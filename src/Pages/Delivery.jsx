@@ -56,19 +56,19 @@ const Delivery = ({ onDeliveryData }) => {
 
     setIsSubmitting(true);
 
-    // Save delivery data to backend using existing /order-items endpoint
     try {
-      const response = await fetch(`http://3.87.165.143:3000/order-items`, {
+      // Save delivery data to backend using the new /orders endpoint
+      const response = await fetch(`http://3.87.165.143/orders`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          orderId: `delivery_${Date.now()}`, // Generate temporary order ID
-          productId: 'delivery_info', // Use special product ID for delivery info
-          quantity: 1,
-          price: 0, // Delivery info has no price
-          deliveryData: deliveryData // Add the actual delivery data
+          userId: localStorage.getItem('userId') || "guest_user", // Example userId
+          items: [], // Empty for now, actual products will be added in checkout
+          totalAmount: 0, // Delivery step has no cost, update later at checkout
+          status: "pending",
+          deliveryInfo: deliveryData // Pass delivery info here
         })
       });
 
@@ -78,9 +78,10 @@ const Delivery = ({ onDeliveryData }) => {
       }
 
       const result = await response.json();
-      console.log("Delivery data saved to order-items:", result);
+      console.log("Delivery data saved to orders:", result);
 
-      // Also save locally as backup
+      // Save orderId for later use (e.g. in payment)
+      localStorage.setItem('currentOrderId', result.data._id);
       localStorage.setItem('deliveryData', JSON.stringify(deliveryData));
 
     } catch (error) {
