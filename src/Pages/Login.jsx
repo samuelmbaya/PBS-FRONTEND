@@ -62,7 +62,7 @@ const Login = () => {
     }
   };
 
-  const API_BASE_URL = `http://${import.meta.env.VITE_SERVER_IP}:3000`;
+  const API_BASE_URL = `http://3.87.165.143:3000`;
 
   const handleLoginInputChange = (e) => {
     const { name, value } = e.target;
@@ -78,7 +78,7 @@ const Login = () => {
     setMessage('');
 
     try {
-      const response = await fetch(`${API_BASE_URL}/signin`, {
+      const response = await fetch(`http://3.87.165.143:3000/signin`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
