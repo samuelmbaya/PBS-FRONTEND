@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 const NotFound = () => {
   return (
     <div style={styles.container}>
-      <h1 style={styles.text}>404 – Not Found</h1>
+      <h1 style={styles.text}>404 – Page Not Available</h1>
       <Link to="/" style={styles.button} className="hover-button">
         Go to Homepage
       </Link>
