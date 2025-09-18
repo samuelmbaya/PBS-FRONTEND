@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import './Delivery.css';
 import { useNavigate } from 'react-router-dom';
 
-// ✅ Load IP from .env
-const serverIP = import.meta.env.VITE_SERVER_IP;
-
 const Delivery = ({ onDeliveryData }) => {
   const navigate = useNavigate();
+
+  // Use consistent API configuration
+  const API_BASE_URL = process.env.REACT_APP_API_URL || "http://3.87.165.143:3000";
 
   const [deliveryData, setDeliveryData] = useState({
     country: '',
@@ -19,6 +19,8 @@ const Delivery = ({ onDeliveryData }) => {
     province: '',
     phoneNumber: ''
   });
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -48,13 +50,15 @@ const Delivery = ({ onDeliveryData }) => {
     const missingFields = requiredFields.filter(field => !deliveryData[field]);
 
     if (missingFields.length > 0) {
-      alert('Please fill in all required fields');
+      alert(`Please fill in all required fields: ${missingFields.join(', ')}`);
       return;
     }
 
-    // ✅ Optional: send delivery data to backend
+    setIsSubmitting(true);
+
+    // Save delivery data to backend
     try {
-      const response = await fetch(`http://${serverIP}:3000/api/delivery`, {
+      const response = await fetch(`${API_BASE_URL}/api/delivery`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -63,22 +67,26 @@ const Delivery = ({ onDeliveryData }) => {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to send delivery data to server');
+        const errorData = await response.json();
+        throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
       }
 
       const result = await response.json();
-      console.log("✅ Delivery data saved:", result);
+      console.log("Delivery data saved:", result);
 
     } catch (error) {
-      console.error("❌ Error sending delivery data:", error);
-      alert("There was a problem saving your delivery info. Please try again.");
+      console.error("Error sending delivery data:", error);
+      alert(`There was a problem saving your delivery info: ${error.message}. Please try again.`);
+      setIsSubmitting(false);
       return;
     }
 
+    // Pass data to parent component if callback exists
     if (onDeliveryData) {
       onDeliveryData(deliveryData, true);
     }
 
+    setIsSubmitting(false);
     navigate('/payment');
   };
 
@@ -99,6 +107,7 @@ const Delivery = ({ onDeliveryData }) => {
             value={deliveryData.country}
             onChange={handleInputChange}
             className="form-input full-width"
+            disabled={isSubmitting}
           />
         </div>
 
@@ -111,6 +120,7 @@ const Delivery = ({ onDeliveryData }) => {
               value={deliveryData.name}
               onChange={handleInputChange}
               className="form-input"
+              disabled={isSubmitting}
             />
           </div>
           <div className="form-group half-width">
@@ -121,6 +131,7 @@ const Delivery = ({ onDeliveryData }) => {
               value={deliveryData.lastName}
               onChange={handleInputChange}
               className="form-input"
+              disabled={isSubmitting}
             />
           </div>
         </div>
@@ -133,6 +144,7 @@ const Delivery = ({ onDeliveryData }) => {
             value={deliveryData.streetAddress}
             onChange={handleInputChange}
             className="form-input full-width"
+            disabled={isSubmitting}
           />
         </div>
 
@@ -144,6 +156,7 @@ const Delivery = ({ onDeliveryData }) => {
             value={deliveryData.apartment}
             onChange={handleInputChange}
             className="form-input full-width"
+            disabled={isSubmitting}
           />
         </div>
 
@@ -156,6 +169,7 @@ const Delivery = ({ onDeliveryData }) => {
               value={deliveryData.postalCode}
               onChange={handleInputChange}
               className="form-input"
+              disabled={isSubmitting}
             />
           </div>
           <div className="form-group">
@@ -166,6 +180,7 @@ const Delivery = ({ onDeliveryData }) => {
               value={deliveryData.city}
               onChange={handleInputChange}
               className="form-input"
+              disabled={isSubmitting}
             />
           </div>
           <div className="form-group">
@@ -176,6 +191,7 @@ const Delivery = ({ onDeliveryData }) => {
               value={deliveryData.province}
               onChange={handleInputChange}
               className="form-input"
+              disabled={isSubmitting}
             />
           </div>
         </div>
@@ -188,6 +204,7 @@ const Delivery = ({ onDeliveryData }) => {
             value={deliveryData.phoneNumber}
             onChange={handleInputChange}
             className="form-input full-width"
+            disabled={isSubmitting}
           />
         </div>
 
@@ -200,8 +217,9 @@ const Delivery = ({ onDeliveryData }) => {
         <button 
           className="continue-btn"
           onClick={handleContinueToPayment}
+          disabled={isSubmitting}
         >
-          Continue To Payment
+          {isSubmitting ? 'Saving...' : 'Continue To Payment'}
         </button>
       </div>
     </div>
