@@ -26,6 +26,9 @@ const ProductPage = () => {
 
   const navigate = useNavigate();
 
+  // API Base URL - use environment variable or fallback to production server
+  const API_BASE_URL = process.env.REACT_APP_API_URL || "http://3.87.165.143:3000";
+
   // Debounced query to avoid filtering on every keystroke
   const debouncedQuery = useDebounce(query, 300);
 
@@ -68,19 +71,27 @@ const ProductPage = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await fetch("http://localhost:3000/Products");
-        if (!res.ok) throw new Error("Failed to fetch products");
+        setLoading(true);
+        setError(null);
+        
+        const res = await fetch(`${API_BASE_URL}/products`);
+        
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
+        
         const data = await res.json();
         setProducts(data.data || []);
       } catch (err) {
         console.error("Failed to fetch products:", err);
-        setError(err.message);
+        setError(`Failed to fetch products: ${err.message}`);
       } finally {
         setLoading(false);
       }
     };
+    
     fetchProducts();
-  }, []);
+  }, [API_BASE_URL]);
 
   // Save cart & wishlist to localStorage when they change
   useEffect(() => {
@@ -188,13 +199,18 @@ const ProductPage = () => {
 
       <main className="products-container">
         {loading && <p>Loading products...</p>}
-        {error && <p className="error">Error: {error}</p>}
+        {error && (
+          <div className="error">
+            <p>Error: {error}</p>
+            <p>Please check if the server at {API_BASE_URL} is running.</p>
+          </div>
+        )}
         {!loading && !error && (
           filteredProducts.length > 0 ? (
             filteredProducts.map((product) => (
               <div className="product-card" key={product._id}>
                 <img
-                  src={product.imageURL || "https://via.placeholder.com/150"}
+                  src={product.imageUrl || product.imageURL || "https://via.placeholder.com/150"}
                   alt={product.name || "Unnamed Product"}
                   className="product-img"
                 />

@@ -15,6 +15,9 @@ const Login = () => {
     password: ''
   });
 
+  // API Base URL - use environment variable or fallback to production server
+  const API_BASE_URL = process.env.REACT_APP_API_URL || "http://3.87.165.143:3000";
+
   // Check for existing user data on component mount
   useEffect(() => {
     const checkAuthStatus = () => {
@@ -62,8 +65,6 @@ const Login = () => {
     }
   };
 
-  const API_BASE_URL = `http://3.87.165.143:3000`;
-
   const handleLoginInputChange = (e) => {
     const { name, value } = e.target;
     setLoginData(prev => ({
@@ -78,7 +79,7 @@ const Login = () => {
     setMessage('');
 
     try {
-      const response = await fetch(`http://3.87.165.143:3000/signin`, {
+      const response = await fetch(`${API_BASE_URL}/signin`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -111,7 +112,7 @@ const Login = () => {
       }
     } catch (error) {
       console.error('Login error:', error);
-      setMessage('Network error. Please try again.');
+      setMessage(`Network error: ${error.message}. Please check if the server is running.`);
     } finally {
       setIsLoading(false);
     }
