@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Cart.css";
 
+// ✅ Add server IP from .env
+const serverIP = import.meta.env.VITE_SERVER_IP;
+
 const Cart = () => {
   const [cart, setCart] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
@@ -33,14 +36,32 @@ const Cart = () => {
     }
   }, [navigate]);
 
-  // Save cart updates
+  // Save cart updates to localStorage
   useEffect(() => {
     if (currentUser && currentUser.email) {
       localStorage.setItem(`cart_${currentUser.email}`, JSON.stringify(cart));
     }
   }, [cart, currentUser]);
 
-  // Functions for cart
+  // 🔄 Optional: Example for syncing cart to backend using Elastic IP
+  /*
+  useEffect(() => {
+    if (currentUser && cart.length > 0) {
+      fetch(`http://${serverIP}:3000/api/sync-cart`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ email: currentUser.email, cart })
+      })
+        .then((res) => res.json())
+        .then((data) => console.log("Cart synced:", data))
+        .catch((err) => console.error("Error syncing cart:", err));
+    }
+  }, [cart, currentUser]);
+  */
+
+  // Functions for cart operations
   const increaseQuantity = (productId) => {
     setCart((prev) =>
       prev.map((item) =>
@@ -72,7 +93,6 @@ const Cart = () => {
     );
   };
 
-  // Handle continue shopping
   const handleContinueShopping = () => {
     navigate("/ProductPage");
   };
@@ -109,7 +129,6 @@ const Cart = () => {
                   </div>
                 </div>
 
-                {/* Remove button styled like logout */}
                 <button
                   onClick={() => removeFromCart(item._id)}
                   className="remove-btn"
@@ -122,7 +141,9 @@ const Cart = () => {
 
           <div className="cart-summary">
             <h2>Total: R {getTotal().toLocaleString()}</h2>
-            <button onClick={() => navigate("/delivery")} className="checkout-btn">Proceed to Checkout</button>
+            <button onClick={() => navigate("/delivery")} className="checkout-btn">
+              Proceed to Checkout
+            </button>
           </div>
         </>
       )}

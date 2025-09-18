@@ -4,20 +4,30 @@ import "./Payment.css";
 
 const Payment = () => {
   const navigate = useNavigate();
+
+  // Payment method state
   const [paymentMethod, setPaymentMethod] = useState("credit-card");
+
+  // Credit card data
   const [cardData, setCardData] = useState({
     number: "",
     name: "",
     expiry: "",
     cvc: "",
   });
+
+  // PayPal and Google Pay emails
   const [paypalEmail, setPaypalEmail] = useState("");
   const [googlePayEmail, setGooglePayEmail] = useState("");
+
+  // Loading state for processing payment
   const [loading, setLoading] = useState(false);
+
+  // Cart and user info
   const [cart, setCart] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
 
-  // Disable body scroll
+  // Disable scrolling on mount, restore on unmount
   useEffect(() => {
     document.body.style.overflow = "hidden";
     return () => {
@@ -25,7 +35,7 @@ const Payment = () => {
     };
   }, []);
 
-  // Load current user and their cart
+  // Load current user and cart from localStorage
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
     const storedIsLoggedIn = localStorage.getItem("isLoggedIn");
@@ -36,20 +46,24 @@ const Payment = () => {
     }
 
     setCurrentUser(storedUser);
+
     const userCart = JSON.parse(
       localStorage.getItem(`cart_${storedUser.email}`) || "[]"
     );
     setCart(userCart);
   }, [navigate]);
 
+  // Calculate total cart price
   const totalPrice = cart.reduce(
     (sum, item) => sum + (item.price || 0) * (item.quantity || 1),
     0
   );
 
+  // Remove item from cart and update localStorage
   const removeFromCart = (productId) => {
     const updatedCart = cart.filter((item) => item._id !== productId);
     setCart(updatedCart);
+
     if (currentUser?.email) {
       localStorage.setItem(
         `cart_${currentUser.email}`,
@@ -58,6 +72,7 @@ const Payment = () => {
     }
   };
 
+  // Luhn algorithm to validate credit card number
   const isValidCard = (num) => {
     const value = num.replace(/\s/g, "");
     let sum = 0;
@@ -74,9 +89,11 @@ const Payment = () => {
     return sum % 10 === 0;
   };
 
+  // Format card number as "#### #### #### ####"
   const formatCardNumber = (num) =>
     num.replace(/\D/g, "").replace(/(\d{4})(?=\d)/g, "$1 ");
 
+  // Handle card input changes
   const handleCardChange = (e) => {
     const { name, value } = e.target;
     setCardData((prev) => ({
@@ -85,28 +102,52 @@ const Payment = () => {
     }));
   };
 
+  // Handle order placement with validation
   const handlePlaceOrder = () => {
-    if (cart.length === 0) return alert("Your cart is empty!");
+    if (cart.length === 0) {
+      alert("Your cart is empty!");
+      return;
+    }
 
-    // ✅ Validate payment details
+    // Validate based on payment method
     if (paymentMethod === "credit-card") {
       const { number, name, expiry, cvc } = cardData;
-      if (!number || !name || !expiry || !cvc)
-        return alert("Fill all card details!");
-      if (!/^\d{2}\/\d{2}$/.test(expiry))
-        return alert("Invalid expiration date. Use MM/YY format.");
-      if (!/^\d{3,4}$/.test(cvc)) return alert("Invalid CVC");
-      if (!isValidCard(number)) return alert("Invalid card number");
+
+      if (!number || !name || !expiry || !cvc) {
+        alert("Please fill all card details!");
+        return;
+      }
+
+      if (!/^\d{2}\/\d{2}$/.test(expiry)) {
+        alert("Invalid expiration date. Use MM/YY format.");
+        return;
+      }
+
+      if (!/^\d{3,4}$/.test(cvc)) {
+        alert("Invalid CVC");
+        return;
+      }
+
+      if (!isValidCard(number)) {
+        alert("Invalid card number");
+        return;
+      }
     } else if (paymentMethod === "paypal") {
-      if (!paypalEmail) return alert("Enter PayPal email!");
+      if (!paypalEmail) {
+        alert("Enter PayPal email!");
+        return;
+      }
     } else if (paymentMethod === "google-pay") {
-      if (!googlePayEmail) return alert("Enter Google Pay email!");
+      if (!googlePayEmail) {
+        alert("Enter Google Pay email!");
+        return;
+      }
     }
 
     setLoading(true);
 
+    // Simulate payment processing delay
     setTimeout(() => {
-      // ✅ Build new order object
       const newOrder = {
         id: "ORD-" + Date.now(),
         date: new Date().toLocaleDateString(),
@@ -116,7 +157,7 @@ const Payment = () => {
         paymentMethod,
       };
 
-      // ✅ Save to user-specific orders
+      // Save order in localStorage for the user
       let userOrders = JSON.parse(
         localStorage.getItem(`orders_${currentUser.email}`) || "[]"
       );
@@ -126,13 +167,13 @@ const Payment = () => {
         JSON.stringify(userOrders)
       );
 
-      // ✅ Clear cart
+      // Clear the cart after successful order
       localStorage.setItem(`cart_${currentUser.email}`, JSON.stringify([]));
       setCart([]);
 
       setLoading(false);
       alert("Payment successful! Order placed.");
-      navigate("/Orders"); // redirect to Orders page
+      navigate("/Orders"); // Redirect to Orders page
     }, 1500);
   };
 

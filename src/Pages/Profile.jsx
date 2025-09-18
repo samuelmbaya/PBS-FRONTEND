@@ -8,24 +8,23 @@ const UserContext = createContext();
 export const UserProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [theme, setTheme] = useState("dark"); // default theme
+  const [theme, setTheme] = useState('dark'); // default theme
 
   useEffect(() => {
     const checkAuthStatus = () => {
       try {
         const storedUser = localStorage.getItem('user');
         const storedIsLoggedIn = localStorage.getItem('isLoggedIn');
-        
+
         if (storedUser && storedIsLoggedIn === 'true') {
           const parsedUser = JSON.parse(storedUser);
           setCurrentUser(parsedUser);
           setIsAuthenticated(true);
-          
-          // Load user's preferred theme
+
+          // Load user's preferred theme from localStorage
           const userTheme = localStorage.getItem(`darkMode_${parsedUser.email}`);
           if (userTheme !== null) {
-            const isDarkMode = JSON.parse(userTheme);
-            setTheme(isDarkMode ? "dark" : "light");
+            setTheme(JSON.parse(userTheme) ? 'dark' : 'light');
           } else if (parsedUser.theme) {
             setTheme(parsedUser.theme);
           }
@@ -35,12 +34,13 @@ export const UserProvider = ({ children }) => {
         }
       } catch (error) {
         console.error('Error parsing stored user data:', error);
+        // Clear invalid data and reset states
         localStorage.removeItem('user');
         localStorage.removeItem('isLoggedIn');
         localStorage.removeItem('wishlist');
         setCurrentUser(null);
         setIsAuthenticated(false);
-        setTheme("dark");
+        setTheme('dark');
       }
     };
 
@@ -52,7 +52,7 @@ export const UserProvider = ({ children }) => {
     localStorage.removeItem('isLoggedIn');
     setCurrentUser(null);
     setIsAuthenticated(false);
-    setTheme("dark");
+    setTheme('dark');
   };
 
   return (
@@ -62,8 +62,8 @@ export const UserProvider = ({ children }) => {
   );
 };
 
-// Custom hook
-const useUser = () => {
+// Custom hook to use UserContext
+export const useUser = () => {
   const context = useContext(UserContext);
   if (!context) throw new Error('useUser must be used within a UserProvider');
   return context;
@@ -75,18 +75,18 @@ const Profile = () => {
 
   const handleLogout = () => {
     logout();
-    window.location.href = '/Home';
+    window.location.href = '/Home'; // you may consider using react-router's navigate for SPA navigation
   };
 
   const handleBackToProducts = () => {
-    window.location.href = '/ProductPage';
+    window.location.href = '/ProductPage'; // same as above, SPA navigation recommended
   };
 
   const getDisplayName = () => {
-    if (!currentUser) return "User";
+    if (!currentUser) return 'User';
     if (currentUser.name) return currentUser.name;
     if (currentUser.email) return currentUser.email.split('@')[0];
-    return "User";
+    return 'User';
   };
 
   return (
@@ -101,13 +101,15 @@ const Profile = () => {
 
       {/* Main Content */}
       <div className="profile-content">
-        <div className="greeting">
-          HI, {getDisplayName().toUpperCase()}
-        </div>
+        <div className="greeting">HI, {getDisplayName().toUpperCase()}</div>
 
         <div className="user-info-display">
-          <p><strong>Name:</strong> {currentUser?.name || 'Not provided'}</p>
-          <p><strong>Email:</strong> {currentUser?.email || 'Not provided'}</p>
+          <p>
+            <strong>Name:</strong> {currentUser?.name || 'Not provided'}
+          </p>
+          <p>
+            <strong>Email:</strong> {currentUser?.email || 'Not provided'}
+          </p>
         </div>
 
         <button className="logout-button" onClick={handleLogout}>
@@ -118,6 +120,7 @@ const Profile = () => {
   );
 };
 
+// Wrap Profile with UserProvider in App
 const App = () => (
   <UserProvider>
     <Profile />

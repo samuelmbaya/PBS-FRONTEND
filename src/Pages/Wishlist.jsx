@@ -17,41 +17,39 @@ const Wishlist = () => {
         const parsedUser = JSON.parse(storedUser);
         setCurrentUser(parsedUser);
 
-        // Load wishlist
+        // Load user's wishlist or default to empty array
         const userWishlist = JSON.parse(
           localStorage.getItem(`wishlist_${parsedUser.email}`) || "[]"
         );
         setWishlist(userWishlist);
 
-        // Load theme
+        // Load theme preference, default to true (dark)
         const userDarkMode = localStorage.getItem(`darkMode_${parsedUser.email}`);
         if (userDarkMode !== null) {
           setDarkMode(JSON.parse(userDarkMode));
         }
       } else {
         alert("Please log in to view your wishlist.");
-        navigate("/");
+        navigate("/", { replace: true });
       }
     } catch (err) {
       console.error("Error loading wishlist:", err);
       alert("Error loading wishlist, please login again.");
-      navigate("/");
+      navigate("/", { replace: true });
     }
   }, [navigate]);
 
-  // Save wishlist when it changes
+  // Persist wishlist changes to localStorage
   useEffect(() => {
-    if (currentUser && currentUser.email) {
+    if (currentUser?.email) {
       localStorage.setItem(`wishlist_${currentUser.email}`, JSON.stringify(wishlist));
     }
   }, [wishlist, currentUser]);
 
-  // Remove from wishlist
   const removeFromWishlist = (id) => {
     setWishlist((prevWishlist) => prevWishlist.filter((item) => item._id !== id));
   };
 
-  // Handle continue shopping
   const handleContinueShopping = () => {
     navigate("/ProductPage");
   };
@@ -68,31 +66,30 @@ const Wishlist = () => {
       {wishlist.length === 0 ? (
         <p>Your wishlist is empty.</p>
       ) : (
-        <>
-          <div className="wishlist-items">
-            {wishlist.map((item) => (
-              <div className="wishlist-item" key={item._id}>
-                <img
-                  src={item.imageURL || "https://via.placeholder.com/100"}
-                  alt={item.name}
-                  className="wishlist-item-img"
-                />
+        <div className="wishlist-items">
+          {wishlist.map((item) => (
+            <div className="wishlist-item" key={item._id}>
+              <img
+                src={item.imageURL || "https://via.placeholder.com/100"}
+                alt={item.name}
+                className="wishlist-item-img"
+              />
 
-                <div className="wishlist-item-info">
-                  <h3>{item.name}</h3>
-                  <p>R {item.price ? item.price.toLocaleString() : "0.00"}</p>
-                </div>
-
-                <button
-                  onClick={() => removeFromWishlist(item._id)}
-                  className="remove-btn"
-                >
-                  Remove
-                </button>
+              <div className="wishlist-item-info">
+                <h3>{item.name}</h3>
+                <p>R {item.price ? item.price.toLocaleString() : "0.00"}</p>
               </div>
-            ))}
-          </div>
-        </>
+
+              <button
+                onClick={() => removeFromWishlist(item._id)}
+                className="remove-btn"
+                aria-label={`Remove ${item.name} from wishlist`}
+              >
+                Remove
+              </button>
+            </div>
+          ))}
+        </div>
       )}
     </div>
   );

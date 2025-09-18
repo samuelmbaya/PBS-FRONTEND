@@ -10,7 +10,7 @@ const Signup = () => {
     name: '',
     email: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
   });
 
   useEffect(() => {
@@ -18,7 +18,7 @@ const Signup = () => {
       try {
         const storedUser = localStorage.getItem('user');
         const storedIsLoggedIn = localStorage.getItem('isLoggedIn');
-        
+
         if (storedUser && storedIsLoggedIn === 'true') {
           const parsedUser = JSON.parse(storedUser);
           setCurrentUser(parsedUser);
@@ -39,9 +39,9 @@ const Signup = () => {
 
   const handleRegisterInputChange = (e) => {
     const { name, value } = e.target;
-    setRegisterData(prev => ({
+    setRegisterData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
@@ -50,7 +50,7 @@ const Signup = () => {
     setIsLoading(true);
     setMessage('');
 
-    // Client-side validation
+    // Basic client-side validation
     if (registerData.password.length < 8) {
       setMessage('Password must be at least 8 characters long');
       setIsLoading(false);
@@ -85,8 +85,8 @@ const Signup = () => {
           name: registerData.name,
           email: registerData.email,
           password: registerData.password,
-          confirmPassword: registerData.confirmPassword
-        })
+          confirmPassword: registerData.confirmPassword,
+        }),
       });
 
       const data = await response.json();
@@ -95,7 +95,7 @@ const Signup = () => {
         setMessage('Registration successful! Redirecting to login...');
         setRegisterData({ name: '', email: '', password: '', confirmPassword: '' });
         setTimeout(() => {
-          window.location.href = '/';
+          window.location.href = '/'; // redirect to login page
         }, 2000);
       } else {
         setMessage(data.error || 'Registration failed');
@@ -124,7 +124,7 @@ const Signup = () => {
     <div className="signup-body">
       <div className="signup-container">
         {message && (
-          <div className={`message ${message.includes('successful') ? 'success' : 'error'}`}>
+          <div className={`message ${message.toLowerCase().includes('successful') ? 'success' : 'error'}`}>
             {message}
           </div>
         )}
@@ -134,75 +134,84 @@ const Signup = () => {
             <h1>Sign Up</h1>
             <form onSubmit={handleRegister}>
               <div className="input-box">
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   name="name"
-                  placeholder="Full Name" 
+                  placeholder="Full Name"
                   value={registerData.name}
                   onChange={handleRegisterInputChange}
                   disabled={isLoading}
-                  required 
+                  required
                 />
-                <i className='bx bxs-user'></i>
+                <i className="bx bxs-user"></i>
               </div>
               <div className="input-box">
-                <input 
-                  type="email" 
+                <input
+                  type="email"
                   name="email"
-                  placeholder="Email" 
+                  placeholder="Email"
                   value={registerData.email}
                   onChange={handleRegisterInputChange}
                   disabled={isLoading}
-                  required 
+                  required
                 />
-                <i className='bx bxs-envelope'></i>
+                <i className="bx bxs-envelope"></i>
               </div>
               <div className="input-box">
-                <input 
-                  type="password" 
+                <input
+                  type="password"
                   name="password"
-                  placeholder="Password (min 8 characters)" 
+                  placeholder="Password (min 8 characters)"
                   value={registerData.password}
                   onChange={handleRegisterInputChange}
                   disabled={isLoading}
-                  required 
+                  required
                 />
-                <i className='bx bxs-lock-alt'></i>
+                <i className="bx bxs-lock-alt"></i>
               </div>
               <div className="input-box">
-                <input 
-                  type="password" 
+                <input
+                  type="password"
                   name="confirmPassword"
-                  placeholder="Confirm Password" 
+                  placeholder="Confirm Password"
                   value={registerData.confirmPassword}
                   onChange={handleRegisterInputChange}
                   disabled={isLoading}
-                  required 
+                  required
                 />
-                <i className='bx bxs-lock-alt'></i>
+                <i className="bx bxs-lock-alt"></i>
               </div>
-              <button 
-                type="submit"
-                className="signup-btn"
-                disabled={isLoading}
-              >
+              <button type="submit" className="signup-btn" disabled={isLoading}>
                 {isLoading ? 'Registering...' : 'Sign Up'}
               </button>
             </form>
-            
+
             <div className="auth-links">
-              <p>Already have an account? <button onClick={goToLogin} className="link-btn">Login</button></p>
-              <button onClick={handleSkipToHome} className="skip-btn">
+              <p>
+                Already have an account?{' '}
+                <button onClick={goToLogin} className="link-btn" type="button">
+                  Login
+                </button>
+              </p>
+              <button onClick={handleSkipToHome} className="skip-btn" type="button">
                 Skip to Home
               </button>
             </div>
-            
+
             <p className="social-text">or register with social platforms</p>
             <div className="social-icons">
-              <a href="#"><i className='bx bxl-google'></i></a>
-              <a href="#"><i className='bx bxl-facebook'></i></a>
-              <a href="#"><i className='bx bxl-github'></i></a>
-              <a href="#"><i className='bx bxl-linkedin'></i></a>
+              <a href="#" aria-label="Register with Google">
+                <i className="bx bxl-google"></i>
+              </a>
+              <a href="#" aria-label="Register with Facebook">
+                <i className="bx bxl-facebook"></i>
+              </a>
+              <a href="#" aria-label="Register with GitHub">
+                <i className="bx bxl-github"></i>
+              </a>
+              <a href="#" aria-label="Register with LinkedIn">
+                <i className="bx bxl-linkedin"></i>
+              </a>
             </div>
           </div>
         </div>

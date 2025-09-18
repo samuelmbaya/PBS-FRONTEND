@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import './Delivery.css';
 import { useNavigate } from 'react-router-dom';
 
+// ✅ Load IP from .env
+const serverIP = import.meta.env.VITE_SERVER_IP;
+
 const Delivery = ({ onDeliveryData }) => {
   const navigate = useNavigate();
 
@@ -23,7 +26,7 @@ const Delivery = ({ onDeliveryData }) => {
       ...prev,
       [name]: value
     }));
-    
+
     if (onDeliveryData) {
       onDeliveryData({
         ...deliveryData,
@@ -32,7 +35,7 @@ const Delivery = ({ onDeliveryData }) => {
     }
   };
 
-  const handleContinueToPayment = () => {
+  const handleContinueToPayment = async () => {
     const requiredFields = [
       'country',
       'name',
@@ -43,9 +46,32 @@ const Delivery = ({ onDeliveryData }) => {
       'phoneNumber'
     ];
     const missingFields = requiredFields.filter(field => !deliveryData[field]);
-    
+
     if (missingFields.length > 0) {
       alert('Please fill in all required fields');
+      return;
+    }
+
+    // ✅ Optional: send delivery data to backend
+    try {
+      const response = await fetch(`http://${serverIP}:3000/api/delivery`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(deliveryData)
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to send delivery data to server');
+      }
+
+      const result = await response.json();
+      console.log("✅ Delivery data saved:", result);
+
+    } catch (error) {
+      console.error("❌ Error sending delivery data:", error);
+      alert("There was a problem saving your delivery info. Please try again.");
       return;
     }
 
@@ -61,10 +87,10 @@ const Delivery = ({ onDeliveryData }) => {
       <div className="delivery-header">
         <h2>Delivery</h2>
       </div>
-      
+
       <div className="shipping-address">
         <h3>Shipping Address</h3>
-        
+
         <div className="form-group">
           <input
             type="text"

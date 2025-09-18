@@ -1,7 +1,10 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Login.css';
 
 const Login = () => {
+  const navigate = useNavigate();
+
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -59,7 +62,7 @@ const Login = () => {
     }
   };
 
-  const API_BASE_URL = 'http://localhost:3000';
+  const API_BASE_URL = `http://${import.meta.env.VITE_SERVER_IP}:3000`;
 
   const handleLoginInputChange = (e) => {
     const { name, value } = e.target;
@@ -101,7 +104,7 @@ const Login = () => {
         setLoginData({ username: '', password: '' });
         
         setTimeout(() => {
-          window.location.href = '/Home';
+          navigate('/Home');
         }, 1500);
       } else {
         setMessage(data.error || 'Login failed');
@@ -116,14 +119,14 @@ const Login = () => {
 
   const handleSkipToHome = () => {
     if (isAuthenticated && currentUser) {
-      window.location.href = '/ProtectedRoutez';
+      navigate('/ProtectedRoutez');
     } else {
       alert('You must be logged in to access this page.');
     }
   };
 
   const goToSignup = () => {
-    window.location.href = '/signup';
+    navigate('/signup');
   };
 
   return (

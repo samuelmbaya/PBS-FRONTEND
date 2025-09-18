@@ -1,6 +1,18 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import "./ProductPage.css";
 import { useNavigate } from "react-router-dom";
+
+// Custom hook for debouncing a value
+function useDebounce(value, delay) {
+  const [debounced, setDebounced] = useState(value);
+
+  useEffect(() => {
+    const handler = setTimeout(() => setDebounced(value), delay);
+    return () => clearTimeout(handler);
+  }, [value, delay]);
+
+  return debounced;
+}
 
 const ProductPage = () => {
   const [cart, setCart] = useState([]);
@@ -13,6 +25,9 @@ const ProductPage = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const navigate = useNavigate();
+
+  // Debounced query to avoid filtering on every keystroke
+  const debouncedQuery = useDebounce(query, 300);
 
   // Check authentication and load user data
   useEffect(() => {
@@ -27,11 +42,11 @@ const ProductPage = () => {
           setIsAuthenticated(true);
           loadUserSpecificData(parsedUser.email);
         } else {
-          navigate("/");
+          navigate("/login"); // Changed to /login for clarity
         }
       } catch (error) {
         console.error("Error checking authentication:", error);
-        navigate("/");
+        navigate("/login");
       }
     };
 
@@ -67,7 +82,7 @@ const ProductPage = () => {
     fetchProducts();
   }, []);
 
-  // Save cart & wishlist to localStorage
+  // Save cart & wishlist to localStorage when they change
   useEffect(() => {
     if (currentUser?.email) {
       localStorage.setItem(`cart_${currentUser.email}`, JSON.stringify(cart));
@@ -75,38 +90,44 @@ const ProductPage = () => {
     }
   }, [cart, wishlist, currentUser]);
 
-  // Toggle wishlist
-  const toggleWishlist = (product) => {
-    if (!isAuthenticated) {
-      alert("Please login to manage your wishlist");
-      return;
-    }
-    setWishlist((prev) => {
-      const exists = prev.findIndex((item) => item._id === product._id);
-      if (exists !== -1) return prev.filter((item) => item._id !== product._id);
-      return [...prev, { ...product, addedAt: new Date().toISOString() }];
-    });
-  };
-
-  // Add to cart
-  const addToCart = (product) => {
-    if (!isAuthenticated) {
-      alert("Please login to add items to cart");
-      return;
-    }
-    setCart((prev) => {
-      const index = prev.findIndex((item) => item._id === product._id);
-      if (index !== -1) {
-        const updated = [...prev];
-        updated[index] = {
-          ...updated[index],
-          quantity: (updated[index].quantity || 1) + 1,
-        };
-        return updated;
+  // Toggle wishlist handler, memoized for performance
+  const toggleWishlist = useCallback(
+    (product) => {
+      if (!isAuthenticated) {
+        alert("Please login to manage your wishlist");
+        return;
       }
-      return [...prev, { ...product, quantity: 1, addedAt: new Date().toISOString() }];
-    });
-  };
+      setWishlist((prev) => {
+        const exists = prev.findIndex((item) => item._id === product._id);
+        if (exists !== -1) return prev.filter((item) => item._id !== product._id);
+        return [...prev, { ...product, addedAt: new Date().toISOString() }];
+      });
+    },
+    [isAuthenticated]
+  );
+
+  // Add to cart handler, memoized for performance
+  const addToCart = useCallback(
+    (product) => {
+      if (!isAuthenticated) {
+        alert("Please login to add items to cart");
+        return;
+      }
+      setCart((prev) => {
+        const index = prev.findIndex((item) => item._id === product._id);
+        if (index !== -1) {
+          const updated = [...prev];
+          updated[index] = {
+            ...updated[index],
+            quantity: (updated[index].quantity || 1) + 1,
+          };
+          return updated;
+        }
+        return [...prev, { ...product, quantity: 1, addedAt: new Date().toISOString() }];
+      });
+    },
+    [isAuthenticated]
+  );
 
   const isInWishlist = (productId) => wishlist.some((item) => item._id === productId);
   const getCartItemCount = () => cart.reduce((total, item) => total + (item.quantity || 1), 0);
@@ -117,20 +138,35 @@ const ProductPage = () => {
     navigate("/Home");
   };
 
+  // Filter products based on debounced query
   const filteredProducts = products.filter((p) =>
-    p.name?.toLowerCase().includes(query.toLowerCase())
+    p.name?.toLowerCase().includes(debouncedQuery.toLowerCase())
   );
 
   return (
     <div className="homepage">
       <header className="navbar">
-        <h1 className="logo" onClick={() => navigate("/Home")}>PWS Products</h1>
+        <h1
+          className="logo"
+          onClick={() => navigate("/Home")}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              navigate("/Home");
+            }
+          }}
+          aria-label="Navigate to Home"
+        >
+          PWS Products
+        </h1>
         <div className="searchbar">
           <input
             type="text"
             placeholder="Search products..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
+            aria-label="Search products"
           />
         </div>
         <nav className="nav-buttons">
@@ -140,9 +176,11 @@ const ProductPage = () => {
           <button onClick={() => navigate("/profile")}>Profile</button>
           <button onClick={() => navigate("/orders")}>Orders</button>
           {currentUser && (
-            <div className="user-info">
+            <div className="user-info" aria-live="polite">
               <span>Signed in as: {currentUser.name || currentUser.email}!</span>
-              <button onClick={handleLogout} className="logout-btn">Logout</button>
+              <button onClick={handleLogout} className="logout-btn">
+                Logout
+              </button>
             </div>
           )}
         </nav>
@@ -162,20 +200,41 @@ const ProductPage = () => {
                 />
                 <h3>{product.name || "Unnamed Product"}</h3>
                 <p className="price">
-                  R {product.price?.toLocaleString() || "0.00"}
+                  R {typeof product.price === "number" ? product.price.toLocaleString() : "0.00"}
                 </p>
                 <div className="actions">
-                  <button onClick={(e) => { e.stopPropagation(); addToCart(product); }} className="add-to-cart-btn">Add to Cart</button>
-                  <button onClick={(e) => { e.stopPropagation(); toggleWishlist(product); }} className={`wishlist-btn ${isInWishlist(product._id) ? "in-wishlist" : ""}`}>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      addToCart(product);
+                    }}
+                    className="add-to-cart-btn"
+                    aria-label={`Add ${product.name} to cart`}
+                  >
+                    Add to Cart
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      toggleWishlist(product);
+                    }}
+                    className={`wishlist-btn ${isInWishlist(product._id) ? "in-wishlist" : ""}`}
+                    aria-pressed={isInWishlist(product._id)}
+                    aria-label={isInWishlist(product._id) ? `Remove ${product.name} from wishlist` : `Add ${product.name} to wishlist`}
+                  >
                     {isInWishlist(product._id) ? "♥ Remove" : "♡ Wishlist"}
                   </button>
                 </div>
                 {cart.find((item) => item._id === product._id) && (
-                  <div className="in-cart-indicator">In Cart (Qty: {cart.find((item) => item._id === product._id)?.quantity || 1})</div>
+                  <div className="in-cart-indicator" aria-live="polite">
+                    In Cart (Qty: {cart.find((item) => item._id === product._id)?.quantity || 1})
+                  </div>
                 )}
               </div>
             ))
-          ) : <p>No products found.</p>
+          ) : (
+            <p>No products found.</p>
+          )
         )}
       </main>
     </div>
