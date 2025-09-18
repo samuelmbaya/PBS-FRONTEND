@@ -56,14 +56,20 @@ const Delivery = ({ onDeliveryData }) => {
 
     setIsSubmitting(true);
 
-    // Save delivery data to backend
+    // Save delivery data to backend using existing /order-items endpoint
     try {
-      const response = await fetch(`${API_BASE_URL}/api/delivery`, {
+      const response = await fetch(`http://3.87.165.143:3000/order-items`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(deliveryData)
+        body: JSON.stringify({
+          orderId: `delivery_${Date.now()}`, // Generate temporary order ID
+          productId: 'delivery_info', // Use special product ID for delivery info
+          quantity: 1,
+          price: 0, // Delivery info has no price
+          deliveryData: deliveryData // Add the actual delivery data
+        })
       });
 
       if (!response.ok) {
@@ -72,13 +78,19 @@ const Delivery = ({ onDeliveryData }) => {
       }
 
       const result = await response.json();
-      console.log("Delivery data saved:", result);
+      console.log("Delivery data saved to order-items:", result);
+
+      // Also save locally as backup
+      localStorage.setItem('deliveryData', JSON.stringify(deliveryData));
 
     } catch (error) {
-      console.error("Error sending delivery data:", error);
-      alert(`There was a problem saving your delivery info: ${error.message}. Please try again.`);
-      setIsSubmitting(false);
-      return;
+      console.error("Error saving delivery data:", error);
+      
+      // Save locally as fallback
+      localStorage.setItem('deliveryData', JSON.stringify(deliveryData));
+      console.log("Delivery data saved locally as fallback");
+      
+      alert(`Note: Could not save delivery info to server (${error.message}), but data is saved locally.`);
     }
 
     // Pass data to parent component if callback exists
