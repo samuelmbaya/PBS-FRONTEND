@@ -57,7 +57,6 @@ const Delivery = ({ onDeliveryData }) => {
     setIsSubmitting(true);
 
     try {
-      // Example: you can later pull real items and totals from Cart context/localStorage
       const orderPayload = {
         userId: localStorage.getItem('userId') || "guest_user",
         items: [
@@ -67,7 +66,7 @@ const Delivery = ({ onDeliveryData }) => {
             deliveryInfo: deliveryData
           }
         ],
-        totalAmount: 0, // no cost yet, will update later in checkout
+        totalAmount: 0, // placeholder value allowed on backend now
         status: "pending"
       };
 
@@ -79,29 +78,31 @@ const Delivery = ({ onDeliveryData }) => {
         body: JSON.stringify(orderPayload)
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+      let result;
+      try {
+        result = await response.json(); // always parse JSON
+      } catch (err) {
+        throw new Error(`Invalid JSON response (status ${response.status})`);
       }
 
-      const result = await response.json();
+      if (!response.ok) {
+        throw new Error(result.error || `HTTP error! status: ${response.status}`);
+      }
+
       console.log("Order created successfully:", result);
 
-      // Save orderId for later use (e.g. in payment)
       localStorage.setItem('currentOrderId', result.data._id);
       localStorage.setItem('deliveryData', JSON.stringify(deliveryData));
 
     } catch (error) {
       console.error("Error saving delivery data:", error);
 
-      // Save locally as fallback
       localStorage.setItem('deliveryData', JSON.stringify(deliveryData));
       console.log("Delivery data saved locally as fallback");
 
       alert(`Note: Could not save delivery info to server (${error.message}), but data is saved locally.`);
     }
 
-    // Pass data to parent component if callback exists
     if (onDeliveryData) {
       onDeliveryData(deliveryData, true);
     }
