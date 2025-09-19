@@ -57,19 +57,26 @@ const Delivery = ({ onDeliveryData }) => {
     setIsSubmitting(true);
 
     try {
-      // Save delivery data to backend using the new /orders endpoint
-      const response = await fetch(`http://3.87.165.143/orders`, {
+      // Example: you can later pull real items and totals from Cart context/localStorage
+      const orderPayload = {
+        userId: localStorage.getItem('userId') || "guest_user",
+        items: [
+          {
+            productId: "delivery-info-placeholder",
+            quantity: 1,
+            deliveryInfo: deliveryData
+          }
+        ],
+        totalAmount: 0, // no cost yet, will update later in checkout
+        status: "pending"
+      };
+
+      const response = await fetch(`${API_BASE_URL}/orders`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-          userId: localStorage.getItem('userId') || "guest_user", // Example userId
-          items: [], // Empty for now, actual products will be added in checkout
-          totalAmount: 0, // Delivery step has no cost, update later at checkout
-          status: "pending",
-          deliveryInfo: deliveryData // Pass delivery info here
-        })
+        body: JSON.stringify(orderPayload)
       });
 
       if (!response.ok) {
@@ -78,7 +85,7 @@ const Delivery = ({ onDeliveryData }) => {
       }
 
       const result = await response.json();
-      console.log("Delivery data saved to orders:", result);
+      console.log("Order created successfully:", result);
 
       // Save orderId for later use (e.g. in payment)
       localStorage.setItem('currentOrderId', result.data._id);
@@ -86,11 +93,11 @@ const Delivery = ({ onDeliveryData }) => {
 
     } catch (error) {
       console.error("Error saving delivery data:", error);
-      
+
       // Save locally as fallback
       localStorage.setItem('deliveryData', JSON.stringify(deliveryData));
       console.log("Delivery data saved locally as fallback");
-      
+
       alert(`Note: Could not save delivery info to server (${error.message}), but data is saved locally.`);
     }
 
