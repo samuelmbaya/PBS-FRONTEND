@@ -20,9 +20,10 @@ function App() {
   return (
     <Router>
       <Routes>
+        {/* Home as the landing page */}
+        <Route index element={<Home />} />
         <Route path="/" element={<Home />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/Home" element={<Home />} />
         <Route path="/ProductPage" element={<ProductPage />} />
         <Route path="/cart" element={<Cart />} />
         <Route
