@@ -56,27 +56,55 @@ const Delivery = ({ onDeliveryData }) => {
     setIsSubmitting(true);
 
     try {
+      // Get user info
+      const storedUser = localStorage.getItem("user");
+      let userId = "guest_user";
+      
+      if (storedUser) {
+        try {
+          const parsedUser = JSON.parse(storedUser);
+          userId = parsedUser.id || parsedUser._id || parsedUser.email;
+        } catch (e) {
+          console.warn("Could not parse stored user data");
+        }
+      }
+
       // Get cart items from localStorage or other state management
       const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
       const totalAmount = parseFloat(localStorage.getItem('cartTotal') || '0');
 
+      // Prepare items for backend
+      let orderItems = [];
+      if (cartItems.length > 0) {
+        orderItems = cartItems.map(item => ({
+          productId: item._id || item.id || "unknown",
+          name: item.name || "Unknown Product",
+          quantity: item.quantity || 1,
+          price: item.price || 0,
+          imageUrl: item.imageURL || item.imageUrl || ""
+        }));
+      } else {
+        // Fallback if no cart items
+        orderItems = [{
+          productId: "placeholder-item",
+          name: "Order Item",
+          quantity: 1,
+          price: totalAmount || 0
+        }];
+      }
+
       const orderPayload = {
-        userId: localStorage.getItem('userId') || "guest_user",
-        items: cartItems.length > 0 ? cartItems : [
-          {
-            productId: "delivery-info-placeholder",
-            quantity: 1,
-            price: 0
-          }
-        ],
-        totalAmount: totalAmount,
+        userId: userId,
+        items: orderItems,
+        totalAmount: totalAmount || 0,
         status: "pending",
-        deliveryData: deliveryData // Include delivery data in the order
+        deliveryData: deliveryData,
+        paymentMethod: "pending"
       };
 
       console.log('Sending order payload:', orderPayload);
 
-      // FIXED: Changed from /order to /orders to match backend route
+      // Send to backend
       const response = await fetch(`${API_BASE_URL}/orders`, {
         method: 'POST',
         headers: {
@@ -87,7 +115,6 @@ const Delivery = ({ onDeliveryData }) => {
       });
 
       console.log('Response status:', response.status);
-      console.log('Response headers:', response.headers);
 
       let result;
       const responseText = await response.text();
@@ -97,11 +124,11 @@ const Delivery = ({ onDeliveryData }) => {
         result = JSON.parse(responseText);
       } catch (parseError) {
         console.error('JSON parse error:', parseError);
-        throw new Error(`Invalid JSON response: ${responseText}`);
+        throw new Error(`Invalid response from server: ${responseText}`);
       }
 
       if (!response.ok) {
-        throw new Error(result.error || `HTTP error! status: ${response.status}`);
+        throw new Error(result.error || `Server error: ${response.status}`);
       }
 
       console.log("Order created successfully:", result);
@@ -111,6 +138,36 @@ const Delivery = ({ onDeliveryData }) => {
         localStorage.setItem('currentOrderId', result.data._id);
       }
       localStorage.setItem('deliveryData', JSON.stringify(deliveryData));
+
+      // Also save to user's order history in localStorage as backup
+      if (storedUser) {
+        try {
+          const parsedUser = JSON.parse(storedUser);
+          const userEmail = parsedUser.email;
+          
+          // Get existing orders for this user
+          const existingOrders = JSON.parse(
+            localStorage.getItem(`orders_${userEmail}`) || "[]"
+          );
+          
+          // Add new order to user's history
+          const newOrder = {
+            id: result.data._id || Date.now().toString(),
+            date: new Date().toLocaleDateString(),
+            status: "pending",
+            items: orderItems,
+            total: totalAmount || 0,
+            paymentMethod: "pending",
+            deliveryData: deliveryData
+          };
+          
+          existingOrders.push(newOrder);
+          localStorage.setItem(`orders_${userEmail}`, JSON.stringify(existingOrders));
+          
+        } catch (e) {
+          console.warn("Could not save to user order history:", e);
+        }
+      }
 
       // Call the callback if provided
       if (onDeliveryData) {
@@ -128,17 +185,27 @@ const Delivery = ({ onDeliveryData }) => {
       console.log("Delivery data saved locally as fallback");
 
       // Show user-friendly error message
-      const errorMessage = error.message.includes('fetch') 
-        ? 'Unable to connect to server. Please check your internet connection.'
-        : `Error: ${error.message}`;
-
-      alert(`Could not save order: ${errorMessage}\n\nDelivery data has been saved locally. You can continue to payment.`);
-
-      // Still allow navigation to payment page
-      if (onDeliveryData) {
-        onDeliveryData(deliveryData, true);
+      let errorMessage = 'An unexpected error occurred.';
+      
+      if (error.message.includes('fetch')) {
+        errorMessage = 'Unable to connect to server. Please check your internet connection.';
+      } else if (error.message.includes('Invalid response')) {
+        errorMessage = 'Server returned an invalid response.';
+      } else if (error.message) {
+        errorMessage = error.message;
       }
-      navigate('/payment');
+
+      const shouldContinue = window.confirm(
+        `Could not save order to server: ${errorMessage}\n\nDelivery data has been saved locally. Would you like to continue to payment anyway?`
+      );
+
+      if (shouldContinue) {
+        // Still allow navigation to payment page
+        if (onDeliveryData) {
+          onDeliveryData(deliveryData, true);
+        }
+        navigate('/payment');
+      }
 
     } finally {
       setIsSubmitting(false);

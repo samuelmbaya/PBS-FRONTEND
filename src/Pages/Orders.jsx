@@ -6,38 +6,129 @@ const Orders = () => {
   const [orders, setOrders] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
   const [darkMode, setDarkMode] = useState(true);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    try {
-      const storedUser = localStorage.getItem("user");
-      const storedIsLoggedIn = localStorage.getItem("isLoggedIn");
+  // Use the same API configuration as your other components
+  const API_BASE_URL = process.env.REACT_APP_API_URL || "http://3.87.165.143:3000";
 
-      if (storedUser && storedIsLoggedIn === "true") {
+  useEffect(() => {
+    const loadUserAndOrders = async () => {
+      try {
+        const storedUser = localStorage.getItem("user");
+        const storedIsLoggedIn = localStorage.getItem("isLoggedIn");
+
+        if (!storedUser || storedIsLoggedIn !== "true") {
+          alert("Please log in to view your orders.");
+          navigate("/");
+          return;
+        }
+
         const parsedUser = JSON.parse(storedUser);
         setCurrentUser(parsedUser);
-
-        // Load orders
-        const userOrders = JSON.parse(
-          localStorage.getItem(`orders_${parsedUser.email}`) || "[]"
-        );
-        setOrders(userOrders);
 
         // Load theme
         const userDarkMode = localStorage.getItem(`darkMode_${parsedUser.email}`);
         if (userDarkMode !== null) {
           setDarkMode(JSON.parse(userDarkMode));
         }
-      } else {
-        alert("Please log in to view your orders.");
+
+        // Fetch orders from backend
+        await fetchOrdersFromBackend(parsedUser.id || parsedUser._id);
+
+      } catch (err) {
+        console.error("Error loading user data:", err);
+        setError("Error loading user data. Please login again.");
         navigate("/");
       }
-    } catch (err) {
-      console.error("Error loading orders:", err);
-      alert("Error loading orders, please login again.");
-      navigate("/");
+    };
+
+    loadUserAndOrders();
+  }, [navigate, API_BASE_URL]);
+
+  const fetchOrdersFromBackend = async (userId) => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const response = await fetch(`${API_BASE_URL}/orders?userId=${userId}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        }
+      });
+
+      if (!response.ok) {
+        // If backend fails, fallback to localStorage
+        if (response.status === 404 || response.status >= 500) {
+          console.warn("Backend unavailable, falling back to localStorage");
+          loadOrdersFromLocalStorage();
+          return;
+        }
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      
+      if (result.data && Array.isArray(result.data)) {
+        // Transform backend data to match frontend expectations
+        const transformedOrders = result.data.map(order => ({
+          id: order._id,
+          date: new Date(order.createdAt).toLocaleDateString(),
+          status: order.status || 'pending',
+          items: order.items || [],
+          total: order.totalAmount || 0,
+          paymentMethod: order.paymentMethod || 'Not specified',
+          deliveryData: order.deliveryData || {}
+        }));
+        
+        setOrders(transformedOrders);
+      } else {
+        setOrders([]);
+      }
+
+    } catch (error) {
+      console.error("Error fetching orders from backend:", error);
+      
+      // Fallback to localStorage if backend fails
+      console.warn("Backend failed, falling back to localStorage");
+      loadOrdersFromLocalStorage();
+      
+      setError("Could not load orders from server. Showing cached orders.");
+    } finally {
+      setLoading(false);
     }
-  }, [navigate]);
+  };
+
+  const loadOrdersFromLocalStorage = () => {
+    try {
+      if (!currentUser) return;
+      
+      // Load orders from localStorage as fallback
+      const userOrders = JSON.parse(
+        localStorage.getItem(`orders_${currentUser.email}`) || "[]"
+      );
+      setOrders(userOrders);
+      setLoading(false);
+    } catch (err) {
+      console.error("Error loading orders from localStorage:", err);
+      setOrders([]);
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className={`orders-page ${darkMode ? "dark" : "light"}`}>
+        <div className="orders-header">
+          <h1>Your Orders</h1>
+        </div>
+        <p>Loading orders...</p>
+      </div>
+    );
+  }
 
   return (
     <div className={`orders-page ${darkMode ? "dark" : "light"}`}>
@@ -51,8 +142,28 @@ const Orders = () => {
         </button>
       </div>
 
+      {error && (
+        <div className="error-message" style={{ 
+          background: '#f8d7da', 
+          color: '#721c24', 
+          padding: '10px', 
+          marginBottom: '20px', 
+          borderRadius: '5px' 
+        }}>
+          {error}
+        </div>
+      )}
+
       {orders.length === 0 ? (
-        <p>You have no orders yet.</p>
+        <div className="no-orders">
+          <p>You have no orders yet.</p>
+          <button
+            onClick={() => navigate("/ProductPage")}
+            className="start-shopping-btn"
+          >
+            Start Shopping
+          </button>
+        </div>
       ) : (
         <div className="orders-list">
           {orders.map((order) => (
@@ -60,31 +171,45 @@ const Orders = () => {
               <div className="order-info">
                 <p><strong>Order ID:</strong> {order.id}</p>
                 <p><strong>Date:</strong> {order.date}</p>
-                <p><strong>Status:</strong> {order.status}</p>
+                <p><strong>Status:</strong> 
+                  <span className={`status-${order.status}`}>
+                    {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                  </span>
+                </p>
               </div>
 
               <div className="order-items">
-                {order.items.map((item) => (
-                  <div className="order-item" key={item._id}>
-                    <img
-                      src={item.imageURL || "https://via.placeholder.com/80"}
-                      alt={item.name}
-                      className="order-item-img"
-                    />
-                    <div className="order-item-info">
-                      <h3>{item.name}</h3>
-                      <p>
-                        Qty: {item.quantity || 1} | R{" "}
-                        {((item.price || 0) * (item.quantity || 1)).toFixed(2)}
-                      </p>
+                {order.items && order.items.length > 0 ? (
+                  order.items.map((item, index) => (
+                    <div className="order-item" key={item._id || index}>
+                      <img
+                        src={item.imageURL || item.imageUrl || "https://via.placeholder.com/80"}
+                        alt={item.name || 'Product'}
+                        className="order-item-img"
+                        onError={(e) => {
+                          e.target.src = "https://via.placeholder.com/80";
+                        }}
+                      />
+                      <div className="order-item-info">
+                        <h3>{item.name || 'Unknown Product'}</h3>
+                        <p>
+                          Qty: {item.quantity || 1} | R{" "}
+                          {((item.price || 0) * (item.quantity || 1)).toFixed(2)}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))
+                ) : (
+                  <p>No items found for this order</p>
+                )}
               </div>
 
               <div className="order-footer">
                 <p><strong>Payment:</strong> {order.paymentMethod}</p>
-                <p><strong>Total:</strong> R {order.total.toFixed(2)}</p>
+                <p><strong>Total:</strong> R {(order.total || 0).toFixed(2)}</p>
+                {order.deliveryData && order.deliveryData.name && (
+                  <p><strong>Delivery to:</strong> {order.deliveryData.name} {order.deliveryData.lastName}</p>
+                )}
               </div>
             </div>
           ))}
