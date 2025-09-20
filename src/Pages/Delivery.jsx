@@ -24,16 +24,15 @@ const Delivery = ({ onDeliveryData }) => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setDeliveryData(prev => ({
-      ...prev,
+    const updatedData = {
+      ...deliveryData,
       [name]: value
-    }));
+    };
+    
+    setDeliveryData(updatedData);
 
     if (onDeliveryData) {
-      onDeliveryData({
-        ...deliveryData,
-        [name]: value
-      });
+      onDeliveryData(updatedData);
     }
   };
 
@@ -57,32 +56,48 @@ const Delivery = ({ onDeliveryData }) => {
     setIsSubmitting(true);
 
     try {
+      // Get cart items from localStorage or other state management
+      const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
+      const totalAmount = parseFloat(localStorage.getItem('cartTotal') || '0');
+
       const orderPayload = {
         userId: localStorage.getItem('userId') || "guest_user",
-        items: [
+        items: cartItems.length > 0 ? cartItems : [
           {
             productId: "delivery-info-placeholder",
             quantity: 1,
-            deliveryInfo: deliveryData
+            price: 0
           }
         ],
-        totalAmount: 0, // placeholder value allowed on backend now
-        status: "pending"
+        totalAmount: totalAmount,
+        status: "pending",
+        deliveryData: deliveryData // Include delivery data in the order
       };
 
-      const response = await fetch(`${API_BASE_URL}/order`, {
+      console.log('Sending order payload:', orderPayload);
+
+      // FIXED: Changed from /order to /orders to match backend route
+      const response = await fetch(`${API_BASE_URL}/orders`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
         },
         body: JSON.stringify(orderPayload)
       });
 
+      console.log('Response status:', response.status);
+      console.log('Response headers:', response.headers);
+
       let result;
+      const responseText = await response.text();
+      console.log('Raw response:', responseText);
+
       try {
-        result = await response.json(); // always parse JSON
-      } catch (err) {
-        throw new Error(`Invalid JSON response (status ${response.status})`);
+        result = JSON.parse(responseText);
+      } catch (parseError) {
+        console.error('JSON parse error:', parseError);
+        throw new Error(`Invalid JSON response: ${responseText}`);
       }
 
       if (!response.ok) {
@@ -91,24 +106,43 @@ const Delivery = ({ onDeliveryData }) => {
 
       console.log("Order created successfully:", result);
 
-      localStorage.setItem('currentOrderId', result.data._id);
+      // Store order ID and delivery data
+      if (result.data && result.data._id) {
+        localStorage.setItem('currentOrderId', result.data._id);
+      }
       localStorage.setItem('deliveryData', JSON.stringify(deliveryData));
+
+      // Call the callback if provided
+      if (onDeliveryData) {
+        onDeliveryData(deliveryData, true);
+      }
+
+      // Navigate to payment
+      navigate('/payment');
 
     } catch (error) {
       console.error("Error saving delivery data:", error);
 
+      // Save delivery data locally as fallback
       localStorage.setItem('deliveryData', JSON.stringify(deliveryData));
       console.log("Delivery data saved locally as fallback");
 
-      alert(`Note: Could not save delivery info to server (${error.message}), but data is saved locally.`);
-    }
+      // Show user-friendly error message
+      const errorMessage = error.message.includes('fetch') 
+        ? 'Unable to connect to server. Please check your internet connection.'
+        : `Error: ${error.message}`;
 
-    if (onDeliveryData) {
-      onDeliveryData(deliveryData, true);
-    }
+      alert(`Could not save order: ${errorMessage}\n\nDelivery data has been saved locally. You can continue to payment.`);
 
-    setIsSubmitting(false);
-    navigate('/payment');
+      // Still allow navigation to payment page
+      if (onDeliveryData) {
+        onDeliveryData(deliveryData, true);
+      }
+      navigate('/payment');
+
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
