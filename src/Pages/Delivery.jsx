@@ -5,9 +5,6 @@ import { useNavigate } from 'react-router-dom';
 const Delivery = ({ onDeliveryData }) => {
   const navigate = useNavigate();
 
-  // Use consistent API configuration
-  const API_BASE_URL = process.env.REACT_APP_API_URL || "http://3.87.165.143:3000";
-
   const [deliveryData, setDeliveryData] = useState({
     country: '',
     name: '',
@@ -59,117 +56,96 @@ const Delivery = ({ onDeliveryData }) => {
       // Get user info
       const storedUser = localStorage.getItem("user");
       let userId = "guest_user";
+      let userEmail = "guest@example.com";
       
       if (storedUser) {
         try {
           const parsedUser = JSON.parse(storedUser);
           userId = parsedUser.id || parsedUser._id || parsedUser.email;
+          userEmail = parsedUser.email || "guest@example.com";
         } catch (e) {
           console.warn("Could not parse stored user data");
         }
       }
 
-      // Get cart items from localStorage or other state management
+      // Get cart items from localStorage
       const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
       const totalAmount = parseFloat(localStorage.getItem('cartTotal') || '0');
 
-      // Prepare items for backend
+      // Prepare items for order
       let orderItems = [];
       if (cartItems.length > 0) {
         orderItems = cartItems.map(item => ({
+          _id: item._id || item.id || Date.now().toString(),
           productId: item._id || item.id || "unknown",
           name: item.name || "Unknown Product",
           quantity: item.quantity || 1,
           price: item.price || 0,
-          imageUrl: item.imageURL || item.imageUrl || ""
+          imageURL: item.imageURL || item.imageUrl || "https://via.placeholder.com/80"
         }));
       } else {
-        // Fallback if no cart items
+        // Create a placeholder item if cart is empty
         orderItems = [{
+          _id: "placeholder_" + Date.now(),
           productId: "placeholder-item",
           name: "Order Item",
           quantity: 1,
-          price: totalAmount || 0
+          price: totalAmount || 0,
+          imageURL: "https://via.placeholder.com/80"
         }];
       }
 
-      const orderPayload = {
+      // Create order data
+      const orderData = {
+        id: "ORD_" + Date.now(),
+        _id: "ORD_" + Date.now(),
         userId: userId,
         items: orderItems,
         totalAmount: totalAmount || 0,
+        total: totalAmount || 0,
         status: "pending",
         deliveryData: deliveryData,
-        paymentMethod: "pending"
+        paymentMethod: "pending",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        date: new Date().toLocaleDateString()
       };
 
-      console.log('Sending order payload:', orderPayload);
-
-      // Send to backend
-      const response = await fetch(`${API_BASE_URL}/orders`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        },
-        body: JSON.stringify(orderPayload)
-      });
-
-      console.log('Response status:', response.status);
-
-      let result;
-      const responseText = await response.text();
-      console.log('Raw response:', responseText);
-
-      try {
-        result = JSON.parse(responseText);
-      } catch (parseError) {
-        console.error('JSON parse error:', parseError);
-        throw new Error(`Invalid response from server: ${responseText}`);
-      }
-
-      if (!response.ok) {
-        throw new Error(result.error || `Server error: ${response.status}`);
-      }
-
-      console.log("Order created successfully:", result);
-
-      // Store order ID and delivery data
-      if (result.data && result.data._id) {
-        localStorage.setItem('currentOrderId', result.data._id);
-      }
+      // Save current order data
+      localStorage.setItem('currentOrderId', orderData.id);
+      localStorage.setItem('currentOrderData', JSON.stringify(orderData));
       localStorage.setItem('deliveryData', JSON.stringify(deliveryData));
 
-      // Also save to user's order history in localStorage as backup
-      if (storedUser) {
-        try {
-          const parsedUser = JSON.parse(storedUser);
-          const userEmail = parsedUser.email;
-          
-          // Get existing orders for this user
-          const existingOrders = JSON.parse(
-            localStorage.getItem(`orders_${userEmail}`) || "[]"
-          );
-          
-          // Add new order to user's history
-          const newOrder = {
-            id: result.data._id || Date.now().toString(),
-            date: new Date().toLocaleDateString(),
-            status: "pending",
-            items: orderItems,
-            total: totalAmount || 0,
-            paymentMethod: "pending",
-            deliveryData: deliveryData
-          };
-          
-          existingOrders.push(newOrder);
-          localStorage.setItem(`orders_${userEmail}`, JSON.stringify(existingOrders));
-          
-        } catch (e) {
-          console.warn("Could not save to user order history:", e);
-        }
+      // Save to user's order history in localStorage
+      try {
+        const existingOrders = JSON.parse(
+          localStorage.getItem(`orders_${userEmail}`) || "[]"
+        );
+        
+        // Add the new order to the beginning of the array (most recent first)
+        existingOrders.unshift(orderData);
+        localStorage.setItem(`orders_${userEmail}`, JSON.stringify(existingOrders));
+        
+        console.log("Order saved to user history:", orderData);
+      } catch (e) {
+        console.warn("Could not save to user order history:", e);
       }
 
-      // Call the callback if provided
+      // Also save to a general orders list (for admin purposes or backup)
+      try {
+        const allOrders = JSON.parse(localStorage.getItem('allOrders') || '[]');
+        allOrders.unshift(orderData);
+        localStorage.setItem('allOrders', JSON.stringify(allOrders));
+      } catch (e) {
+        console.warn("Could not save to general orders:", e);
+      }
+
+      console.log("Order saved locally:", orderData);
+
+      // Show success message
+      alert("Delivery information saved successfully! Proceeding to payment.");
+
+      // Call callback if provided
       if (onDeliveryData) {
         onDeliveryData(deliveryData, true);
       }
@@ -179,34 +155,17 @@ const Delivery = ({ onDeliveryData }) => {
 
     } catch (error) {
       console.error("Error saving delivery data:", error);
-
-      // Save delivery data locally as fallback
-      localStorage.setItem('deliveryData', JSON.stringify(deliveryData));
-      console.log("Delivery data saved locally as fallback");
-
-      // Show user-friendly error message
-      let errorMessage = 'An unexpected error occurred.';
       
-      if (error.message.includes('fetch')) {
-        errorMessage = 'Unable to connect to server. Please check your internet connection.';
-      } else if (error.message.includes('Invalid response')) {
-        errorMessage = 'Server returned an invalid response.';
-      } else if (error.message) {
-        errorMessage = error.message;
+      // Still save the delivery data even if something fails
+      localStorage.setItem('deliveryData', JSON.stringify(deliveryData));
+      
+      alert("Error processing order, but delivery data has been saved. You can continue to payment.");
+      
+      // Still allow navigation
+      if (onDeliveryData) {
+        onDeliveryData(deliveryData, true);
       }
-
-      const shouldContinue = window.confirm(
-        `Could not save order to server: ${errorMessage}\n\nDelivery data has been saved locally. Would you like to continue to payment anyway?`
-      );
-
-      if (shouldContinue) {
-        // Still allow navigation to payment page
-        if (onDeliveryData) {
-          onDeliveryData(deliveryData, true);
-        }
-        navigate('/payment');
-      }
-
+      navigate('/payment');
     } finally {
       setIsSubmitting(false);
     }
@@ -216,6 +175,9 @@ const Delivery = ({ onDeliveryData }) => {
     <div className="delivery-section dark">
       <div className="delivery-header">
         <h2>Delivery</h2>
+        <p style={{ fontSize: '14px', color: '#888', marginTop: '5px' }}>
+          (Working in offline mode - data saved locally)
+        </p>
       </div>
 
       <div className="shipping-address">
