@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
-// import LoginSignupForm from './Pages/LoginSignupForm';
 import NotFound from './404Page';
 import ProductPage from './Pages/ProductPage';
 import ProtectedRoute from './Pages/ProtectedRoute';
@@ -16,11 +15,10 @@ import Signup from './Pages/Signup';
 import Orders from './Pages/Orders';
 
 function App() {
-
   return (
     <Router>
       <Routes>
-        {/* Redirect "/" to "/Home" */}
+        {/* Landing page set to Home */}
         <Route path="/" element={<Home />} />
         <Route path="/Home" element={<Home />} />
         <Route path="/signup" element={<Signup />} />
