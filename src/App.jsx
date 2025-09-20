@@ -20,17 +20,10 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Login />} />
+        <Route path="/" element={<Home />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/Home" element={<Home />} />
-        <Route
-          path="/ProductPage"
-          element={
-            <ProtectedRoute>
-              <ProductPage />
-            </ProtectedRoute>
-          }
-        />
+        <Route path="/ProductPage" element={<ProductPage />} />
         <Route path="/cart" element={<Cart />} />
         <Route
           path="/wishlist"
@@ -67,7 +60,16 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="/orders" element={<Orders />} />
+        {/* Protected Orders Route */}
+        <Route
+          path="/orders"
+          element={
+            <ProtectedRoute>
+              <Orders />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/login" element={<Login />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>
