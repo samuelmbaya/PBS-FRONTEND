@@ -17,19 +17,23 @@ const Wishlist = () => {
         const parsedUser = JSON.parse(storedUser);
         setCurrentUser(parsedUser);
 
-        // Load user's wishlist or default to empty array
+        // ✅ Load user's wishlist safely
         const userWishlist = JSON.parse(
           localStorage.getItem(`wishlist_${parsedUser.email}`) || "[]"
         );
         setWishlist(userWishlist);
 
-        // Load theme preference, default to true (dark)
+        // ✅ Load theme preference, default true (dark)
         const userDarkMode = localStorage.getItem(`darkMode_${parsedUser.email}`);
         if (userDarkMode !== null) {
           setDarkMode(JSON.parse(userDarkMode));
         }
       } else {
-        alert("Please log in to view your wishlist.");
+        // ✅ Prevent multiple alerts with sessionStorage flag
+        if (!sessionStorage.getItem("wishlistAlertShown")) {
+          alert("Please log in to view your wishlist.");
+          sessionStorage.setItem("wishlistAlertShown", "true");
+        }
         navigate("/", { replace: true });
       }
     } catch (err) {
@@ -39,15 +43,20 @@ const Wishlist = () => {
     }
   }, [navigate]);
 
-  // Persist wishlist changes to localStorage
+  // ✅ Persist wishlist changes to localStorage
   useEffect(() => {
     if (currentUser?.email) {
-      localStorage.setItem(`wishlist_${currentUser.email}`, JSON.stringify(wishlist));
+      localStorage.setItem(
+        `wishlist_${currentUser.email}`,
+        JSON.stringify(wishlist)
+      );
     }
   }, [wishlist, currentUser]);
 
   const removeFromWishlist = (id) => {
-    setWishlist((prevWishlist) => prevWishlist.filter((item) => item._id !== id));
+    setWishlist((prevWishlist) =>
+      prevWishlist.filter((item) => item._id !== id)
+    );
   };
 
   const handleContinueShopping = () => {
@@ -58,7 +67,10 @@ const Wishlist = () => {
     <div className={`wishlist-page ${darkMode ? "dark" : "light"}`}>
       <div className="wishlist-header">
         <h1>Your Wishlist</h1>
-        <button onClick={handleContinueShopping} className="continue-shopping-btn">
+        <button
+          onClick={handleContinueShopping}
+          className="continue-shopping-btn"
+        >
           Continue Shopping
         </button>
       </div>

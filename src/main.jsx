@@ -1,15 +1,20 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import LoginSignupForm from './App.jsx'
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import App from "./App.jsx";
+import { ApiProvider } from "./ApiContext.jsx"; // ✅ import ApiProvider
 
-createRoot(document.getElementById('root')).render(
+createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <LoginSignupForm />
-  </StrictMode>,
-)
-if (localStorage.getItem('userData')) {
-  const userData = JSON.parse(localStorage.getItem('userData'));
+    <ApiProvider>
+      <App />
+    </ApiProvider>
+  </StrictMode>
+);
+
+// ✅ Keep your redirect logic after rendering
+if (localStorage.getItem("userData")) {
+  const userData = JSON.parse(localStorage.getItem("userData"));
   if (userData.isLoggedIn) {
-    window.location.href = '/ProductPage';
+    window.location.href = "/ProductPage";
   }
 }

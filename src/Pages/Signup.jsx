@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react';
+import { useApiUrl } from '../ApiContext';   // ✅ import your API context
 import './Signup.css';
 
 const Signup = () => {
+  const apiUrl = useApiUrl();  // ✅ dynamic API base URL from context
+
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -34,8 +37,6 @@ const Signup = () => {
 
     checkAuthStatus();
   }, []);
-
-  const API_BASE_URL = 'http://localhost:3000';
 
   const handleRegisterInputChange = (e) => {
     const { name, value } = e.target;
@@ -76,17 +77,12 @@ const Signup = () => {
     }
 
     try {
-      const response = await fetch(`${API_BASE_URL}/signup`, {
+      const response = await fetch(`${apiUrl}/signup`, {   // ✅ use apiUrl
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          name: registerData.name,
-          email: registerData.email,
-          password: registerData.password,
-          confirmPassword: registerData.confirmPassword,
-        }),
+        body: JSON.stringify(registerData),
       });
 
       const data = await response.json();

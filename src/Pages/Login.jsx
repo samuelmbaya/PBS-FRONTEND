@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Login.css';
+import { useApiUrl } from '../ApiContext'; // ✅ Import API context
 
 const Login = () => {
   const navigate = useNavigate();
+  const apiUrl = useApiUrl(); // ✅ Get dynamic API URL from context
 
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState('');
@@ -15,16 +17,12 @@ const Login = () => {
     password: ''
   });
 
-  // API Base URL - use environment variable or fallback to production server
-  const API_BASE_URL = process.env.REACT_APP_API_URL || "http://3.87.165.143:3000";
-
-  // Check for existing user data on component mount
   useEffect(() => {
     const checkAuthStatus = () => {
       try {
         const storedUser = localStorage.getItem('user');
         const storedIsLoggedIn = localStorage.getItem('isLoggedIn');
-        
+
         if (storedUser && storedIsLoggedIn === 'true') {
           const parsedUser = JSON.parse(storedUser);
           setCurrentUser(parsedUser);
@@ -45,21 +43,18 @@ const Login = () => {
     try {
       localStorage.setItem('user', JSON.stringify(userData));
       localStorage.setItem('isLoggedIn', 'true');
-      
+
       // Initialize wishlist for new user if it doesn't exist
       const existingWishlist = localStorage.getItem(`wishlist_${userData.email}`);
       if (!existingWishlist) {
         localStorage.setItem(`wishlist_${userData.email}`, JSON.stringify([]));
       }
-      
+
       setCurrentUser(userData);
       setIsAuthenticated(true);
-      
-      // Show user greeting and hide it after 4 seconds
+
       setShowUserGreeting(true);
-      setTimeout(() => {
-        setShowUserGreeting(false);
-      }, 4000);
+      setTimeout(() => setShowUserGreeting(false), 4000);
     } catch (error) {
       console.error('Error saving user data:', error);
     }
@@ -79,7 +74,7 @@ const Login = () => {
     setMessage('');
 
     try {
-      const response = await fetch(`${API_BASE_URL}/signin`, {
+      const response = await fetch(`${apiUrl}/signin`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -99,11 +94,11 @@ const Login = () => {
           email: data.user.email,
           loginTime: new Date().toISOString()
         };
-        
+
         saveUserToLocalStorage(userDataToStore);
         setMessage('Login successful! Redirecting...');
         setLoginData({ username: '', password: '' });
-        
+
         setTimeout(() => {
           navigate('/Home');
         }, 1500);
@@ -184,14 +179,14 @@ const Login = () => {
                 {isLoading ? 'Logging in...' : 'Login'}
               </button>
             </form>
-            
+
             <div className="auth-links">
               <p>Don't have an account? <button onClick={goToSignup} className="link-btn">Sign up</button></p>
               <button onClick={handleSkipToHome} className="skip-btn">
                 Skip to Home
               </button>
             </div>
-            
+
             <p className="social-text">or login with social platforms</p>
             <div className="social-icons">
               <a href="#"><i className='bx bxl-google'></i></a>

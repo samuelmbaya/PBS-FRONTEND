@@ -1,19 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import "./Home.css";
-
-// ✅ Import backend IP from .env
-const serverIP = import.meta.env.VITE_SERVER_IP;
+import { useApiUrl } from "../ApiContext"; // ✅ Use the context for API base URL
 
 const Home = () => {
+  const apiUrl = useApiUrl(); // ✅ Get API base URL from context
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // ✅ Fetch featured products from backend
   useEffect(() => {
     const fetchFeaturedProducts = async () => {
       try {
-        const response = await fetch(`http://${serverIP}:3000/api/featured-products`);
+        const response = await fetch(`${apiUrl}/api/featured-products`);
         if (!response.ok) throw new Error("Failed to fetch featured products");
         const data = await response.json();
         setFeaturedProducts(data);
@@ -24,8 +22,13 @@ const Home = () => {
       }
     };
 
-    fetchFeaturedProducts();
-  }, []);
+    if (apiUrl) {
+      fetchFeaturedProducts();
+    } else {
+      console.error("API URL not found.");
+      setLoading(false);
+    }
+  }, [apiUrl]);
 
   return (
     <div className="home-container">
@@ -55,7 +58,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* ✅ Featured Products Section */}
+      {/* Featured Products Section */}
       <section className="featured-section">
         <h2>Featured Products</h2>
         {loading ? (

@@ -45,7 +45,7 @@ const ProductPage = () => {
           setIsAuthenticated(true);
           loadUserSpecificData(parsedUser.email);
         } else {
-          navigate("/login"); // Changed to /login for clarity
+          navigate("/login"); // Redirect to login page if not authenticated
         }
       } catch (error) {
         console.error("Error checking authentication:", error);
@@ -101,7 +101,7 @@ const ProductPage = () => {
     }
   }, [cart, wishlist, currentUser]);
 
-  // Toggle wishlist handler, memoized for performance
+  // Toggle wishlist handler
   const toggleWishlist = useCallback(
     (product) => {
       if (!isAuthenticated) {
@@ -117,7 +117,7 @@ const ProductPage = () => {
     [isAuthenticated]
   );
 
-  // Add to cart handler, memoized for performance
+  // Add to cart handler
   const addToCart = useCallback(
     (product) => {
       if (!isAuthenticated) {
@@ -140,9 +140,13 @@ const ProductPage = () => {
     [isAuthenticated]
   );
 
+  // Check if product is in wishlist
   const isInWishlist = (productId) => wishlist.some((item) => item._id === productId);
+
+  // Get total cart item count
   const getCartItemCount = () => cart.reduce((total, item) => total + (item.quantity || 1), 0);
 
+  // Logout handler
   const handleLogout = () => {
     localStorage.removeItem("user");
     localStorage.removeItem("isLoggedIn");
@@ -207,47 +211,53 @@ const ProductPage = () => {
         )}
         {!loading && !error && (
           filteredProducts.length > 0 ? (
-            filteredProducts.map((product) => (
-              <div className="product-card" key={product._id}>
-                <img
-                  src={product.imageUrl || product.imageURL || "https://via.placeholder.com/150"}
-                  alt={product.name || "Unnamed Product"}
-                  className="product-img"
-                />
-                <h3>{product.name || "Unnamed Product"}</h3>
-                <p className="price">
-                  R {typeof product.price === "number" ? product.price.toLocaleString() : "0.00"}
-                </p>
-                <div className="actions">
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      addToCart(product);
-                    }}
-                    className="add-to-cart-btn"
-                    aria-label={`Add ${product.name} to cart`}
-                  >
-                    Add to Cart
-                  </button>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      toggleWishlist(product);
-                    }}
-                    className={`wishlist-btn ${isInWishlist(product._id) ? "in-wishlist" : ""}`}
-                    aria-pressed={isInWishlist(product._id)}
-                    aria-label={isInWishlist(product._id) ? `Remove ${product.name} from wishlist` : `Add ${product.name} to wishlist`}
-                  >
-                    {isInWishlist(product._id) ? "♥ Remove" : "♡ Wishlist"}
-                  </button>
-                </div>
-                {cart.find((item) => item._id === product._id) && (
-                  <div className="in-cart-indicator" aria-live="polite">
-                    In Cart (Qty: {cart.find((item) => item._id === product._id)?.quantity || 1})
+            filteredProducts.map((product) => {
+              const cartItem = cart.find(item => item._id === product._id);
+              const imageSrc = product.imageUrl || product.imageURL || "https://via.placeholder.com/150";
+              const inWishlist = isInWishlist(product._id);
+
+              return (
+                <div className="product-card" key={product._id}>
+                  <img
+                    src={imageSrc}
+                    alt={product.name || "Unnamed Product"}
+                    className="product-img"
+                  />
+                  <h3>{product.name || "Unnamed Product"}</h3>
+                  <p className="price">
+                    R {typeof product.price === "number" ? product.price.toLocaleString() : "0.00"}
+                  </p>
+                  <div className="actions">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        addToCart(product);
+                      }}
+                      className="add-to-cart-btn"
+                      aria-label={`Add ${product.name} to cart`}
+                    >
+                      Add to Cart
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleWishlist(product);
+                      }}
+                      className={`wishlist-btn ${inWishlist ? "in-wishlist" : ""}`}
+                      aria-pressed={inWishlist}
+                      aria-label={inWishlist ? `Remove ${product.name} from wishlist` : `Add ${product.name} to wishlist`}
+                    >
+                      {inWishlist ? "♥ Remove" : "♡ Wishlist"}
+                    </button>
                   </div>
-                )}
-              </div>
-            ))
+                  {cartItem && (
+                    <div className="in-cart-indicator" aria-live="polite" role="status">
+                      In Cart (Qty: {cartItem.quantity || 1})
+                    </div>
+                  )}
+                </div>
+              );
+            })
           ) : (
             <p>No products found.</p>
           )

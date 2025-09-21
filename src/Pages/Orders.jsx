@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useApiUrl } from "../ApiContext"; // ✅ Import API URL context
 import "./Orders.css";
 
 const Orders = () => {
@@ -9,9 +10,7 @@ const Orders = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
-
-  // Use the same API configuration as your other components
-  const API_BASE_URL = process.env.REACT_APP_API_URL || "http://3.87.165.143:3000";
+  const apiUrl = useApiUrl(); // ✅ Get API URL from context
 
   useEffect(() => {
     const loadUserAndOrders = async () => {
@@ -28,13 +27,13 @@ const Orders = () => {
         const parsedUser = JSON.parse(storedUser);
         setCurrentUser(parsedUser);
 
-        // Load theme
+        // Load theme preference
         const userDarkMode = localStorage.getItem(`darkMode_${parsedUser.email}`);
         if (userDarkMode !== null) {
           setDarkMode(JSON.parse(userDarkMode));
         }
 
-        // Fetch orders from backend
+        // Fetch orders from backend using apiUrl
         await fetchOrdersFromBackend(parsedUser.id || parsedUser._id);
 
       } catch (err) {
@@ -45,14 +44,14 @@ const Orders = () => {
     };
 
     loadUserAndOrders();
-  }, [navigate, API_BASE_URL]);
+  }, [navigate, apiUrl]);
 
   const fetchOrdersFromBackend = async (userId) => {
     try {
       setLoading(true);
       setError(null);
 
-      const response = await fetch(`${API_BASE_URL}/orders?userId=${userId}`, {
+      const response = await fetch(`${apiUrl}/orders?userId=${userId}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -61,7 +60,6 @@ const Orders = () => {
       });
 
       if (!response.ok) {
-        // If backend fails, fallback to localStorage
         if (response.status === 404 || response.status >= 500) {
           console.warn("Backend unavailable, falling back to localStorage");
           loadOrdersFromLocalStorage();
@@ -71,9 +69,8 @@ const Orders = () => {
       }
 
       const result = await response.json();
-      
+
       if (result.data && Array.isArray(result.data)) {
-        // Transform backend data to match frontend expectations
         const transformedOrders = result.data.map(order => ({
           id: order._id,
           date: new Date(order.createdAt).toLocaleDateString(),
@@ -83,7 +80,6 @@ const Orders = () => {
           paymentMethod: order.paymentMethod || 'Not specified',
           deliveryData: order.deliveryData || {}
         }));
-        
         setOrders(transformedOrders);
       } else {
         setOrders([]);
@@ -91,11 +87,8 @@ const Orders = () => {
 
     } catch (error) {
       console.error("Error fetching orders from backend:", error);
-      
-      // Fallback to localStorage if backend fails
       console.warn("Backend failed, falling back to localStorage");
       loadOrdersFromLocalStorage();
-      
       setError("Could not load orders from server. Showing cached orders.");
     } finally {
       setLoading(false);
@@ -105,8 +98,7 @@ const Orders = () => {
   const loadOrdersFromLocalStorage = () => {
     try {
       if (!currentUser) return;
-      
-      // Load orders from localStorage as fallback
+
       const userOrders = JSON.parse(
         localStorage.getItem(`orders_${currentUser.email}`) || "[]"
       );

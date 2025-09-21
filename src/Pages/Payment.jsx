@@ -75,6 +75,7 @@ const Payment = () => {
   // Luhn algorithm to validate credit card number
   const isValidCard = (num) => {
     const value = num.replace(/\s/g, "");
+    if (!/^\d+$/.test(value)) return false;
     let sum = 0;
     let shouldDouble = false;
     for (let i = value.length - 1; i >= 0; i--) {
@@ -102,6 +103,24 @@ const Payment = () => {
     }));
   };
 
+  // Email validation helper
+  const isValidEmail = (email) =>
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+  // Expiry date validation helper
+  const isExpiryValid = (expiry) => {
+    if (!/^\d{2}\/\d{2}$/.test(expiry)) return false;
+    const [monthStr, yearStr] = expiry.split("/");
+    const month = parseInt(monthStr, 10);
+    const year = parseInt("20" + yearStr, 10);
+    if (month < 1 || month > 12) return false;
+
+    const now = new Date();
+    // Set expiry date to the last day of the month
+    const expiryDate = new Date(year, month, 0, 23, 59, 59);
+    return expiryDate >= now;
+  };
+
   // Handle order placement with validation
   const handlePlaceOrder = () => {
     if (cart.length === 0) {
@@ -118,8 +137,8 @@ const Payment = () => {
         return;
       }
 
-      if (!/^\d{2}\/\d{2}$/.test(expiry)) {
-        alert("Invalid expiration date. Use MM/YY format.");
+      if (!isExpiryValid(expiry)) {
+        alert("Invalid or expired expiration date. Use MM/YY format.");
         return;
       }
 
@@ -137,9 +156,17 @@ const Payment = () => {
         alert("Enter PayPal email!");
         return;
       }
+      if (!isValidEmail(paypalEmail)) {
+        alert("Enter a valid PayPal email!");
+        return;
+      }
     } else if (paymentMethod === "google-pay") {
       if (!googlePayEmail) {
         alert("Enter Google Pay email!");
+        return;
+      }
+      if (!isValidEmail(googlePayEmail)) {
+        alert("Enter a valid Google Pay email!");
         return;
       }
     }
@@ -220,8 +247,9 @@ const Payment = () => {
           {/* Payment Section */}
           <div className="payment-section">
             <div className="payment-methods">
-              <label>
+              <label htmlFor="credit-card">
                 <input
+                  id="credit-card"
                   type="radio"
                   value="credit-card"
                   checked={paymentMethod === "credit-card"}
@@ -229,8 +257,9 @@ const Payment = () => {
                 />
                 Credit Card
               </label>
-              <label>
+              <label htmlFor="paypal">
                 <input
+                  id="paypal"
                   type="radio"
                   value="paypal"
                   checked={paymentMethod === "paypal"}
@@ -238,8 +267,9 @@ const Payment = () => {
                 />
                 PayPal
               </label>
-              <label>
+              <label htmlFor="google-pay">
                 <input
+                  id="google-pay"
                   type="radio"
                   value="google-pay"
                   checked={paymentMethod === "google-pay"}
@@ -261,37 +291,52 @@ const Payment = () => {
                   </div>
                 </div>
 
+                <label htmlFor="card-number" className="sr-only">Card Number</label>
                 <input
+                  id="card-number"
                   type="text"
                   name="number"
                   placeholder="Card Number"
                   value={cardData.number}
                   onChange={handleCardChange}
                   maxLength={19}
+                  autoComplete="cc-number"
                 />
+
+                <label htmlFor="card-name" className="sr-only">Cardholder Name</label>
                 <input
+                  id="card-name"
                   type="text"
                   name="name"
                   placeholder="Cardholder Name"
                   value={cardData.name}
                   onChange={handleCardChange}
+                  autoComplete="cc-name"
                 />
+
                 <div className="card-row">
+                  <label htmlFor="card-expiry" className="sr-only">Expiry Date</label>
                   <input
+                    id="card-expiry"
                     type="text"
                     name="expiry"
                     placeholder="MM/YY"
                     value={cardData.expiry}
                     onChange={handleCardChange}
                     maxLength={5}
+                    autoComplete="cc-exp"
                   />
+
+                  <label htmlFor="card-cvc" className="sr-only">CVC</label>
                   <input
+                    id="card-cvc"
                     type="text"
                     name="cvc"
                     placeholder="CVC"
                     value={cardData.cvc}
                     onChange={handleCardChange}
                     maxLength={4}
+                    autoComplete="cc-csc"
                   />
                 </div>
               </div>
@@ -299,22 +344,28 @@ const Payment = () => {
 
             {paymentMethod === "paypal" && (
               <div className="paypal-form">
+                <label htmlFor="paypal-email" className="sr-only">PayPal Email</label>
                 <input
+                  id="paypal-email"
                   type="email"
                   placeholder="PayPal Email"
                   value={paypalEmail}
                   onChange={(e) => setPaypalEmail(e.target.value)}
+                  autoComplete="email"
                 />
               </div>
             )}
 
             {paymentMethod === "google-pay" && (
               <div className="google-pay-form">
+                <label htmlFor="googlepay-email" className="sr-only">Google Pay Email</label>
                 <input
+                  id="googlepay-email"
                   type="email"
                   placeholder="Google Pay Email"
                   value={googlePayEmail}
                   onChange={(e) => setGooglePayEmail(e.target.value)}
+                  autoComplete="email"
                 />
               </div>
             )}

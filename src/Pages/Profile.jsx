@@ -75,11 +75,11 @@ const Profile = () => {
 
   const handleLogout = () => {
     logout();
-    window.location.href = '/Home'; // you may consider using react-router's navigate for SPA navigation
+    window.location.href = '/Home'; // consider react-router navigate for SPA
   };
 
   const handleBackToProducts = () => {
-    window.location.href = '/ProductPage'; // same as above, SPA navigation recommended
+    window.location.href = '/ProductPage'; // consider react-router navigate for SPA
   };
 
   const getDisplayName = () => {

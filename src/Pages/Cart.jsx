@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useApiUrl } from "../ApiContext"; // ✅ Import API context hook
 import "./Cart.css";
-
-// ✅ Add server IP from .env
-const serverIP = import.meta.env.VITE_SERVER_IP;
 
 const Cart = () => {
   const [cart, setCart] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
   const navigate = useNavigate();
+  const apiUrl = useApiUrl(); // ✅ Get API URL from context
 
   // Load cart for the logged-in user
   useEffect(() => {
@@ -20,7 +19,7 @@ const Cart = () => {
         const parsedUser = JSON.parse(storedUser);
         setCurrentUser(parsedUser);
 
-        // Load user cart
+        // Load user cart from localStorage
         const userCart = JSON.parse(
           localStorage.getItem(`cart_${parsedUser.email}`) || "[]"
         );
@@ -43,11 +42,11 @@ const Cart = () => {
     }
   }, [cart, currentUser]);
 
-  // 🔄 Optional: Example for syncing cart to backend using Elastic IP
+  // 🔄 Optional: Example for syncing cart to backend using API URL
   /*
   useEffect(() => {
     if (currentUser && cart.length > 0) {
-      fetch(`http://${serverIP}:3000/api/sync-cart`, {
+      fetch(`${apiUrl}/api/sync-cart`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -58,7 +57,7 @@ const Cart = () => {
         .then((data) => console.log("Cart synced:", data))
         .catch((err) => console.error("Error syncing cart:", err));
     }
-  }, [cart, currentUser]);
+  }, [cart, currentUser, apiUrl]);
   */
 
   // Functions for cart operations
