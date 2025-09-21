@@ -1,17 +1,24 @@
 import React, { createContext, useContext } from "react";
 
-// Create Context
 const ApiContext = createContext();
 
 // Provider Component
 export const ApiProvider = ({ children }) => {
   const fullUrl = new URL(window.location);
-  const apiUrl = `http://${fullUrl.searchParams.get("ip")}:3000`;
+  const ipFromQuery = fullUrl.searchParams.get("ip");
+
+  // ✅ Priority:
+  // 1. If ?ip= is provided → use it
+  // 2. If in production → use .env.production value
+  // 3. Otherwise (dev) → localhost
+  const apiUrl = ipFromQuery
+    ? `http://${ipFromQuery}:3000`
+    : process.env.NODE_ENV === "production"
+    ? process.env.REACT_APP_API_URL
+    : "http://localhost:3000";
 
   return (
-    <ApiContext.Provider value={apiUrl}>
-      {children}
-    </ApiContext.Provider>
+    <ApiContext.Provider value={apiUrl}>{children}</ApiContext.Provider>
   );
 };
 

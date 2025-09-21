@@ -1,78 +1,103 @@
-import React, { useEffect } from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import React, { useEffect } from "react";
+import { BrowserRouter as Router, Route, Routes, useNavigate } from "react-router-dom";
 
-import NotFound from './404Page';
-import ProductPage from './Pages/ProductPage';
-import ProtectedRoute from './Pages/ProtectedRoute';
-import Home from './Pages/Home';
-import Cart from './Pages/Cart';
-import Wishlist from './Pages/Wishlist';
-import Delivery from './Pages/Delivery';
-import Payment from './Pages/Payment';
-import Profile from './Pages/Profile';
-import Login from './Pages/Login';
-import Signup from './Pages/Signup';
-import Orders from './Pages/Orders';
+import NotFound from "./404Page";
+import ProductPage from "./Pages/ProductPage";
+import ProtectedRoute from "./Pages/ProtectedRoute";
+import Home from "./Pages/Home";
+import Cart from "./Pages/Cart";
+import Wishlist from "./Pages/Wishlist";
+import Delivery from "./Pages/Delivery";
+import Payment from "./Pages/Payment";
+import Profile from "./Pages/Profile";
+import Login from "./Pages/Login";
+import Signup from "./Pages/Signup";
+import Orders from "./Pages/Orders";
 
 function App() {
+  const navigate = useNavigate();
+
+  // ✅ Auto-redirect if logged in
+  useEffect(() => {
+    const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+    if (isLoggedIn) {
+      navigate("/ProductPage");
+    }
+  }, [navigate]);
+
   return (
-    <Router>
-      <Routes>
-        {/* Landing page set to Home */}
-        <Route path="/" element={<Home />} />
-        <Route path="/Home" element={<Home />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/ProductPage" element={<ProductPage />} />
-        <Route path="/cart" element={<Cart />} />
-        <Route
-          path="/wishlist"
-          element={
-            <ProtectedRoute>
-              <Wishlist />
-            </ProtectedRoute>
-          }
-        />
-        {/* Protected Profile Route */}
-        <Route
-          path="/profile"
-          element={
-            <ProtectedRoute>
-              <Profile />
-            </ProtectedRoute>
-          }
-        />
-        {/* Protected Payment Route */}
-        <Route
-          path="/payment"
-          element={
-            <ProtectedRoute>
-              <Payment />
-            </ProtectedRoute>
-          }
-        />
-        {/* Protected Delivery Route */}
-        <Route
-          path="/delivery"
-          element={
-            <ProtectedRoute>
-              <Delivery />
-            </ProtectedRoute>
-          }
-        />
-        {/* Protected Orders Route */}
-        <Route
-          path="/orders"
-          element={
-            <ProtectedRoute>
-              <Orders />
-            </ProtectedRoute>
-          }
-        />
-        <Route path="/login" element={<Login />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </Router>
+    <Routes>
+      {/* Public routes */}
+      <Route path="/" element={<Home />} />
+      <Route path="/Home" element={<Home />} />
+      <Route path="/signup" element={<Signup />} />
+      <Route path="/login" element={<Login />} />
+
+      {/* ProductPage should be protected */}
+      <Route
+        path="/ProductPage"
+        element={
+          <ProtectedRoute>
+            <ProductPage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route path="/cart" element={<Cart />} />
+
+      {/* Protected routes */}
+      <Route
+        path="/wishlist"
+        element={
+          <ProtectedRoute>
+            <Wishlist />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/profile"
+        element={
+          <ProtectedRoute>
+            <Profile />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/payment"
+        element={
+          <ProtectedRoute>
+            <Payment />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/delivery"
+        element={
+          <ProtectedRoute>
+            <Delivery />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/orders"
+        element={
+          <ProtectedRoute>
+            <Orders />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* 404 fallback */}
+      <Route path="*" element={<NotFound />} />
+    </Routes>
   );
 }
 
-export default App;
+// ✅ Wrap App in Router here
+export default function WrappedApp() {
+  return (
+    <Router>
+      <App />
+    </Router>
+  );
+}
