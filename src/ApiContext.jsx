@@ -1,12 +1,16 @@
 import React, { createContext, useContext } from "react";
 
-// Create Context
 const ApiContext = createContext();
 
-// Provider Component
 export const ApiProvider = ({ children }) => {
   const fullUrl = new URL(window.location);
-  const apiUrl = `http://${fullUrl.searchParams.get("ip")}:3000`;
+  const ipFromUrl = fullUrl.searchParams.get("ip");
+
+  // If ?ip= is provided → use that
+  // Otherwise → fallback to .env
+  const apiUrl = ipFromUrl
+    ? `http://${ipFromUrl}:3000`
+    : import.meta.env.VITE_API_URL;
 
   return (
     <ApiContext.Provider value={apiUrl}>
@@ -15,5 +19,4 @@ export const ApiProvider = ({ children }) => {
   );
 };
 
-// Custom hook
 export const useApiUrl = () => useContext(ApiContext);

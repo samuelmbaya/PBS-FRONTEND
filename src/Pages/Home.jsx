@@ -11,7 +11,7 @@ const Home = () => {
   useEffect(() => {
     const fetchFeaturedProducts = async () => {
       try {
-        const response = await fetch(`${apiUrl}/api/featured-products`);
+        const response = await fetch(`${apiUrl}/products`);
         if (!response.ok) throw new Error("Failed to fetch featured products");
         const data = await response.json();
         setFeaturedProducts(data);

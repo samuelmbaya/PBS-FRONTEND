@@ -26,8 +26,8 @@ const ProductPage = () => {
 
   const navigate = useNavigate();
 
-  // API Base URL - use environment variable or fallback to production server
-  const API_BASE_URL = process.env.REACT_APP_API_URL || "http://3.87.165.143:3000";
+  // ✅ Use Vite environment variable
+  const API_BASE_URL = import.meta.env.VITE_API_URL;
 
   // Debounced query to avoid filtering on every keystroke
   const debouncedQuery = useDebounce(query, 300);
@@ -73,13 +73,13 @@ const ProductPage = () => {
       try {
         setLoading(true);
         setError(null);
-        
-        const res = await fetch(`${API_BASE_URL}/products`);
-        
+
+        const res = await fetch(`${apiUrl}/products`);
+
         if (!res.ok) {
           throw new Error(`HTTP error! status: ${res.status}`);
         }
-        
+
         const data = await res.json();
         setProducts(data.data || []);
       } catch (err) {
@@ -89,7 +89,7 @@ const ProductPage = () => {
         setLoading(false);
       }
     };
-    
+
     fetchProducts();
   }, [API_BASE_URL]);
 
