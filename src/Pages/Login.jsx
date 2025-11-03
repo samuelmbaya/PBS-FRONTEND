@@ -4,7 +4,7 @@
 
   const Login = () => {
     const navigate = useNavigate();
-    const apiUrl = "http://44.198.25.29:3000";
+    const apiUrl = import.meta.env.VITE_API_URL;
 
     const [isLoading, setIsLoading] = useState(false);
     const [message, setMessage] = useState("");
