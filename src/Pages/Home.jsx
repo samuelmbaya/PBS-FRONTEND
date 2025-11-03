@@ -27,7 +27,7 @@ const Home = () => {
     <div className="home-container">
       {/* Top Navbar */}
       <nav className="navbar">
-        <div className="logo">PBS Electrical Solutions</div>
+        <div className="logo">PBS Electrical Solutions.</div>
         <div className="nav-links">
           <Link to="/ProductPage" className="nav-btn">Products</Link>
           <Link to="/Wishlist" className="nav-btn">Wishlist</Link>
