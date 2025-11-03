@@ -16,7 +16,16 @@ const Login = () => {
     password: "",
   });
 
-  // ✅ Load user session from localStorage (on mount)
+  // -------------------------
+  // Step 1: Debug API URL
+  // -------------------------
+  useEffect(() => {
+    console.log("✅ API URL:", apiUrl);
+  }, [apiUrl]);
+
+  // -------------------------
+  // Step 2: Load user session
+  // -------------------------
   useEffect(() => {
     try {
       const storedUser = localStorage.getItem("user");
@@ -26,22 +35,24 @@ const Login = () => {
         const parsedUser = JSON.parse(storedUser);
         setCurrentUser(parsedUser);
         setIsAuthenticated(true);
+        console.log("✅ Loaded user from localStorage:", parsedUser);
       }
     } catch (error) {
-      console.error("Error parsing stored user data:", error);
+      console.error("⚠️ Error parsing stored user data:", error);
       localStorage.removeItem("user");
       localStorage.removeItem("isLoggedIn");
       localStorage.removeItem("wishlist");
     }
   }, []);
 
-  // ✅ Save user to localStorage
+  // -------------------------
+  // Step 3: Save user to localStorage
+  // -------------------------
   const saveUserToLocalStorage = (userData) => {
     try {
       localStorage.setItem("user", JSON.stringify(userData));
       localStorage.setItem("isLoggedIn", "true");
 
-      // Initialize user's wishlist if not existing
       const wishlistKey = `wishlist_${userData.email}`;
       if (!localStorage.getItem(wishlistKey)) {
         localStorage.setItem(wishlistKey, JSON.stringify([]));
@@ -51,27 +62,31 @@ const Login = () => {
       setIsAuthenticated(true);
       setShowUserGreeting(true);
 
-      // Auto-hide greeting after 4 seconds
+      console.log("✅ User saved to localStorage:", userData);
+
       setTimeout(() => setShowUserGreeting(false), 4000);
     } catch (error) {
-      console.error("Error saving user data:", error);
+      console.error("⚠️ Error saving user data:", error);
     }
   };
 
-  // ✅ Handle input change
+  // -------------------------
+  // Step 4: Handle input
+  // -------------------------
   const handleLoginInputChange = (e) => {
     const { name, value } = e.target;
-    setLoginData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setLoginData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // ✅ Handle login submission
+  // -------------------------
+  // Step 5: Handle login
+  // -------------------------
   const handleLogin = async (e) => {
     e.preventDefault();
     setMessage("");
     setIsLoading(true);
+
+    console.log("🚀 Attempting login with:", loginData);
 
     try {
       const response = await fetch(`${apiUrl}/signin`, {
@@ -83,15 +98,22 @@ const Login = () => {
         }),
       });
 
-      const data = await response.json();
+      console.log("🔹 Raw response status:", response.status);
+
+      let data;
+      try {
+        data = await response.json();
+        console.log("🔹 Response data:", data);
+      } catch (jsonError) {
+        console.error("⚠️ Error parsing JSON response:", jsonError);
+        throw new Error("Invalid server response");
+      }
 
       if (!response.ok) {
-        const errMessage =
-          data.error || data.message || "Invalid email or password.";
+        const errMessage = data?.error || data?.message || "Login failed";
         throw new Error(errMessage);
       }
 
-      // ✅ Prepare user object to save
       const userDataToStore = {
         id: data.user?.id,
         name: data.user?.name,
@@ -100,20 +122,22 @@ const Login = () => {
       };
 
       saveUserToLocalStorage(userDataToStore);
+
       setMessage("✅ Login successful! Redirecting...");
       setLoginData({ username: "", password: "" });
 
-      // Redirect after 1.5s
       setTimeout(() => navigate("/Home"), 1500);
     } catch (err) {
-      console.error("Login error:", err);
+      console.error("⚠️ Login error:", err);
       setMessage(`❌ ${err.message}`);
     } finally {
       setIsLoading(false);
     }
   };
 
-  // ✅ Skip to home (for authenticated users)
+  // -------------------------
+  // Step 6: Skip button
+  // -------------------------
   const handleSkipToHome = () => {
     if (isAuthenticated && currentUser) {
       navigate("/ProtectedRoutez");
@@ -122,15 +146,19 @@ const Login = () => {
     }
   };
 
-  // ✅ Go to signup page
+  // -------------------------
+  // Step 7: Signup
+  // -------------------------
   const goToSignup = () => {
     navigate("/signup");
   };
 
+  // -------------------------
+  // Step 8: Render JSX
+  // -------------------------
   return (
     <div className="login-body">
       <div className="login-container">
-        {/* ✅ Message feedback */}
         {message && (
           <div
             className={`message ${
@@ -141,7 +169,6 @@ const Login = () => {
           </div>
         )}
 
-        {/* ✅ Greeting message */}
         {isAuthenticated && currentUser && showUserGreeting && (
           <div className="greeting-message">
             👋 Hi, {currentUser.name || currentUser.email}! Welcome back.
@@ -151,9 +178,7 @@ const Login = () => {
         <div className="login-form-box">
           <div className="form-container">
             <h1>Hello Again!!!</h1>
-
             <form onSubmit={handleLogin}>
-              {/* Username */}
               <div className="input-box">
                 <input
                   type="text"
@@ -167,7 +192,6 @@ const Login = () => {
                 <i className="bx bxs-user"></i>
               </div>
 
-              {/* Password */}
               <div className="input-box">
                 <input
                   type="password"
@@ -185,13 +209,11 @@ const Login = () => {
                 <a href="#">Forgot Password?</a>
               </div>
 
-              {/* Submit button */}
               <button type="submit" className="login-btn" disabled={isLoading}>
                 {isLoading ? "Logging in..." : "Login"}
               </button>
             </form>
 
-            {/* Auth links */}
             <div className="auth-links">
               <p>
                 Don't have an account?{" "}
@@ -204,7 +226,6 @@ const Login = () => {
               </button>
             </div>
 
-            {/* Social login */}
             <p className="social-text">or login with social platforms</p>
             <div className="social-icons">
               <a href="#" aria-label="Login with Google">
