@@ -1,17 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import "./Home.css";
-import { useApiUrl } from "../ApiContext"; // ✅ Use the context for API base URL
 
 const Home = () => {
-  const apiUrl = useApiUrl(); // ✅ Get API base URL from context
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchFeaturedProducts = async () => {
       try {
-        const response = await fetch(`${apiUrl}/products`);
+        const response = await fetch("https://localhost:3000/products"); 
         if (!response.ok) throw new Error("Failed to fetch featured products");
         const data = await response.json();
         setFeaturedProducts(data);
@@ -22,13 +20,8 @@ const Home = () => {
       }
     };
 
-    if (apiUrl) {
-      fetchFeaturedProducts();
-    } else {
-      console.error("API URL not found.");
-      setLoading(false);
-    }
-  }, [apiUrl]);
+    fetchFeaturedProducts();
+  }, []);
 
   return (
     <div className="home-container">

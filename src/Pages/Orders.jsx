@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useApiUrl } from "../ApiContext"; // ✅ Import API URL context
 import "./Orders.css";
 
 const Orders = () => {
@@ -10,7 +9,9 @@ const Orders = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
-  const apiUrl = useApiUrl(); // ✅ Get API URL from context
+
+  // ✅ Replace with your actual API endpoint
+  const apiUrl = "https://localhost:3000/products";
 
   useEffect(() => {
     const loadUserAndOrders = async () => {
@@ -33,9 +34,8 @@ const Orders = () => {
           setDarkMode(JSON.parse(userDarkMode));
         }
 
-        // Fetch orders from backend using apiUrl
+        // Fetch orders from backend
         await fetchOrdersFromBackend(parsedUser.id || parsedUser._id);
-
       } catch (err) {
         console.error("Error loading user data:", err);
         setError("Error loading user data. Please login again.");
@@ -44,7 +44,7 @@ const Orders = () => {
     };
 
     loadUserAndOrders();
-  }, [navigate, apiUrl]);
+  }, [navigate]);
 
   const fetchOrdersFromBackend = async (userId) => {
     try {
@@ -52,11 +52,11 @@ const Orders = () => {
       setError(null);
 
       const response = await fetch(`${apiUrl}/orders?userId=${userId}`, {
-        method: 'GET',
+        method: "GET",
         headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json'
-        }
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
       });
 
       if (!response.ok) {
@@ -71,20 +71,19 @@ const Orders = () => {
       const result = await response.json();
 
       if (result.data && Array.isArray(result.data)) {
-        const transformedOrders = result.data.map(order => ({
+        const transformedOrders = result.data.map((order) => ({
           id: order._id,
           date: new Date(order.createdAt).toLocaleDateString(),
-          status: order.status || 'pending',
+          status: order.status || "pending",
           items: order.items || [],
           total: order.totalAmount || 0,
-          paymentMethod: order.paymentMethod || 'Not specified',
-          deliveryData: order.deliveryData || {}
+          paymentMethod: order.paymentMethod || "Not specified",
+          deliveryData: order.deliveryData || {},
         }));
         setOrders(transformedOrders);
       } else {
         setOrders([]);
       }
-
     } catch (error) {
       console.error("Error fetching orders from backend:", error);
       console.warn("Backend failed, falling back to localStorage");
@@ -98,7 +97,6 @@ const Orders = () => {
   const loadOrdersFromLocalStorage = () => {
     try {
       if (!currentUser) return;
-
       const userOrders = JSON.parse(
         localStorage.getItem(`orders_${currentUser.email}`) || "[]"
       );
@@ -135,13 +133,16 @@ const Orders = () => {
       </div>
 
       {error && (
-        <div className="error-message" style={{ 
-          background: '#f8d7da', 
-          color: '#721c24', 
-          padding: '10px', 
-          marginBottom: '20px', 
-          borderRadius: '5px' 
-        }}>
+        <div
+          className="error-message"
+          style={{
+            background: "#f8d7da",
+            color: "#721c24",
+            padding: "10px",
+            marginBottom: "20px",
+            borderRadius: "5px",
+          }}
+        >
           {error}
         </div>
       )}
@@ -161,9 +162,14 @@ const Orders = () => {
           {orders.map((order) => (
             <div className="order-card" key={order.id}>
               <div className="order-info">
-                <p><strong>Order ID:</strong> {order.id}</p>
-                <p><strong>Date:</strong> {order.date}</p>
-                <p><strong>Status:</strong> 
+                <p>
+                  <strong>Order ID:</strong> {order.id}
+                </p>
+                <p>
+                  <strong>Date:</strong> {order.date}
+                </p>
+                <p>
+                  <strong>Status:</strong>
                   <span className={`status-${order.status}`}>
                     {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
                   </span>
@@ -175,15 +181,19 @@ const Orders = () => {
                   order.items.map((item, index) => (
                     <div className="order-item" key={item._id || index}>
                       <img
-                        src={item.imageURL || item.imageUrl || "https://via.placeholder.com/80"}
-                        alt={item.name || 'Product'}
+                        src={
+                          item.imageURL ||
+                          item.imageUrl ||
+                          "https://via.placeholder.com/80"
+                        }
+                        alt={item.name || "Product"}
                         className="order-item-img"
                         onError={(e) => {
                           e.target.src = "https://via.placeholder.com/80";
                         }}
                       />
                       <div className="order-item-info">
-                        <h3>{item.name || 'Unknown Product'}</h3>
+                        <h3>{item.name || "Unknown Product"}</h3>
                         <p>
                           Qty: {item.quantity || 1} | R{" "}
                           {((item.price || 0) * (item.quantity || 1)).toFixed(2)}
@@ -197,10 +207,17 @@ const Orders = () => {
               </div>
 
               <div className="order-footer">
-                <p><strong>Payment:</strong> {order.paymentMethod}</p>
-                <p><strong>Total:</strong> R {(order.total || 0).toFixed(2)}</p>
+                <p>
+                  <strong>Payment:</strong> {order.paymentMethod}
+                </p>
+                <p>
+                  <strong>Total:</strong> R {(order.total || 0).toFixed(2)}
+                </p>
                 {order.deliveryData && order.deliveryData.name && (
-                  <p><strong>Delivery to:</strong> {order.deliveryData.name} {order.deliveryData.lastName}</p>
+                  <p>
+                    <strong>Delivery to:</strong> {order.deliveryData.name}{" "}
+                    {order.deliveryData.lastName}
+                  </p>
                 )}
               </div>
             </div>

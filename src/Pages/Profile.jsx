@@ -75,7 +75,7 @@ const Profile = () => {
 
   const handleLogout = () => {
     logout();
-    window.location.href = '/Home'; // consider react-router navigate for SPA
+    window.location.href = '/login'; // consider react-router navigate for SPA
   };
 
   const handleBackToProducts = () => {

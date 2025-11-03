@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import './Delivery.css';
 import { useNavigate } from 'react-router-dom';
-import { useApiUrl } from '../ApiContext'; // ✅ API context
 
 const Delivery = ({ onDeliveryData }) => {
   const navigate = useNavigate();
-  const apiUrl = useApiUrl(); // ✅ Dynamic backend IP
+  const apiUrl = "https://your-backend-url.com"; // ✅ Replace with your backend API URL
 
   const [deliveryData, setDeliveryData] = useState({
     country: '',
@@ -110,7 +109,7 @@ const Delivery = ({ onDeliveryData }) => {
         localStorage.setItem(`orders_${userEmail}`, JSON.stringify(existingOrders));
       }
 
-      // 🟢 Store in localStorage
+      // 🟢 Store locally
       localStorage.setItem('currentOrderId', orderData.id);
       localStorage.setItem('currentOrderData', JSON.stringify(orderData));
       localStorage.setItem('deliveryData', JSON.stringify(deliveryData));

@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useApiUrl } from "../ApiContext"; // ✅ Import API context hook
 import "./Cart.css";
 
 const Cart = () => {
   const [cart, setCart] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
   const navigate = useNavigate();
-  const apiUrl = useApiUrl(); // ✅ Get API URL from context
 
   // Load cart for the logged-in user
   useEffect(() => {
@@ -41,24 +39,6 @@ const Cart = () => {
       localStorage.setItem(`cart_${currentUser.email}`, JSON.stringify(cart));
     }
   }, [cart, currentUser]);
-
-  // 🔄 Optional: Example for syncing cart to backend using API URL
-  /*
-  useEffect(() => {
-    if (currentUser && cart.length > 0) {
-      fetch(`${apiUrl}/api/sync-cart`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ email: currentUser.email, cart })
-      })
-        .then((res) => res.json())
-        .then((data) => console.log("Cart synced:", data))
-        .catch((err) => console.error("Error syncing cart:", err));
-    }
-  }, [cart, currentUser, apiUrl]);
-  */
 
   // Functions for cart operations
   const increaseQuantity = (productId) => {

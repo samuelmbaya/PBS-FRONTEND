@@ -45,10 +45,10 @@ const ProductPage = () => {
           setIsAuthenticated(true);
           loadUserSpecificData(parsedUser.email);
         } else {
-          navigate("/login"); // Redirect to login page if not authenticated
+          navigate("/login"); // Redirect if not authenticated
         }
-      } catch (error) {
-        console.error("Error checking authentication:", error);
+      } catch (err) {
+        console.error("Error checking authentication:", err);
         navigate("/login");
       }
     };
@@ -59,8 +59,8 @@ const ProductPage = () => {
         setCart(userCart);
         const userWishlist = JSON.parse(localStorage.getItem(`wishlist_${userEmail}`) || "[]");
         setWishlist(userWishlist);
-      } catch (error) {
-        console.error("Error loading user data:", error);
+      } catch (err) {
+        console.error("Error loading user data:", err);
       }
     };
 
@@ -74,13 +74,22 @@ const ProductPage = () => {
         setLoading(true);
         setError(null);
 
-        const res = await fetch(`${apiUrl}/products`);
+        const res = await fetch(`${API_BASE_URL}/products`);
 
         if (!res.ok) {
           throw new Error(`HTTP error! status: ${res.status}`);
         }
 
-        const data = await res.json();
+        const text = await res.text();
+
+        // Try parsing JSON safely
+        let data;
+        try {
+          data = JSON.parse(text);
+        } catch (err) {
+          throw new Error("Invalid JSON returned from server. Are you sure the backend is returning JSON?");
+        }
+
         setProducts(data.data || []);
       } catch (err) {
         console.error("Failed to fetch products:", err);
@@ -140,20 +149,16 @@ const ProductPage = () => {
     [isAuthenticated]
   );
 
-  // Check if product is in wishlist
   const isInWishlist = (productId) => wishlist.some((item) => item._id === productId);
 
-  // Get total cart item count
   const getCartItemCount = () => cart.reduce((total, item) => total + (item.quantity || 1), 0);
 
-  // Logout handler
   const handleLogout = () => {
     localStorage.removeItem("user");
     localStorage.removeItem("isLoggedIn");
-    navigate("/Home");
+    navigate("/login");
   };
 
-  // Filter products based on debounced query
   const filteredProducts = products.filter((p) =>
     p.name?.toLowerCase().includes(debouncedQuery.toLowerCase())
   );
@@ -167,9 +172,7 @@ const ProductPage = () => {
           role="button"
           tabIndex={0}
           onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              navigate("/Home");
-            }
+            if (e.key === "Enter" || e.key === " ") navigate("/Home");
           }}
           aria-label="Navigate to Home"
         >
@@ -212,7 +215,7 @@ const ProductPage = () => {
         {!loading && !error && (
           filteredProducts.length > 0 ? (
             filteredProducts.map((product) => {
-              const cartItem = cart.find(item => item._id === product._id);
+              const cartItem = cart.find((item) => item._id === product._id);
               const imageSrc = product.imageUrl || product.imageURL || "https://via.placeholder.com/150";
               const inWishlist = isInWishlist(product._id);
 
