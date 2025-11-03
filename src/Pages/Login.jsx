@@ -171,7 +171,7 @@ const Login = () => {
 
         {isAuthenticated && currentUser && showUserGreeting && (
           <div className="greeting-message">
-            👋 Hi, {currentUser.name || currentUser.email}! Welcome back.
+            👋 Hi, {currentUser.name || currentUser.email}! Welcome back..
           </div>
         )}
 
