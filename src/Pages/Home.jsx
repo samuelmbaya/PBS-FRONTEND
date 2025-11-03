@@ -9,7 +9,7 @@ const Home = () => {
   useEffect(() => {
     const fetchFeaturedProducts = async () => {
       try {
-        const response = await fetch("https://localhost:3000/products"); 
+        const response = await fetch("http://44.198.25.29:3000/products");
         if (!response.ok) throw new Error("Failed to fetch featured products");
         const data = await response.json();
         setFeaturedProducts(data);

@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 const Delivery = ({ onDeliveryData }) => {
   const navigate = useNavigate();
-  const apiUrl = "https://your-backend-url.com"; // ✅ Replace with your backend API URL
+  const apiUrl = "http://44.198.25.29:3000";
 
   const [deliveryData, setDeliveryData] = useState({
     country: '',

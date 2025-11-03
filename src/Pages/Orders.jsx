@@ -11,7 +11,7 @@ const Orders = () => {
   const navigate = useNavigate();
 
   // ✅ Replace with your actual API endpoint
-  const apiUrl = "https://localhost:3000/products";
+  const apiUrl = "http://44.198.25.29:3000";
 
   useEffect(() => {
     const loadUserAndOrders = async () => {
