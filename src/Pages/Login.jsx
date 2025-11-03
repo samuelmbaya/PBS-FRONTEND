@@ -4,7 +4,7 @@
 
   const Login = () => {
     const navigate = useNavigate();
-    const apiUrl = "http://localhost:3000"; // ✅ Replace with your actual backend URL
+    const apiUrl = "http://44.198.25.29:3000";
 
     const [isLoading, setIsLoading] = useState(false);
     const [message, setMessage] = useState("");
