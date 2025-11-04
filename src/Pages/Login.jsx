@@ -4,7 +4,15 @@ import "./Login.css";
 
 const Login = () => {
   const navigate = useNavigate();
-  const apiUrl = import.meta.env.VITE_API_URL;
+  
+  // Add fallback and debugging
+  const apiUrl = import.meta.env.VITE_API_URL || 'http://44.198.25.29:3000';
+  
+  // Debug: Log the API URL on component mount
+  useEffect(() => {
+    console.log('API URL being used:', apiUrl);
+    console.log('All env variables:', import.meta.env);
+  }, []);
 
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState("");
@@ -70,6 +78,8 @@ const Login = () => {
     setMessage("");
     setIsLoading(true);
 
+    console.log('Attempting login to:', `${apiUrl}/signin`); // Debug log
+
     try {
       const response = await fetch(`${apiUrl}/signin`, {
         method: "POST",
@@ -104,7 +114,7 @@ const Login = () => {
       setTimeout(() => navigate("/Home"), 1500);
     } catch (err) {
       console.error("Login error:", err);
-      setMessage(err.message);
+      setMessage(err.message || "Failed to connect to server");
     } finally {
       setIsLoading(false);
     }
