@@ -9,7 +9,7 @@ const Home = () => {
   useEffect(() => {
     const fetchFeaturedProducts = async () => {
       try {
-        const response = await fetch("http://44.198.25.29:3000/products");
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/products`);
         if (!response.ok) throw new Error("Failed to fetch featured products");
         const data = await response.json();
         setFeaturedProducts(data);
