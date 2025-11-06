@@ -27,7 +27,9 @@ const ProductPage = () => {
   const navigate = useNavigate();
 
   // ✅ Use Vite environment variable
-  const API_BASE_URL = import.meta.env.VITE_API_URL;
+  const API_BASE_URL =
+    import.meta.env.VITE_API_URL || "http://44.198.25.29:3000";
+
 
   // Debounced query to avoid filtering on every keystroke
   const debouncedQuery = useDebounce(query, 300);
