@@ -2,12 +2,14 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Login.css";
 
+import ReCaptcha from "../Components/reCaptcha";
+
 const Login = () => {
   const navigate = useNavigate();
-  
+
   // Add fallback and debugging
   const apiUrl = import.meta.env.VITE_API_URL || 'http://44.198.25.29:3000';
-  
+
   // Debug: Log the API URL on component mount
   useEffect(() => {
     console.log('API URL being used:', apiUrl);
@@ -23,6 +25,15 @@ const Login = () => {
     username: "",
     password: "",
   });
+
+  const [token, setToken] = useState('');
+  const [submitEnabled, setSubmitEnabled] = useState(false);
+
+  useEffect(() =>{
+    if(token.length){
+      setSubmitEnabled(true)
+    }
+  }, [token])
 
   // Check localStorage for existing session
   useEffect(() => {
@@ -95,7 +106,7 @@ const Login = () => {
         try {
           const errorData = await response.json();
           errMessage = errorData.error || errorData.message || errMessage;
-        } catch {}
+        } catch { }
         throw new Error(errMessage);
       }
 
@@ -134,14 +145,17 @@ const Login = () => {
     navigate("/signup");
   };
 
+  const handleToken = (token) => {
+    setToken(token)
+  }
+
   return (
     <div className="login-body">
       <div className="login-container">
         {message && (
           <div
-            className={`message ${
-              message.includes("successful") ? "success" : "error"
-            }`}
+            className={`message ${message.includes("successful") ? "success" : "error"
+              }`}
           >
             {message}
           </div>
@@ -184,9 +198,17 @@ const Login = () => {
               <div className="forgot-link">
                 <a href="#">Forgot Password?</a>
               </div>
-              <button type="submit" className="login-btn" disabled={isLoading}>
+
+              <div className="reCaptcha">
+                <ReCaptcha sitekey={'6LeF6AcsAAAAAAOswhxu2aHDKaLBZS4YgD-FdH61'} callback={handleToken}/>
+              </div>
+               
+              <button disabled={!submitEnabled} 
+              type="submit" 
+              className="login-btn">
                 {isLoading ? "Logging in..." : "Login"}
               </button>
+
             </form>
 
             <div className="auth-links">
