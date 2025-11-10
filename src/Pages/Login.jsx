@@ -98,6 +98,7 @@ const Login = () => {
         body: JSON.stringify({
           email: loginData.username,
           password: loginData.password,
+          token: token, 
         }),
       });
 
