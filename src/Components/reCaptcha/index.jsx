@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, {useState, useEffect, useRef } from 'react'
 
 const ReCaptcha = ({sitekey, callback}) => {
     const recaptchaRef = useRef(null)
