@@ -29,8 +29,8 @@ const Login = () => {
   const [token, setToken] = useState('');
   const [submitEnabled, setSubmitEnabled] = useState(false);
 
-  useEffect(() =>{
-    if(token.length){
+  useEffect(() => {
+    if (token.length) {
       setSubmitEnabled(true)
     }
   }, [token])
@@ -98,7 +98,7 @@ const Login = () => {
         body: JSON.stringify({
           email: loginData.username,
           password: loginData.password,
-          token: token, 
+          token: token,
         }),
       });
 
@@ -200,13 +200,14 @@ const Login = () => {
                 <a href="#">Forgot Password?</a>
               </div>
 
-              <div className="reCaptcha">
-                <ReCaptcha sitekey={'6LeF6AcsAAAAAAOswhxu2aHDKaLBZS4YgD-FdH61'} callback={handleToken}/>
+              <div className="reCaptcha" style={{ width: '400px' }}>
+                <ReCaptcha sitekey="6LeF6AcsAAAAAAOswhxu2aHDKaLBZS4YgD-FdH61" callback={handleToken} />
               </div>
-               
-              <button disabled={!submitEnabled} 
-              type="submit" 
-              className="login-btn">
+
+
+              <button disabled={!submitEnabled}
+                type="submit"
+                className="login-btn">
                 {isLoading ? "Logging in..." : "Login"}
               </button>
 
