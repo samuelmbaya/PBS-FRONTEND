@@ -3,7 +3,7 @@ html,
 body {
   height: 100%;
   margin: 0;
-  /* padding: 0; */
+  padding: 0;
   /* overflow-y: auto; */
   font-family: "Segoe UI", Arial, sans-serif;
   background: #0d0d0d;
