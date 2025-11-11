@@ -200,7 +200,7 @@ const Login = () => {
                 <a href="#">Forgot Password?</a>
               </div>
 
-              <div className="reCaptcha" style={{ width: '400px' }}>
+              <div className="reCaptcha">
                 <ReCaptcha sitekey="6LeF6AcsAAAAAAOswhxu2aHDKaLBZS4YgD-FdH61" callback={handleToken} />
               </div>
 
