@@ -26,16 +26,28 @@ const ReCaptcha = ({ sitekey, callback }) => {
     }, [])
 
     useEffect(() => {
-        if (isRecaptchaLoaded) {
+        if (isRecaptchaLoaded && recaptchaRef.current && !recaptchaRef.current.hasChildNodes()) {
             window.grecaptcha.render(recaptchaRef.current, {
-                'sitekey': sitekey,
-                'callback': callback
-            })
+                sitekey,
+                callback,
+            });
         }
-    }, [isRecaptchaLoaded])
+    }, [isRecaptchaLoaded]);
+
 
     return (
-        <div ref={recaptchaRef}></div>
+        <div
+            ref={recaptchaRef}
+            style={{
+                width: '30vw',
+                height: '78px',
+                margin: 'auto',
+                transform: 'scale(1.1)',
+                transformOrigin: '0 0',
+                fontSize: '1px'
+            }}
+        ></div>
+
     )
 }
 

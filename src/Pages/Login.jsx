@@ -7,13 +7,11 @@ import ReCaptcha from "../Components/reCaptcha";
 const Login = () => {
   const navigate = useNavigate();
 
-  // Add fallback and debugging
-  const apiUrl = import.meta.env.VITE_API_URL || 'http://44.198.25.29:3000';
+  const apiUrl = import.meta.env.VITE_API_URL || "http://44.198.25.29:3000";
 
-  // Debug: Log the API URL on component mount
   useEffect(() => {
-    console.log('API URL being used:', apiUrl);
-    console.log('All env variables:', import.meta.env);
+    console.log("API URL being used:", apiUrl);
+    console.log("All env variables:", import.meta.env);
   }, []);
 
   const [isLoading, setIsLoading] = useState(false);
@@ -26,16 +24,16 @@ const Login = () => {
     password: "",
   });
 
-  const [token, setToken] = useState('');
+  const [token, setToken] = useState("");
   const [submitEnabled, setSubmitEnabled] = useState(false);
 
   useEffect(() => {
     if (token.length) {
-      setSubmitEnabled(true)
+      setSubmitEnabled(true);
     }
-  }, [token])
+  }, [token]);
 
-  // Check localStorage for existing session
+  // ✅ Check localStorage for existing session
   useEffect(() => {
     try {
       const storedUser = localStorage.getItem("user");
@@ -54,15 +52,13 @@ const Login = () => {
     }
   }, []);
 
-  // Save user session
+  // ✅ Save user session
   const saveUserToLocalStorage = (userData) => {
     try {
       localStorage.setItem("user", JSON.stringify(userData));
       localStorage.setItem("isLoggedIn", "true");
 
-      const existingWishlist = localStorage.getItem(
-        `wishlist_${userData.email}`
-      );
+      const existingWishlist = localStorage.getItem(`wishlist_${userData.email}`);
       if (!existingWishlist) {
         localStorage.setItem(`wishlist_${userData.email}`, JSON.stringify([]));
       }
@@ -77,19 +73,24 @@ const Login = () => {
     }
   };
 
-  // Handle input change
+  // ✅ Handle input change
   const handleLoginInputChange = (e) => {
     const { name, value } = e.target;
     setLoginData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Handle login
+  // ✅ Handle reCAPTCHA token
+  const handleRecaptcha = (token) => {
+    setToken(token);
+  };
+
+  // ✅ Handle login
   const handleLogin = async (e) => {
     e.preventDefault();
     setMessage("");
     setIsLoading(true);
 
-    console.log('Attempting login to:', `${apiUrl}/signin`); // Debug log
+    console.log("Attempting login to:", `${apiUrl}/signin`);
 
     try {
       const response = await fetch(`${apiUrl}/signin`, {
@@ -107,7 +108,7 @@ const Login = () => {
         try {
           const errorData = await response.json();
           errMessage = errorData.error || errorData.message || errMessage;
-        } catch { }
+        } catch {}
         throw new Error(errMessage);
       }
 
@@ -132,7 +133,6 @@ const Login = () => {
     }
   };
 
-  // Skip to protected route
   const handleSkipToHome = () => {
     if (isAuthenticated && currentUser) {
       navigate("/ProtectedRoutez");
@@ -141,23 +141,15 @@ const Login = () => {
     }
   };
 
-  // Go to signup
   const goToSignup = () => {
     navigate("/signup");
   };
-
-  const handleToken = (token) => {
-    setToken(token)
-  }
 
   return (
     <div className="login-body">
       <div className="login-container">
         {message && (
-          <div
-            className={`message ${message.includes("successful") ? "success" : "error"
-              }`}
-          >
+          <div className={`message ${message.includes("successful") ? "success" : "error"}`}>
             {message}
           </div>
         )}
@@ -184,6 +176,7 @@ const Login = () => {
                 />
                 <i className="bx bxs-user"></i>
               </div>
+
               <div className="input-box">
                 <input
                   type="password"
@@ -196,21 +189,22 @@ const Login = () => {
                 />
                 <i className="bx bxs-lock-alt"></i>
               </div>
-              {/* <div className="forgot-link">
-                <a href="#">Forgot Password?</a>
-              </div> */}
 
+              {/* ✅ New reCaptcha block */}
               <div className="reCaptcha">
-                <ReCaptcha sitekey="6LeF6AcsAAAAAAOswhxu2aHDKaLBZS4YgD-FdH61" callback={handleToken} />
+                <ReCaptcha
+                  sitekey="6LeF6AcsAAAAAAOswhxu2aHDKaLBZS4YgD-FdH61"
+                  callback={(token) => handleRecaptcha(token)}
+                />
               </div>
 
-
-              <button disabled={!submitEnabled}
+              <button
+                disabled={!submitEnabled}
                 type="submit"
-                className="login-btn">
+                className="login-btn"
+              >
                 {isLoading ? "Logging in..." : "Login"}
               </button>
-
             </form>
 
             <div className="auth-links">
@@ -227,18 +221,10 @@ const Login = () => {
 
             <p className="social-text">or login with social platforms</p>
             <div className="social-icons">
-              <a href="#">
-                <i className="bx bxl-google"></i>
-              </a>
-              <a href="#">
-                <i className="bx bxl-facebook"></i>
-              </a>
-              <a href="#">
-                <i className="bx bxl-github"></i>
-              </a>
-              <a href="#">
-                <i className="bx bxl-linkedin"></i>
-              </a>
+              <a href="#"><i className="bx bxl-google"></i></a>
+              <a href="#"><i className="bx bxl-facebook"></i></a>
+              <a href="#"><i className="bx bxl-github"></i></a>
+              <a href="#"><i className="bx bxl-linkedin"></i></a>
             </div>
           </div>
         </div>

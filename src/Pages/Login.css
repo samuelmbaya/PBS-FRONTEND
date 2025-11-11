@@ -10,10 +10,10 @@
     overflow: hidden;
 }
 
-.reCaptcha{
+/* .reCaptcha{
     width: 40vw;
     margin-left: 2.4vw;
-}
+} */
 
 .login-body {
     display: flex;
