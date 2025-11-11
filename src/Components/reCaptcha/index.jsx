@@ -1,15 +1,15 @@
-import React, {useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 
-const ReCaptcha = ({sitekey, callback}) => {
+const ReCaptcha = ({ sitekey, callback }) => {
     const recaptchaRef = useRef(null)
     const [isRecaptchaLoaded, setIsRecaptchaLoaded] = useState(false)
 
     const onRecaptchaLoad = () => {
-setIsRecaptchaLoaded(true)
+        setIsRecaptchaLoaded(true)
     }
 
     useEffect(() => {
-window.onRecaptchaLoad = onRecaptchaLoad
+        window.onRecaptchaLoad = onRecaptchaLoad
         if (!window.grecaptcha) {
             const script = document.createElement('script')
             script.src = "https://www.google.com/recaptcha/api.js?onload=onRecaptchaLoad&render=explicit"
@@ -21,15 +21,15 @@ window.onRecaptchaLoad = onRecaptchaLoad
         }
 
         return () => {
-           window.onRecaptchaLoad = null 
+            window.onRecaptchaLoad = null
         }
-    }, []) 
+    }, [])
 
-    useEffect(() =>{
-        if(isRecaptchaLoaded) {
+    useEffect(() => {
+        if (isRecaptchaLoaded) {
             window.grecaptcha.render(recaptchaRef.current, {
-                'sitekey' : sitekey,
-                'callback' : callback
+                'sitekey': sitekey,
+                'callback': callback
             })
         }
     }, [isRecaptchaLoaded])
