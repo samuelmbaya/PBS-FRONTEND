@@ -196,9 +196,9 @@ const Login = () => {
                 />
                 <i className="bx bxs-lock-alt"></i>
               </div>
-              <div className="forgot-link">
+              {/* <div className="forgot-link">
                 <a href="#">Forgot Password?</a>
-              </div>
+              </div> */}
 
               <div className="reCaptcha">
                 <ReCaptcha sitekey="6LeF6AcsAAAAAAOswhxu2aHDKaLBZS4YgD-FdH61" callback={handleToken} />
