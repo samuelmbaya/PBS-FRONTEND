@@ -111,9 +111,8 @@ const Signup = () => {
       <div className="signup-container">
         {message && (
           <div
-            className={`message ${
-              message.toLowerCase().includes("successful") ? "success" : "error"
-            }`}
+            className={`message ${message.toLowerCase().includes("successful") ? "success" : "error"
+              }`}
           >
             {message}
           </div>
@@ -192,18 +191,18 @@ const Signup = () => {
               </button>
             </div>
 
-            <p className="social-text">or register with social platforms</p>
+            <p className="social-text">our social platforms</p>
             <div className="social-icons">
-              <a href="#" aria-label="Register with Google">
-                <i className="bx bxl-google"></i>
+              <a href="https://www.instagram.com/_samuel4422/" aria-label="LinkedIn">
+                <i className="bx bxl-instagram"></i>
               </a>
-              <a href="#" aria-label="Register with Facebook">
-                <i className="bx bxl-facebook"></i>
+              <a href="https://wa.me/27817118312" aria-label="Whatsapp">
+                <i className="bx bxl-whatsapp"></i>
               </a>
-              <a href="#" aria-label="Register with GitHub">
+              <a href="https://github.com/samuelmbaya" aria-label="GitHub">
                 <i className="bx bxl-github"></i>
               </a>
-              <a href="#" aria-label="Register with LinkedIn">
+              <a href="https://www.linkedin.com/in/samuel-mbaya-8316b0344/" aria-label="LinkedIn">
                 <i className="bx bxl-linkedin"></i>
               </a>
             </div>

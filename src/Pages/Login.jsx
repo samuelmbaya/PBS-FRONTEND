@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Login.css";
 
@@ -79,10 +79,11 @@ const Login = () => {
     setLoginData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // ✅ Handle reCAPTCHA token
-  const handleRecaptcha = (token) => {
+  // ✅ Handle reCAPTCHA token - wrapped in useCallback
+  const handleRecaptcha = useCallback((token) => {
+    console.log("reCAPTCHA token received:", token);
     setToken(token);
-  };
+  }, []);
 
   // ✅ Handle login
   const handleLogin = async (e) => {
@@ -190,16 +191,16 @@ const Login = () => {
                 <i className="bx bxs-lock-alt"></i>
               </div>
 
-              {/* ✅ New reCaptcha block */}
+              {/* ✅ Updated reCaptcha block */}
               <div className="reCaptcha">
                 <ReCaptcha
                   sitekey="6LeF6AcsAAAAAAOswhxu2aHDKaLBZS4YgD-FdH61"
-                  callback={(token) => handleRecaptcha(token)}
+                  callback={handleRecaptcha}
                 />
               </div>
 
               <button
-                disabled={!submitEnabled}
+                disabled={!submitEnabled || isLoading}
                 type="submit"
                 className="login-btn"
               >
@@ -221,10 +222,10 @@ const Login = () => {
 
             <p className="social-text">or login with social platforms</p>
             <div className="social-icons">
-              <a href="#"><i className="bx bxl-google"></i></a>
-              <a href="#"><i className="bx bxl-facebook"></i></a>
-              <a href="#"><i className="bx bxl-github"></i></a>
-              <a href="#"><i className="bx bxl-linkedin"></i></a>
+              <a href="https://www.instagram.com/_samuel4422/"><i className="bx bxl-instagram"></i></a>
+              <a href="https://wa.me/27817118312"><i className="bx bxl-whatsapp"></i></a>
+              <a href="https://github.com/samuelmbaya"><i className="bx bxl-github"></i></a>
+              <a href="https://www.linkedin.com/in/samuel-mbaya-8316b0344/"><i className="bx bxl-linkedin"></i></a>
             </div>
           </div>
         </div>

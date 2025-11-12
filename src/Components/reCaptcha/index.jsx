@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 
 const ReCaptcha = ({ sitekey, callback }) => {
     const recaptchaRef = useRef(null)
+    const widgetIdRef = useRef(null)
     const [isRecaptchaLoaded, setIsRecaptchaLoaded] = useState(false)
 
     const onRecaptchaLoad = () => {
@@ -10,6 +11,7 @@ const ReCaptcha = ({ sitekey, callback }) => {
 
     useEffect(() => {
         window.onRecaptchaLoad = onRecaptchaLoad
+        
         if (!window.grecaptcha) {
             const script = document.createElement('script')
             script.src = "https://www.google.com/recaptcha/api.js?onload=onRecaptchaLoad&render=explicit"
@@ -26,28 +28,28 @@ const ReCaptcha = ({ sitekey, callback }) => {
     }, [])
 
     useEffect(() => {
-        if (isRecaptchaLoaded && recaptchaRef.current && !recaptchaRef.current.hasChildNodes()) {
-            window.grecaptcha.render(recaptchaRef.current, {
-                sitekey,
-                callback,
-            });
+        if (isRecaptchaLoaded && recaptchaRef.current && widgetIdRef.current === null) {
+            try {
+                widgetIdRef.current = window.grecaptcha.render(recaptchaRef.current, {
+                    sitekey,
+                    callback,
+                });
+                console.log('reCAPTCHA rendered successfully', widgetIdRef.current);
+            } catch (error) {
+                console.error('reCAPTCHA render error:', error);
+            }
         }
-    }, [isRecaptchaLoaded]);
-
+    }, [isRecaptchaLoaded, sitekey, callback]);
 
     return (
         <div
             ref={recaptchaRef}
             style={{
-                width: '30vw',
+                width: '304px',
                 height: '78px',
                 margin: 'auto',
-                transform: 'scale(1.1)',
-                transformOrigin: '0 0',
-                fontSize: '1px'
             }}
         ></div>
-
     )
 }
 
