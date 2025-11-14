@@ -194,7 +194,7 @@ const Login = () => {
               {/* ✅ Updated reCaptcha block */}
               <div className="reCaptcha">
                 <ReCaptcha
-                  sitekey="6LeF6AcsAAAAAAOswhxu2aHDKaLBZS4YgD-FdH61"
+                  sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI-FdH61"
                   callback={handleRecaptcha}
                 />
               </div>
