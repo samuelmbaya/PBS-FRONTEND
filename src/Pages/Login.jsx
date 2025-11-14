@@ -109,7 +109,7 @@ const Login = () => {
         try {
           const errorData = await response.json();
           errMessage = errorData.error || errorData.message || errMessage;
-        } catch { }
+        } catch {}
         throw new Error(errMessage);
       }
 
@@ -194,7 +194,7 @@ const Login = () => {
               {/* ✅ Updated reCaptcha block */}
               <div className="reCaptcha">
                 <ReCaptcha
-                  sitekey="6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI"
+                  sitekey="6LeF6AcsAAAAAAOswhxu2aHDKaLBZS4YgD-FdH61"
                   callback={handleRecaptcha}
                 />
               </div>
