@@ -3,9 +3,10 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-}
+  overflow: hidden;
+} 
 
-body, html, .home-container {
+ .home-container {
   height: 100%;
   width: 100%;
   font-family: "Arial", sans-serif;
@@ -15,13 +16,14 @@ body, html, .home-container {
 /* Hero Section */
 .hero {
   background: url("https://assets.weforum.org/article/image/large_Bgij__dbgp9c4Dz0fgoDeW--h0QsWyEnV8sZvNx83kE.jpg")
-    no-repeat center center/cover;
+  no-repeat center center/cover;
   height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
   position: relative;
+  overflow: hidden !important;
 }
 
 .hero::after {
