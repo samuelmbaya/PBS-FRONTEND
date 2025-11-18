@@ -2,9 +2,9 @@ import { useState, useEffect } from "react";
 import "./Signup.css";
 
 const Signup = () => {
+  // ✅ Use Vite environment variable
+  const API_BASE_URL = import.meta.env.VITE_API_URL;
 
-  const apiUrl = import.meta.env.VITE_API_URL;
-//dkjeacbjsblc.wibsekkcehkcesrbcuykewbdcukbseckwebfckeusbfkdecbewkbckebekbc
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -71,7 +71,7 @@ const Signup = () => {
     }
 
     try {
-      const res = await fetch(`${apiUrl}/signup`, {
+      const res = await fetch(`${API_BASE_URL}/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(registerData),
@@ -82,7 +82,7 @@ const Signup = () => {
       if (res.ok) {
         setMessage("Registration successful! Redirecting to Home Page...");
         setRegisterData({ name: "", email: "", password: "", confirmPassword: "" });
-        setTimeout(() => (window.location.href = "/Home"), 2500);
+        setTimeout(() => (window.location.href = "/Home"), 2000);
       } else {
         setMessage(data.error || "Registration failed");
       }
