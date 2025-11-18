@@ -34,7 +34,7 @@
 
 /* Back to Products Button - styled like Continue Shopping */
 .back-to-products-btn {
-  background: crimson !important;
+  background: #e63946 !important;
   color: #fff !important;
   padding: 0.5rem 1rem;
   border-radius: 6px;
@@ -119,7 +119,7 @@
 
 /* Logout button */
 .logout-button {
-  background-color: #007AFF;
+  background-color: #e63946;
   border: none;
   color: white;
   padding: 18px 50px;
@@ -135,11 +135,11 @@
 }
 
 .logout-button:hover {
-  background-color: #0056CC;
+  background-color: #e63946;;
 }
 
 .logout-button:active {
-  background-color: #004499;
+  background-color: #e63946;
 }
 
 /* Login prompt */
@@ -163,7 +163,7 @@
 }
 
 .login-button {
-  background-color: #007AFF;
+  background: #e63946;
   border: none;
   color: white;
   padding: 15px 30px;
@@ -177,11 +177,11 @@
 }
 
 .login-button:hover {
-  background-color: #0056CC;
+  background-color: #e63946;
 }
 
 .login-button:active {
-  background-color: #004499;
+  background-color: #e63946;
 }
 
 /* User info display */

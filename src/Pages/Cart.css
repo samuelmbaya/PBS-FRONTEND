@@ -88,7 +88,7 @@
 
 /* ===== Remove Button (styled like logout) ===== */
 .remove-btn {
-  background: crimson;
+  background: #e63946;
   color: #fff;
   padding: 0.5rem 1rem;
   border-radius: 6px;
@@ -104,7 +104,7 @@
 
 /* ===== Continue Shopping Button ===== */
 .continue-shopping-btn {
-  background: crimson !important;
+  background: #e63946 !important;
   color: #fff !important;
   padding: 0.5rem 1rem;
   border-radius: 6px;
@@ -132,7 +132,7 @@
   border: none;
   padding: 10px 16px;
   font-size: 15px;
-  border-radius: 25px;
+  border-radius: 6px;
   cursor: pointer;
   width: 100%;
   max-width: 320px;

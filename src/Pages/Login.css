@@ -108,7 +108,7 @@
 .login-btn {
     width: 100%;
     height: 50px;
-    background: #007bff;
+    background: #e63946;
     border-radius: 8px;
     border: none;
     cursor: pointer;
@@ -121,7 +121,7 @@
 }
 
 .login-btn:hover {
-    background: #0056b3;
+    background: #e63946;
 }
 
 .login-btn:disabled {
@@ -157,16 +157,16 @@
     width: 100%;
     height: 40px;
     background: transparent;
-    border: 2px solid #007bff;
+    border: 2px solid #e63946; 
     border-radius: 8px;
-    color: #007bff;
+    color: #e63946;
     font-size: 14px;
     cursor: pointer;
     transition: all 0.3s ease;
 }
 
 .skip-btn:hover {
-    background: #007bff;
+    background: #e63946;
     color: #fff;
 }
 
@@ -193,8 +193,8 @@
 }
 
 .social-icons a:hover {
-    border-color: #007bff;
-    color: #007bff;
+    border-color: #e63946;
+    color: #e63946;
 }
 
 .message {
