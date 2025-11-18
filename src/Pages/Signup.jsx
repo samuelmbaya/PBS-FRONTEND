@@ -4,7 +4,7 @@ import "./Signup.css";
 const Signup = () => {
 
   const apiUrl = import.meta.env.VITE_API_URL;
-//dkjeacbjsblc.wibsekkcehkcesrbcuykewbdcukbseckwebfckeusbfkdecbewkbckeb ekbc
+//dkjeacbjsblc.wibsekkcehkcesrbcuykewbdcukbseckwebfckeusbfkdecbewkbckebekbc
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
