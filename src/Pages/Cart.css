@@ -136,13 +136,13 @@
   cursor: pointer;
   width: 100%;
   max-width: 320px;
-  background-color: #007bff;
+  background: #e63946;
   color: #fff;
   transition: background 0.2s ease;
 }
 
 .checkout-btn:hover {
-  background-color: #0056b3;
+  background: #e63946 !important;
 }
 
 /* ===== Responsive Design ===== */
