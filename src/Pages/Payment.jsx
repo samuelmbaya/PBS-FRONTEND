@@ -220,7 +220,7 @@ const Payment = () => {
                 {cart.map((item) => (
                   <div className="cart-item-row" key={item._id}>
                     <img
-                      src={item.imageURL || "https://via.placeholder.com/60"}
+                      src={item.imageUrl || "https://via.placeholder.com/60"}
                       alt={item.name}
                       className="cart-item-img"
                     />

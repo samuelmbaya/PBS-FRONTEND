@@ -41,7 +41,6 @@ const Delivery = ({ onDeliveryData }) => {
     setIsSubmitting(true);
 
     try {
-      // 🟢 Get user info
       const storedUser = localStorage.getItem("user");
       let userId = "guest_user";
       let userEmail = "guest@example.com";
@@ -56,7 +55,6 @@ const Delivery = ({ onDeliveryData }) => {
         }
       }
 
-      // 🟢 Cart info
       const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
       const totalAmount = parseFloat(localStorage.getItem('cartTotal') || '0');
 
@@ -66,14 +64,14 @@ const Delivery = ({ onDeliveryData }) => {
         name: "Order Item",
         quantity: 1,
         price: totalAmount || 0,
-        imageURL: "https://via.placeholder.com/80"
+        imageUrl: "https://via.placeholder.com/80"
       }]).map(item => ({
         _id: item._id || item.id || Date.now().toString(),
         productId: item._id || item.id || "unknown",
         name: item.name || "Unknown Product",
         quantity: item.quantity || 1,
         price: item.price || 0,
-        imageURL: item.imageURL || item.imageUrl || "https://via.placeholder.com/80"
+        imageUrl: item.imageUrl || item.imageURL || "https://via.placeholder.com/80"
       }));
 
       const orderData = {
@@ -89,7 +87,6 @@ const Delivery = ({ onDeliveryData }) => {
         date: new Date().toLocaleDateString()
       };
 
-      // 🟢 Save to backend
       try {
         const response = await fetch(`${apiUrl}/orders`, {
           method: "POST",
@@ -109,7 +106,6 @@ const Delivery = ({ onDeliveryData }) => {
         localStorage.setItem(`orders_${userEmail}`, JSON.stringify(existingOrders));
       }
 
-      // 🟢 Store locally
       localStorage.setItem('currentOrderId', orderData.id);
       localStorage.setItem('currentOrderData', JSON.stringify(orderData));
       localStorage.setItem('deliveryData', JSON.stringify(deliveryData));
@@ -126,45 +122,124 @@ const Delivery = ({ onDeliveryData }) => {
     }
   };
 
+  const handleReturnToCart = () => {
+    navigate('/cart');
+  };
+
   return (
-    <div className="delivery-section dark">
+    <div className="delivery-page">
       <div className="delivery-header">
-        <h2>Delivery</h2>
-        <p style={{ fontSize: '14px', color: '#888', marginTop: '5px' }}>
-          (Data will sync to backend if online, otherwise saved locally)
-        </p>
+        <h1>Delivery</h1>
       </div>
 
-      {/* 🟢 Delivery Form */}
       <div className="delivery-form">
-        {[
-          { label: 'Country', name: 'country' },
-          { label: 'First Name', name: 'name' },
-          { label: 'Last Name', name: 'lastName' },
-          { label: 'Street Address', name: 'streetAddress' },
-          { label: 'Apartment', name: 'apartment' },
-          { label: 'Postal Code', name: 'postalCode' },
-          { label: 'City', name: 'city' },
-          { label: 'Province', name: 'province' },
-          { label: 'Phone Number', name: 'phoneNumber' }
-        ].map((field, index) => (
-          <div className="form-group" key={index}>
-            <label>{field.label}</label>
-            <input
-              type="text"
-              name={field.name}
-              value={deliveryData[field.name]}
-              onChange={handleInputChange}
-              required={['country','name','lastName','streetAddress','city','province','phoneNumber'].includes(field.name)}
-            />
-          </div>
-        ))}
+        <div className="form-group">
+          <input
+            type="text"
+            name="country"
+            placeholder="Country"
+            value={deliveryData.country}
+            onChange={handleInputChange}
+            className="form-input"
+            required
+          />
+        </div>
+
+        <div className="form-row">
+          <input
+            type="text"
+            name="name"
+            placeholder="First Name"
+            value={deliveryData.name}
+            onChange={handleInputChange}
+            className="form-input"
+            required
+          />
+          <input
+            type="text"
+            name="lastName"
+            placeholder="Last Name"
+            value={deliveryData.lastName}
+            onChange={handleInputChange}
+            className="form-input"
+            required
+          />
+        </div>
+
+        <div className="form-group">
+          <input
+            type="text"
+            name="streetAddress"
+            placeholder="Street Address"
+            value={deliveryData.streetAddress}
+            onChange={handleInputChange}
+            className="form-input"
+            required
+          />
+        </div>
+
+        <div className="form-group">
+          <input
+            type="text"
+            name="apartment"
+            placeholder="Apartment, suite, etc. (optional)"
+            value={deliveryData.apartment}
+            onChange={handleInputChange}
+            className="form-input"
+          />
+        </div>
+
+        <div className="form-row three-cols">
+          <input
+            type="text"
+            name="postalCode"
+            placeholder="Postal Code"
+            value={deliveryData.postalCode}
+            onChange={handleInputChange}
+            className="form-input"
+          />
+          <input
+            type="text"
+            name="city"
+            placeholder="City"
+            value={deliveryData.city}
+            onChange={handleInputChange}
+            className="form-input"
+            required
+          />
+          <input
+            type="text"
+            name="province"
+            placeholder="Province"
+            value={deliveryData.province}
+            onChange={handleInputChange}
+            className="form-input"
+            required
+          />
+        </div>
+
+        <div className="form-group">
+          <input
+            type="tel"
+            name="phoneNumber"
+            placeholder="Phone Number"
+            value={deliveryData.phoneNumber}
+            onChange={handleInputChange}
+            className="form-input"
+            required
+          />
+        </div>
       </div>
 
-      {/* 🟢 Continue Button */}
-      <div className="continue-section">
+      <div className="delivery-actions">
         <button 
-          className="continue-btn"
+          className="return-cart-btn"
+          onClick={handleReturnToCart}
+        >
+          Return To Cart
+        </button>
+        <button 
+          className="continue-payment-btn"
           onClick={handleContinueToPayment}
           disabled={isSubmitting}
         >
