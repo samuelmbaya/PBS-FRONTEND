@@ -80,7 +80,7 @@ const Orders = () => {
           deliveryData: order.deliveryData || {},
         }));
         setOrders(transformedOrders);
-        
+
         // Sync to localStorage for offline access
         if (currentUser) {
           localStorage.setItem(
@@ -189,9 +189,9 @@ const Orders = () => {
                     <div className="order-item" key={item._id || index}>
                       <img
                         src={
-                          item.imageUrl || 
-                          item.imgUrl || 
-                          item.image || 
+                          item.imageUrl ||
+                          item.imageURL ||
+                          item.image ||
                           item.img ||
                           "https://via.placeholder.com/80"
                         }
