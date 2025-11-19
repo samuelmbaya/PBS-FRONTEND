@@ -27,6 +27,8 @@ const Payment = () => {
   const [cart, setCart] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
 
+  const apiUrl = "http://44.198.25.29:3000";
+
   // Disable scrolling on mount, restore on unmount
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -121,8 +123,8 @@ const Payment = () => {
     return expiryDate >= now;
   };
 
-  // Handle order placement with validation
-  const handlePlaceOrder = () => {
+  // ✅ FIXED: Handle order placement with backend integration
+  const handlePlaceOrder = async () => {
     if (cart.length === 0) {
       alert("Your cart is empty!");
       return;
@@ -173,35 +175,108 @@ const Payment = () => {
 
     setLoading(true);
 
-    // Simulate payment processing delay
-    setTimeout(() => {
-      const newOrder = {
+    try {
+      // Get delivery data from localStorage (saved in Delivery.jsx)
+      const deliveryData = JSON.parse(localStorage.getItem('deliveryData') || '{}');
+      
+      // ✅ Prepare order items with explicit imageUrl field
+      const orderItems = cart.map(item => ({
+        _id: item._id,
+        productId: item._id,
+        name: item.name,
+        price: item.price,
+        quantity: item.quantity || 1,
+        imageUrl: item.imageUrl || item.imageURL || item.image || "https://via.placeholder.com/80" // ✅ Ensure image is included
+      }));
+
+      const orderData = {
+        userId: currentUser.id || currentUser._id,
+        items: orderItems,
+        totalAmount: totalPrice,
+        status: "pending",
+        deliveryData: deliveryData,
+        paymentMethod: paymentMethod
+      };
+
+      // ✅ Send order to backend
+      const response = await fetch(`${apiUrl}/orders`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(orderData),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to create order: ${response.statusText}`);
+      }
+
+      const result = await response.json();
+      console.log("✅ Order created successfully:", result);
+
+      // ✅ Save order to localStorage with backend _id
+      if (result.data) {
+        const savedOrder = {
+          id: result.data._id, // Use backend _id
+          date: new Date(result.data.createdAt).toLocaleDateString(),
+          status: result.data.status,
+          items: result.data.items, // This includes imageUrl
+          total: result.data.totalAmount,
+          paymentMethod: result.data.paymentMethod,
+          deliveryData: result.data.deliveryData
+        };
+
+        // Add to existing orders
+        let userOrders = JSON.parse(
+          localStorage.getItem(`orders_${currentUser.email}`) || "[]"
+        );
+        userOrders.push(savedOrder);
+        localStorage.setItem(
+          `orders_${currentUser.email}`,
+          JSON.stringify(userOrders)
+        );
+
+        // Clear the cart after successful order
+        localStorage.setItem(`cart_${currentUser.email}`, JSON.stringify([]));
+        setCart([]);
+
+        setLoading(false);
+        alert("Payment successful! Order placed.");
+        navigate("/Orders");
+      }
+
+    } catch (error) {
+      console.error("❌ Error creating order:", error);
+      
+      // ⚠️ Fallback: Save to localStorage only if backend fails
+      const fallbackOrder = {
         id: "ORD-" + Date.now(),
         date: new Date().toLocaleDateString(),
         status: "Processing",
-        items: cart,
+        items: cart.map(item => ({
+          ...item,
+          imageUrl: item.imageUrl || item.imageURL || "https://via.placeholder.com/80"
+        })),
         total: totalPrice,
         paymentMethod,
       };
 
-      // Save order in localStorage for the user
       let userOrders = JSON.parse(
         localStorage.getItem(`orders_${currentUser.email}`) || "[]"
       );
-      userOrders.push(newOrder);
+      userOrders.push(fallbackOrder);
       localStorage.setItem(
         `orders_${currentUser.email}`,
         JSON.stringify(userOrders)
       );
 
-      // Clear the cart after successful order
       localStorage.setItem(`cart_${currentUser.email}`, JSON.stringify([]));
       setCart([]);
 
       setLoading(false);
-      alert("Payment successful! Order placed.");
-      navigate("/Orders"); // Redirect to Orders page
-    }, 1500);
+      alert("Order saved locally. Backend unavailable. Order placed successfully!");
+      navigate("/Orders");
+    }
   };
 
   return (

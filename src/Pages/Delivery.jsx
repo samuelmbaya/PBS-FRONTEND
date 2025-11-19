@@ -55,68 +55,36 @@ const Delivery = ({ onDeliveryData }) => {
         }
       }
 
-      const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
-      const totalAmount = parseFloat(localStorage.getItem('cartTotal') || '0');
+      // ✅ FIXED: Load cart from correct localStorage key
+      const userCart = JSON.parse(localStorage.getItem(`cart_${userEmail}`) || '[]');
+      
+      // ✅ Calculate total from actual cart
+      const totalAmount = userCart.reduce(
+        (sum, item) => sum + (item.price || 0) * (item.quantity || 1), 
+        0
+      );
 
-      const orderItems = (cartItems.length > 0 ? cartItems : [{
-        _id: "placeholder_" + Date.now(),
-        productId: "placeholder-item",
-        name: "Order Item",
-        quantity: 1,
-        price: totalAmount || 0,
-        imageUrl: "https://via.placeholder.com/80"
-      }]).map(item => ({
+      // ✅ FIXED: Map cart items with explicit imageUrl
+      const orderItems = userCart.map(item => ({
         _id: item._id || item.id || Date.now().toString(),
         productId: item._id || item.id || "unknown",
         name: item.name || "Unknown Product",
         quantity: item.quantity || 1,
         price: item.price || 0,
-        imageUrl: item.imageUrl || item.imageURL || "https://via.placeholder.com/80"
+        imageUrl: item.imageUrl || item.imageURL || item.image || "https://via.placeholder.com/80" // ✅ Explicitly include imageUrl
       }));
 
-      const orderData = {
-        id: "ORD_" + Date.now(),
-        userId,
-        items: orderItems,
-        totalAmount,
-        status: "pending",
-        deliveryData,
-        paymentMethod: "pending",
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        date: new Date().toLocaleDateString()
-      };
-
-      try {
-        const response = await fetch(`${apiUrl}/orders`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(orderData),
-        });
-
-        if (!response.ok) throw new Error(`Failed to save order: ${response.statusText}`);
-
-        const savedOrder = await response.json();
-        console.log("✅ Order saved to backend:", savedOrder);
-      } catch (err) {
-        console.warn("⚠️ Could not save to backend, saving locally instead:", err);
-
-        const existingOrders = JSON.parse(localStorage.getItem(`orders_${userEmail}`) || "[]");
-        existingOrders.unshift(orderData);
-        localStorage.setItem(`orders_${userEmail}`, JSON.stringify(existingOrders));
-      }
-
-      localStorage.setItem('currentOrderId', orderData.id);
-      localStorage.setItem('currentOrderData', JSON.stringify(orderData));
+      // Don't create order yet, just save delivery data
+      // Payment.jsx will handle order creation
       localStorage.setItem('deliveryData', JSON.stringify(deliveryData));
 
       alert("Delivery information saved successfully! Proceeding to payment.");
       if (onDeliveryData) onDeliveryData(deliveryData, true);
       navigate('/payment');
+      
     } catch (error) {
       console.error("Error saving delivery data:", error);
-      alert("Error processing order. Delivery data saved locally. You can continue to payment.");
-      navigate('/payment');
+      alert("Error processing delivery data. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
