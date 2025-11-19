@@ -29,7 +29,7 @@ const Payment = () => {
 
   const apiUrl = "http://44.198.25.29:3000";
 
-  // Disable scrolling
+  // Disable scrolling on mount, restore on unmount
   useEffect(() => {
     document.body.style.overflow = "hidden";
     return () => {
@@ -37,7 +37,7 @@ const Payment = () => {
     };
   }, []);
 
-  // Load user + cart
+  // Load current user and cart from localStorage
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
     const storedIsLoggedIn = localStorage.getItem("isLoggedIn");
@@ -55,13 +55,13 @@ const Payment = () => {
     setCart(userCart);
   }, [navigate]);
 
-  // Calculate total
+  // Calculate total cart price
   const totalPrice = cart.reduce(
     (sum, item) => sum + (item.price || 0) * (item.quantity || 1),
     0
   );
 
-  // Remove item
+  // Remove item from cart and update localStorage
   const removeFromCart = (productId) => {
     const updatedCart = cart.filter((item) => item._id !== productId);
     setCart(updatedCart);
@@ -74,13 +74,12 @@ const Payment = () => {
     }
   };
 
-  // Card validation helpers
+  // Luhn algorithm to validate credit card number
   const isValidCard = (num) => {
     const value = num.replace(/\s/g, "");
     if (!/^\d+$/.test(value)) return false;
     let sum = 0;
     let shouldDouble = false;
-
     for (let i = value.length - 1; i >= 0; i--) {
       let digit = parseInt(value.charAt(i));
       if (shouldDouble) {
@@ -93,9 +92,11 @@ const Payment = () => {
     return sum % 10 === 0;
   };
 
+  // Format card number as "#### #### #### ####"
   const formatCardNumber = (num) =>
     num.replace(/\D/g, "").replace(/(\d{4})(?=\d)/g, "$1 ");
 
+  // Handle card input changes
   const handleCardChange = (e) => {
     const { name, value } = e.target;
     setCardData((prev) => ({
@@ -104,9 +105,11 @@ const Payment = () => {
     }));
   };
 
+  // Email validation helper
   const isValidEmail = (email) =>
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
+  // Expiry date validation helper
   const isExpiryValid = (expiry) => {
     if (!/^\d{2}\/\d{2}$/.test(expiry)) return false;
     const [monthStr, yearStr] = expiry.split("/");
@@ -115,114 +118,113 @@ const Payment = () => {
     if (month < 1 || month > 12) return false;
 
     const now = new Date();
+    // Set expiry date to the last day of the month
     const expiryDate = new Date(year, month, 0, 23, 59, 59);
     return expiryDate >= now;
   };
 
-  // --------------------------------------------------------
-  //  UPDATED handlePlaceOrder (NO FALLBACK + FIXED REDIRECT)
-  // --------------------------------------------------------
+  // ✅ FIXED: Handle order placement with backend integration
   const handlePlaceOrder = async () => {
-    if (cart.length === 0) {
-      alert("Your cart is empty!");
+  if (cart.length === 0) {
+    alert("Your cart is empty!");
+    return;
+  }
+
+  // Validate based on payment method
+  if (paymentMethod === "credit-card") {
+    const { number, name, expiry, cvc } = cardData;
+
+    if (!number || !name || !expiry || !cvc) {
+      alert("Please fill all card details!");
       return;
     }
 
-    // Validation
-    if (paymentMethod === "credit-card") {
-      const { number, name, expiry, cvc } = cardData;
-
-      if (!number || !name || !expiry || !cvc) {
-        alert("Please fill all card details!");
-        return;
-      }
-
-      if (!isExpiryValid(expiry)) {
-        alert("Invalid or expired expiration date. Use MM/YY format.");
-        return;
-      }
-
-      if (!/^\d{3,4}$/.test(cvc)) {
-        alert("Invalid CVC");
-        return;
-      }
-
-      if (!isValidCard(number)) {
-        alert("Invalid card number");
-        return;
-      }
+    if (!isExpiryValid(expiry)) {
+      alert("Invalid or expired expiration date. Use MM/YY format.");
+      return;
     }
 
-    if (paymentMethod === "paypal" && !isValidEmail(paypalEmail)) {
+    if (!/^\d{3,4}$/.test(cvc)) {
+      alert("Invalid CVC");
+      return;
+    }
+
+    if (!isValidCard(number)) {
+      alert("Invalid card number");
+      return;
+    }
+  } else if (paymentMethod === "paypal") {
+    if (!paypalEmail) {
+      alert("Enter PayPal email!");
+      return;
+    }
+    if (!isValidEmail(paypalEmail)) {
       alert("Enter a valid PayPal email!");
       return;
     }
-
-    if (paymentMethod === "google-pay" && !isValidEmail(googlePayEmail)) {
+  } else if (paymentMethod === "google-pay") {
+    if (!googlePayEmail) {
+      alert("Enter Google Pay email!");
+      return;
+    }
+    if (!isValidEmail(googlePayEmail)) {
       alert("Enter a valid Google Pay email!");
       return;
     }
+  }
 
-    setLoading(true);
+  setLoading(true);
 
-    try {
-      const deliveryData = JSON.parse(
-        localStorage.getItem("deliveryData") || "{}"
-      );
+  try {
+    const deliveryData = JSON.parse(localStorage.getItem("deliveryData") || "{}");
 
-      const orderItems = cart.map((item) => ({
-        _id: item._id,
-        productId: item._id,
-        name: item.name,
-        price: item.price,
-        quantity: item.quantity || 1,
-        imageUrl:
-          item.imageUrl ||
-          item.imageURL ||
-          item.image ||
-          "https://via.placeholder.com/80",
-      }));
+    const orderItems = cart.map(item => ({
+      _id: item._id,
+      productId: item._id,
+      name: item.name,
+      price: item.price,
+      quantity: item.quantity || 1,
+      imageUrl:
+        item.imageUrl ||
+        item.imageURL ||
+        item.image ||
+        "https://via.placeholder.com/80",
+    }));
 
-      const orderData = {
-        userId: currentUser.id || currentUser._id,
-        items: orderItems,
-        totalAmount: totalPrice,
-        status: "pending",
-        deliveryData,
-        paymentMethod,
-      };
+    const orderData = {
+      userId: currentUser.id || currentUser._id,
+      items: orderItems,
+      totalAmount: totalPrice,
+      status: "pending",
+      deliveryData,
+      paymentMethod,
+    };
 
-      const response = await fetch(`${apiUrl}/orders`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(orderData),
-      });
+    // Send order to backend
+    const response = await fetch(`${apiUrl}/orders`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(orderData),
+    });
 
-      if (!response.ok) throw new Error("Failed to create order");
+    if (!response.ok) {
+      throw new Error(`Failed to create order: ${response.statusText}`);
+    }
 
-      const result = await response.json();
-      console.log("Order created successfully:", result);
+    const result = await response.json();
+    console.log("Order created successfully:", result);
 
-      // FIX: support multiple backend formats
-      const order = result.data || result.order;
-
-      if (!order) {
-        alert("Order created but server response format is unexpected.");
-        setLoading(false);
-        return;
-      }
-
-      // Save order
+    if (result.data) {
       const savedOrder = {
-        id: order._id,
-        date: new Date(order.createdAt).toLocaleDateString(),
-        status: order.status,
-        items: order.items,
-        total: order.totalAmount,
-        paymentMethod: order.paymentMethod,
-        deliveryData: order.deliveryData,
+        id: result.data._id,
+        date: new Date(result.data.createdAt).toLocaleDateString(),
+        status: result.data.status,
+        items: result.data.items,
+        total: result.data.totalAmount,
+        paymentMethod: result.data.paymentMethod,
+        deliveryData: result.data.deliveryData,
       };
 
       let userOrders = JSON.parse(
@@ -243,13 +245,15 @@ const Payment = () => {
       setCart([]);
 
       setLoading(false);
-      navigate("/Orders"); // FIXED REDIRECT
-    } catch (error) {
-      console.error("Error creating order:", error);
-      setLoading(false);
-      alert("Failed to place order. Please try again.");
+      alert("Payment successful! Order placed.");
+      navigate("/Orders");
     }
-  };
+  } catch (error) {
+    console.error("Error creating order:", error);
+    setLoading(false);
+    alert("Failed to place order. Please try again.");
+  }
+};
 
   return (
     <div className="payment-fullscreen">
@@ -257,11 +261,9 @@ const Payment = () => {
         <h2>Checkout Payment</h2>
 
         <div className="payment-container">
-
-          {/* ORDER SUMMARY */}
+          {/* Order Summary */}
           <div className="order-summary">
             <h3>Order Summary</h3>
-
             {cart.length === 0 ? (
               <p>Your cart is empty.</p>
             ) : (
@@ -276,8 +278,8 @@ const Payment = () => {
                     <div className="cart-item-info">
                       <p>{item.name}</p>
                       <p>
-                        Qty: {item.quantity} | R{" "}
-                        {(item.price * item.quantity).toFixed(2)}
+                        Qty: {item.quantity || 1} | R{" "}
+                        {((item.price || 0) * (item.quantity || 1)).toFixed(2)}
                       </p>
                     </div>
                     <button
@@ -290,15 +292,15 @@ const Payment = () => {
                 ))}
               </div>
             )}
-
             <p className="total">Total: R {totalPrice.toFixed(2)}</p>
           </div>
 
-          {/* PAYMENT SECTION */}
+          {/* Payment Section */}
           <div className="payment-section">
             <div className="payment-methods">
-              <label>
+              <label htmlFor="credit-card">
                 <input
+                  id="credit-card"
                   type="radio"
                   value="credit-card"
                   checked={paymentMethod === "credit-card"}
@@ -306,9 +308,9 @@ const Payment = () => {
                 />
                 Credit Card
               </label>
-
-              <label>
+              <label htmlFor="paypal">
                 <input
+                  id="paypal"
                   type="radio"
                   value="paypal"
                   checked={paymentMethod === "paypal"}
@@ -316,9 +318,9 @@ const Payment = () => {
                 />
                 PayPal
               </label>
-
-              <label>
+              <label htmlFor="google-pay">
                 <input
+                  id="google-pay"
                   type="radio"
                   value="google-pay"
                   checked={paymentMethod === "google-pay"}
@@ -330,58 +332,93 @@ const Payment = () => {
 
             {paymentMethod === "credit-card" && (
               <div className="card-form">
+                <div className="card-preview">
+                  <div className="card-number">
+                    {cardData.number || "#### #### #### ####"}
+                  </div>
+                  <div className="card-details">
+                    <span>{cardData.name || "CARDHOLDER NAME"}</span>
+                    <span>{cardData.expiry || "MM/YY"}</span>
+                  </div>
+                </div>
+
+                <label htmlFor="card-number" className="sr-only">Card Number</label>
                 <input
+                  id="card-number"
                   type="text"
                   name="number"
                   placeholder="Card Number"
                   value={cardData.number}
                   onChange={handleCardChange}
                   maxLength={19}
+                  autoComplete="cc-number"
                 />
+
+                <label htmlFor="card-name" className="sr-only">Cardholder Name</label>
                 <input
+                  id="card-name"
                   type="text"
                   name="name"
                   placeholder="Cardholder Name"
                   value={cardData.name}
                   onChange={handleCardChange}
+                  autoComplete="cc-name"
                 />
+
                 <div className="card-row">
+                  <label htmlFor="card-expiry" className="sr-only">Expiry Date</label>
                   <input
+                    id="card-expiry"
                     type="text"
                     name="expiry"
                     placeholder="MM/YY"
                     value={cardData.expiry}
                     onChange={handleCardChange}
                     maxLength={5}
+                    autoComplete="cc-exp"
                   />
+
+                  <label htmlFor="card-cvc" className="sr-only">CVC</label>
                   <input
+                    id="card-cvc"
                     type="text"
                     name="cvc"
                     placeholder="CVC"
                     value={cardData.cvc}
                     onChange={handleCardChange}
                     maxLength={4}
+                    autoComplete="cc-csc"
                   />
                 </div>
               </div>
             )}
 
             {paymentMethod === "paypal" && (
-              <input
-                type="email"
-                placeholder="PayPal Email"
-                value={paypalEmail}
-                onChange={(e) => setPaypalEmail(e.target.value)}
-              />
+              <div className="paypal-form">
+                <label htmlFor="paypal-email" className="sr-only">PayPal Email</label>
+                <input
+                  id="paypal-email"
+                  type="email"
+                  placeholder="PayPal Email"
+                  value={paypalEmail}
+                  onChange={(e) => setPaypalEmail(e.target.value)}
+                  autoComplete="email"
+                />
+              </div>
             )}
 
             {paymentMethod === "google-pay" && (
-              <input
-                type="email"
-                placeholder="Google Pay Email"
-                value={googlePayEmail}
-                onChange={(e) => setGooglePayEmail(e.target.value)}
-              />
+              <div className="google-pay-form">
+                <label htmlFor="googlepay-email" className="sr-only">Google Pay Email</label>
+                <input
+                  id="googlepay-email"
+                  type="email"
+                  placeholder="Google Pay Email"
+                  value={googlePayEmail}
+                  onChange={(e) => setGooglePayEmail(e.target.value)}
+                  autoComplete="email"
+                />
+              </div>
             )}
 
             <button
