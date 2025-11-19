@@ -182,7 +182,7 @@ const Orders = () => {
                     <div className="order-item" key={item._id || index}>
                       <img
                         src={
-                          item.imageURL ||
+                          item.imageUrl ||
                           item.imageUrl ||
                           "https://via.placeholder.com/80"
                         }
