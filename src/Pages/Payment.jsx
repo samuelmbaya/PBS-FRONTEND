@@ -123,100 +123,100 @@ const Payment = () => {
     return expiryDate >= now;
   };
 
-  // ✅ FIXED: Handle order placement with backend integration
+  // Handle order placement with backend integration
   const handlePlaceOrder = async () => {
-  if (cart.length === 0) {
-    alert("Your cart is empty!");
-    return;
-  }
-
-  // Validate based on payment method
-  if (paymentMethod === "credit-card") {
-    const { number, name, expiry, cvc } = cardData;
-
-    if (!number || !name || !expiry || !cvc) {
-      alert("Please fill all card details!");
+    if (cart.length === 0) {
+      alert("Your cart is empty!");
       return;
     }
 
-    if (!isExpiryValid(expiry)) {
-      alert("Invalid or expired expiration date. Use MM/YY format.");
-      return;
+    // Validate based on payment method
+    if (paymentMethod === "credit-card") {
+      const { number, name, expiry, cvc } = cardData;
+
+      if (!number || !name || !expiry || !cvc) {
+        alert("Please fill all card details!");
+        return;
+      }
+
+      if (!isExpiryValid(expiry)) {
+        alert("Invalid or expired expiration date. Use MM/YY format.");
+        return;
+      }
+
+      if (!/^\d{3,4}$/.test(cvc)) {
+        alert("Invalid CVC");
+        return;
+      }
+
+      if (!isValidCard(number)) {
+        alert("Invalid card number");
+        return;
+      }
+    } else if (paymentMethod === "paypal") {
+      if (!paypalEmail) {
+        alert("Enter PayPal email!");
+        return;
+      }
+      if (!isValidEmail(paypalEmail)) {
+        alert("Enter a valid PayPal email!");
+        return;
+      }
+    } else if (paymentMethod === "google-pay") {
+      if (!googlePayEmail) {
+        alert("Enter Google Pay email!");
+        return;
+      }
+      if (!isValidEmail(googlePayEmail)) {
+        alert("Enter a valid Google Pay email!");
+        return;
+      }
     }
 
-    if (!/^\d{3,4}$/.test(cvc)) {
-      alert("Invalid CVC");
-      return;
-    }
+    setLoading(true);
 
-    if (!isValidCard(number)) {
-      alert("Invalid card number");
-      return;
-    }
-  } else if (paymentMethod === "paypal") {
-    if (!paypalEmail) {
-      alert("Enter PayPal email!");
-      return;
-    }
-    if (!isValidEmail(paypalEmail)) {
-      alert("Enter a valid PayPal email!");
-      return;
-    }
-  } else if (paymentMethod === "google-pay") {
-    if (!googlePayEmail) {
-      alert("Enter Google Pay email!");
-      return;
-    }
-    if (!isValidEmail(googlePayEmail)) {
-      alert("Enter a valid Google Pay email!");
-      return;
-    }
-  }
+    try {
+      const deliveryData = JSON.parse(localStorage.getItem("deliveryData") || "{}");
 
-  setLoading(true);
+      const orderItems = cart.map(item => ({
+        _id: item._id,
+        productId: item._id,
+        name: item.name,
+        price: item.price,
+        quantity: item.quantity || 1,
+        imageUrl:
+          item.imageUrl ||
+          item.imageURL ||
+          item.image ||
+          "https://via.placeholder.com/80",
+      }));
 
-  try {
-    const deliveryData = JSON.parse(localStorage.getItem("deliveryData") || "{}");
+      const orderData = {
+        userId: currentUser.id || currentUser._id,
+        items: orderItems,
+        totalAmount: totalPrice,
+        status: "pending",
+        deliveryData,
+        paymentMethod,
+      };
 
-    const orderItems = cart.map(item => ({
-      _id: item._id,
-      productId: item._id,
-      name: item.name,
-      price: item.price,
-      quantity: item.quantity || 1,
-      imageUrl:
-        item.imageUrl ||
-        item.imageURL ||
-        item.image ||
-        "https://via.placeholder.com/80",
-    }));
+      // Send order to backend
+      const response = await fetch(`${apiUrl}/orders`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(orderData),
+      });
 
-    const orderData = {
-      userId: currentUser.id || currentUser._id,
-      items: orderItems,
-      totalAmount: totalPrice,
-      status: "pending",
-      deliveryData,
-      paymentMethod,
-    };
+      if (!response.ok) {
+        throw new Error(`Failed to create order: ${response.statusText}`);
+      }
 
-    // Send order to backend
-    const response = await fetch(`${apiUrl}/orders`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(orderData),
-    });
+      const result = await response.json();
+      console.log("Order created successfully:", result);
 
-    if (!response.ok) {
-      throw new Error(`Failed to create order: ${response.statusText}`);
-    }
-
-    const result = await response.json();
-    console.log("Order created successfully:", result);
-
-    if (result.data) {
+      // Save order to localStorage
       const savedOrder = {
         id: result.data._id,
         date: new Date(result.data.createdAt).toLocaleDateString(),
@@ -246,14 +246,16 @@ const Payment = () => {
 
       setLoading(false);
       alert("Payment successful! Order placed.");
-      navigate("/Orders");
+      
+      // Navigate to orders page (try lowercase first, adjust if your route is different)
+      navigate("/orders");
+      
+    } catch (error) {
+      console.error("Error creating order:", error);
+      setLoading(false);
+      alert("Failed to place order. Please try again.");
     }
-  } catch (error) {
-    console.error("Error creating order:", error);
-    setLoading(false);
-    alert("Failed to place order. Please try again.");
-  }
-};
+  };
 
   return (
     <div className="payment-fullscreen">
