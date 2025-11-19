@@ -189,7 +189,10 @@ const Orders = () => {
                     <div className="order-item" key={item._id || index}>
                       <img
                         src={
-                          item.imageUrl ||
+                          item.imageUrl || 
+                          item.imgUrl || 
+                          item.image || 
+                          item.img ||
                           "https://via.placeholder.com/80"
                         }
                         alt={item.name || "Product"}
