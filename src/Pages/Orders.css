@@ -107,7 +107,7 @@
 }
 
 .continue-shopping-btn {
-  background: crimson !important;
+  background: #e63946 !important;
   color: #fff !important;
   padding: 0.5rem 1rem;
   border-radius: 6px;
@@ -117,6 +117,20 @@
 }
 
 .continue-shopping-btn:hover {
+  background: #e63946 !important;
+}
+
+.start-shopping-btn{
+   background: #e63946 !important;
+  color: #fff !important;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  border: none;
+  cursor: pointer; 
+}
+
+.start-shopping-btn:hover {
   background: #e63946 !important;
 }
 
