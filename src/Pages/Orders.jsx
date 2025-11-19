@@ -10,7 +10,6 @@ const Orders = () => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  // ✅ Replace with your actual API endpoint
   const apiUrl = "http://44.198.25.29:3000";
 
   useEffect(() => {
@@ -34,7 +33,7 @@ const Orders = () => {
           setDarkMode(JSON.parse(userDarkMode));
         }
 
-        // Fetch orders from backend
+        // Fetch orders from backend for this specific user
         await fetchOrdersFromBackend(parsedUser.id || parsedUser._id);
       } catch (err) {
         console.error("Error loading user data:", err);
@@ -81,6 +80,14 @@ const Orders = () => {
           deliveryData: order.deliveryData || {},
         }));
         setOrders(transformedOrders);
+        
+        // Sync to localStorage for offline access
+        if (currentUser) {
+          localStorage.setItem(
+            `orders_${currentUser.email}`,
+            JSON.stringify(transformedOrders)
+          );
+        }
       } else {
         setOrders([]);
       }
@@ -182,7 +189,6 @@ const Orders = () => {
                     <div className="order-item" key={item._id || index}>
                       <img
                         src={
-                          item.imageUrl ||
                           item.imageUrl ||
                           "https://via.placeholder.com/80"
                         }
