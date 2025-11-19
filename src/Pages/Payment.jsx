@@ -125,159 +125,135 @@ const Payment = () => {
 
   // ✅ FIXED: Handle order placement with backend integration
   const handlePlaceOrder = async () => {
-    if (cart.length === 0) {
-      alert("Your cart is empty!");
+  if (cart.length === 0) {
+    alert("Your cart is empty!");
+    return;
+  }
+
+  // Validate based on payment method
+  if (paymentMethod === "credit-card") {
+    const { number, name, expiry, cvc } = cardData;
+
+    if (!number || !name || !expiry || !cvc) {
+      alert("Please fill all card details!");
       return;
     }
 
-    // Validate based on payment method
-    if (paymentMethod === "credit-card") {
-      const { number, name, expiry, cvc } = cardData;
-
-      if (!number || !name || !expiry || !cvc) {
-        alert("Please fill all card details!");
-        return;
-      }
-
-      if (!isExpiryValid(expiry)) {
-        alert("Invalid or expired expiration date. Use MM/YY format.");
-        return;
-      }
-
-      if (!/^\d{3,4}$/.test(cvc)) {
-        alert("Invalid CVC");
-        return;
-      }
-
-      if (!isValidCard(number)) {
-        alert("Invalid card number");
-        return;
-      }
-    } else if (paymentMethod === "paypal") {
-      if (!paypalEmail) {
-        alert("Enter PayPal email!");
-        return;
-      }
-      if (!isValidEmail(paypalEmail)) {
-        alert("Enter a valid PayPal email!");
-        return;
-      }
-    } else if (paymentMethod === "google-pay") {
-      if (!googlePayEmail) {
-        alert("Enter Google Pay email!");
-        return;
-      }
-      if (!isValidEmail(googlePayEmail)) {
-        alert("Enter a valid Google Pay email!");
-        return;
-      }
+    if (!isExpiryValid(expiry)) {
+      alert("Invalid or expired expiration date. Use MM/YY format.");
+      return;
     }
 
-    setLoading(true);
+    if (!/^\d{3,4}$/.test(cvc)) {
+      alert("Invalid CVC");
+      return;
+    }
 
-    try {
-      // Get delivery data from localStorage (saved in Delivery.jsx)
-      const deliveryData = JSON.parse(localStorage.getItem('deliveryData') || '{}');
-      
-      // ✅ Prepare order items with explicit imageUrl field
-      const orderItems = cart.map(item => ({
-        _id: item._id,
-        productId: item._id,
-        name: item.name,
-        price: item.price,
-        quantity: item.quantity || 1,
-        imageUrl: item.imageUrl || item.imageURL || item.image || "https://via.placeholder.com/80" // ✅ Ensure image is included
-      }));
+    if (!isValidCard(number)) {
+      alert("Invalid card number");
+      return;
+    }
+  } else if (paymentMethod === "paypal") {
+    if (!paypalEmail) {
+      alert("Enter PayPal email!");
+      return;
+    }
+    if (!isValidEmail(paypalEmail)) {
+      alert("Enter a valid PayPal email!");
+      return;
+    }
+  } else if (paymentMethod === "google-pay") {
+    if (!googlePayEmail) {
+      alert("Enter Google Pay email!");
+      return;
+    }
+    if (!isValidEmail(googlePayEmail)) {
+      alert("Enter a valid Google Pay email!");
+      return;
+    }
+  }
 
-      const orderData = {
-        userId: currentUser.id || currentUser._id,
-        items: orderItems,
-        totalAmount: totalPrice,
-        status: "pending",
-        deliveryData: deliveryData,
-        paymentMethod: paymentMethod
-      };
+  setLoading(true);
 
-      // ✅ Send order to backend
-      const response = await fetch(`${apiUrl}/orders`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(orderData),
-      });
+  try {
+    const deliveryData = JSON.parse(localStorage.getItem("deliveryData") || "{}");
 
-      if (!response.ok) {
-        throw new Error(`Failed to create order: ${response.statusText}`);
-      }
+    const orderItems = cart.map(item => ({
+      _id: item._id,
+      productId: item._id,
+      name: item.name,
+      price: item.price,
+      quantity: item.quantity || 1,
+      imageUrl:
+        item.imageUrl ||
+        item.imageURL ||
+        item.image ||
+        "https://via.placeholder.com/80",
+    }));
 
-      const result = await response.json();
-      console.log("✅ Order created successfully:", result);
+    const orderData = {
+      userId: currentUser.id || currentUser._id,
+      items: orderItems,
+      totalAmount: totalPrice,
+      status: "pending",
+      deliveryData,
+      paymentMethod,
+    };
 
-      // ✅ Save order to localStorage with backend _id
-      if (result.data) {
-        const savedOrder = {
-          id: result.data._id, // Use backend _id
-          date: new Date(result.data.createdAt).toLocaleDateString(),
-          status: result.data.status,
-          items: result.data.items, // This includes imageUrl
-          total: result.data.totalAmount,
-          paymentMethod: result.data.paymentMethod,
-          deliveryData: result.data.deliveryData
-        };
+    // Send order to backend
+    const response = await fetch(`${apiUrl}/orders`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(orderData),
+    });
 
-        // Add to existing orders
-        let userOrders = JSON.parse(
-          localStorage.getItem(`orders_${currentUser.email}`) || "[]"
-        );
-        userOrders.push(savedOrder);
-        localStorage.setItem(
-          `orders_${currentUser.email}`,
-          JSON.stringify(userOrders)
-        );
+    if (!response.ok) {
+      throw new Error(`Failed to create order: ${response.statusText}`);
+    }
 
-        // Clear the cart after successful order
-        localStorage.setItem(`cart_${currentUser.email}`, JSON.stringify([]));
-        setCart([]);
+    const result = await response.json();
+    console.log("Order created successfully:", result);
 
-        setLoading(false);
-        alert("Payment successful! Order placed.");
-        navigate("/Orders");
-      }
-
-    } catch (error) {
-      console.error("❌ Error creating order:", error);
-      
-      // ⚠️ Fallback: Save to localStorage only if backend fails
-      const fallbackOrder = {
-        id: "ORD-" + Date.now(),
-        date: new Date().toLocaleDateString(),
-        status: "Processing",
-        items: cart.map(item => ({
-          ...item,
-          imageUrl: item.imageUrl || item.imageURL || "https://via.placeholder.com/80"
-        })),
-        total: totalPrice,
-        paymentMethod,
+    if (result.data) {
+      const savedOrder = {
+        id: result.data._id,
+        date: new Date(result.data.createdAt).toLocaleDateString(),
+        status: result.data.status,
+        items: result.data.items,
+        total: result.data.totalAmount,
+        paymentMethod: result.data.paymentMethod,
+        deliveryData: result.data.deliveryData,
       };
 
       let userOrders = JSON.parse(
         localStorage.getItem(`orders_${currentUser.email}`) || "[]"
       );
-      userOrders.push(fallbackOrder);
+      userOrders.push(savedOrder);
+
       localStorage.setItem(
         `orders_${currentUser.email}`,
         JSON.stringify(userOrders)
       );
 
-      localStorage.setItem(`cart_${currentUser.email}`, JSON.stringify([]));
+      // Clear cart
+      localStorage.setItem(
+        `cart_${currentUser.email}`,
+        JSON.stringify([])
+      );
       setCart([]);
 
       setLoading(false);
-      alert("Order saved locally. Backend unavailable. Order placed successfully!");
+      alert("Payment successful! Order placed.");
       navigate("/Orders");
     }
-  };
+  } catch (error) {
+    console.error("Error creating order:", error);
+    setLoading(false);
+    alert("Failed to place order. Please try again.");
+  }
+};
 
   return (
     <div className="payment-fullscreen">
