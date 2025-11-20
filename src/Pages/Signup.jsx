@@ -5,6 +5,9 @@ const Signup = () => {
   // ✅ Use Vite environment variable
   const API_BASE_URL = import.meta.env.VITE_API_URL;
 
+  console.log("API:", import.meta.env.VITE_API_URL);
+
+
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
