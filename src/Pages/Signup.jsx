@@ -85,7 +85,7 @@ const Signup = () => {
       if (res.ok) {
         setMessage("Registration successful! Redirecting to Home Page...");
         setRegisterData({ name: "", email: "", password: "", confirmPassword: "" });
-        setTimeout(() => (window.location.href = "/Home"), 2000);
+        setTimeout(() => (window.location.href = "/login"), 2000);
       } else {
         setMessage(data.error || "Registration failed");
       }
