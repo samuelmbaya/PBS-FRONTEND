@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../Components/Navbar";
+import Footer from "../Components/Footer";
 import "./Home.css";
 
 const Home = () => {
@@ -24,12 +25,8 @@ const Home = () => {
         </div>
       </section>
 
-      {/* You said NO PRODUCTS on Home, so removed the featured products section */}
-
       {/* Footer */}
-      <footer className="footer">
-        <p>© {new Date().getFullYear()} Powered By Samuel. All rights reserved.</p>
-      </footer>
+      <Footer />
     </div>
   );
 };
