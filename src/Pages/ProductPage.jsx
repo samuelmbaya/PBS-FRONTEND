@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import "./ProductPage.css";
 import { useNavigate } from "react-router-dom";
+import Navbar from "../Components/Navbar";
 import Footer from "../Components/Footer";
 
 // Custom hook for debouncing a value
@@ -27,11 +28,9 @@ const ProductPage = () => {
 
   const navigate = useNavigate();
 
-  // ✅ Use Vite environment variable
   const API_BASE_URL =
     import.meta.env.VITE_API_URL || "http://44.198.25.29:3000";
 
-  // Debounced query to avoid filtering on every keystroke
   const debouncedQuery = useDebounce(query, 300);
 
   // Check authentication and load user data
@@ -47,7 +46,7 @@ const ProductPage = () => {
           setIsAuthenticated(true);
           loadUserSpecificData(parsedUser.email);
         } else {
-          navigate("/login"); // Redirect if not authenticated
+          navigate("/login");
         }
       } catch (err) {
         console.error("Error checking authentication:", err);
@@ -83,13 +82,11 @@ const ProductPage = () => {
         }
 
         const text = await res.text();
-
-        // Try parsing JSON safely
         let data;
         try {
           data = JSON.parse(text);
         } catch (err) {
-          throw new Error("Invalid JSON returned from server. Are you sure the backend is returning JSON?");
+          throw new Error("Invalid JSON returned from server.");
         }
 
         setProducts(data.data || []);
@@ -104,7 +101,6 @@ const ProductPage = () => {
     fetchProducts();
   }, [API_BASE_URL]);
 
-  // Save cart & wishlist to localStorage when they change
   useEffect(() => {
     if (currentUser?.email) {
       localStorage.setItem(`cart_${currentUser.email}`, JSON.stringify(cart));
@@ -112,7 +108,6 @@ const ProductPage = () => {
     }
   }, [cart, wishlist, currentUser]);
 
-  // Toggle wishlist handler
   const toggleWishlist = useCallback(
     (product) => {
       if (!isAuthenticated) {
@@ -128,7 +123,6 @@ const ProductPage = () => {
     [isAuthenticated]
   );
 
-  // Add to cart handler
   const addToCart = useCallback(
     (product) => {
       if (!isAuthenticated) {
@@ -152,7 +146,6 @@ const ProductPage = () => {
   );
 
   const isInWishlist = (productId) => wishlist.some((item) => item._id === productId);
-
   const getCartItemCount = () => cart.reduce((total, item) => total + (item.quantity || 1), 0);
 
   const handleLogout = () => {
@@ -166,110 +159,93 @@ const ProductPage = () => {
   );
 
   return (
-    <div className="homepage">
-      <header className="navbar">
-        <h1
-          className="logo"
-          onClick={() => navigate("/Home")}
-          role="button"
-          tabIndex={0}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") navigate("/Home");
-          }}
-          aria-label="Navigate to Home"
-        >
-          PWS Products
-        </h1>
-        <div className="searchbar">
-          <input
-            type="text"
-            placeholder="Search products..."
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            aria-label="Search products"
-          />
-        </div>
-        <nav className="nav-buttons">
-          <button onClick={() => navigate("/Home")}>Home</button>
-          <button onClick={() => navigate("/Wishlist")}>Wishlist ({wishlist.length})</button>
-          <button onClick={() => navigate("/Cart")}>Cart ({getCartItemCount()})</button>
-          <button onClick={() => navigate("/profile")}>Profile</button>
-          <button onClick={() => navigate("/orders")}>Orders</button>
-          {currentUser && (
-            <div className="user-info" aria-live="polite">
-              <span>Signed in as: {currentUser.name || currentUser.email}!</span>
-              <button onClick={handleLogout} className="logout-btn">
-                Logout
+    <div className="product-page">
+      <Navbar />
+
+      {/* Header Section */}
+      <div className="product-header">
+        <div className="header-content">
+          <h1 className="page-title">All Products</h1>
+          <div className="header-actions">
+            <div className="search-container">
+              <input
+                type="text"
+                placeholder="Search..."
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                className="search-input"
+              />
+            </div>
+            <div className="user-actions">
+              <button onClick={() => navigate("/Wishlist")} className="icon-btn">
+                ♡ <span>{wishlist.length}</span>
+              </button>
+              <button onClick={() => navigate("/Cart")} className="icon-btn">
+                🛒 <span>{getCartItemCount()}</span>
               </button>
             </div>
-          )}
-        </nav>
-      </header>
+          </div>
+        </div>
+      </div>
 
-      <main className="products-container">
-        {loading && <p>Loading products...</p>}
+      {/* Products Grid */}
+      <main className="products-grid">
+        {loading && <div className="loading-message">Loading products...</div>}
         {error && (
-          <div className="error">
-            <p>Error: {error}</p>
-            <p>Please check if the server at {API_BASE_URL} is running.</p>
+          <div className="error-message">
+            <p>{error}</p>
           </div>
         )}
         {!loading && !error && (
           filteredProducts.length > 0 ? (
             filteredProducts.map((product) => {
               const cartItem = cart.find((item) => item._id === product._id);
-              const imageSrc = product.imageUrl || product.imageURL || "https://via.placeholder.com/150";
+              const imageSrc = product.imageUrl || product.imageURL || "https://via.placeholder.com/400";
               const inWishlist = isInWishlist(product._id);
 
               return (
-                <div className="product-card" key={product._id}>
-                  <img
-                    src={imageSrc}
-                    alt={product.name || "Unnamed Product"}
-                    className="product-img"
-                  />
-                  <h3>{product.name || "Unnamed Product"}</h3>
-                  <p className="price">
-                    R {typeof product.price === "number" ? product.price.toLocaleString() : "0.00"}
-                  </p>
-                  <div className="actions">
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        addToCart(product);
-                      }}
-                      className="add-to-cart-btn"
-                      aria-label={`Add ${product.name} to cart`}
-                    >
-                      Add to Cart
-                    </button>
+                <div className="product-item" key={product._id}>
+                  <div className="product-image-container">
+                    <img
+                      src={imageSrc}
+                      alt={product.name || "Product"}
+                      className="product-image"
+                    />
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
                         toggleWishlist(product);
                       }}
-                      className={`wishlist-btn ${inWishlist ? "in-wishlist" : ""}`}
-                      aria-pressed={inWishlist}
-                      aria-label={inWishlist ? `Remove ${product.name} from wishlist` : `Add ${product.name} to wishlist`}
+                      className={`wishlist-icon ${inWishlist ? "active" : ""}`}
+                      aria-label="Add to wishlist"
                     >
-                      {inWishlist ? "♥ Remove" : "♡ Wishlist"}
+                      {inWishlist ? "♥" : "♡"}
                     </button>
                   </div>
-                  {cartItem && (
-                    <div className="in-cart-indicator" aria-live="polite" role="status">
-                      In Cart (Qty: {cartItem.quantity || 1})
-                    </div>
-                  )}
+                  <div className="product-info">
+                    <h3 className="product-name">{product.name || "Unnamed Product"}</h3>
+                    <p className="product-price">
+                      R {typeof product.price === "number" ? product.price.toLocaleString() : "0.00"}
+                    </p>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        addToCart(product);
+                      }}
+                      className="add-cart-button"
+                    >
+                      {cartItem ? `In Cart (${cartItem.quantity})` : "Add to Cart"}
+                    </button>
+                  </div>
                 </div>
               );
             })
           ) : (
-            <p>No products found.</p>
+            <div className="no-products">No products found.</div>
           )
         )}
       </main>
 
-      {/* Footer Component */}
       <Footer />
     </div>
   );
