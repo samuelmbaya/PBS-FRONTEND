@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import "./ProductPage.css";
 import { useNavigate } from "react-router-dom";
-import Navbar from "../Components/Navbar";
 import Footer from "../Components/Footer";
 
 // Custom hook for debouncing a value
@@ -169,7 +168,6 @@ const ProductPage = () => {
   return (
     <div className="product-page-container">
       {/* Navbar Component */}
-      <Navbar />
 
       {/* Custom Product Page Header with Search */}
       <header className="product-page-header">
