@@ -31,7 +31,7 @@ const Home = () => {
       </section>
 
       {/* Product Showcase Sections */}
-      <section className="product-section dark">
+      <section className="product-section dark solar-bg">
         <div className="product-content">
           <h3 className="product-tagline">Power in perspective</h3>
           <h2 className="product-name">Solar Solutions</h2>
