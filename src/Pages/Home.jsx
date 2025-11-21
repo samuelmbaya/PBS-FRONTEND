@@ -7,8 +7,6 @@ import "./Home.css";
 const Home = () => {
   return (
     <div className="home-container">
-      {/* Navbar */}
-      <Navbar />
 
       {/* Hero Section */}
       <section className="hero">
