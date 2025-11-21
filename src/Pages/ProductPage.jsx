@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback } from "react";
 import "./ProductPage.css";
 import { useNavigate } from "react-router-dom";
+import Navbar from "../Components/Navbar";
+import Footer from "../Components/Footer";
 
 // Custom hook for debouncing a value
 function useDebounce(value, delay) {
@@ -29,7 +31,6 @@ const ProductPage = () => {
   // ✅ Use Vite environment variable
   const API_BASE_URL =
     import.meta.env.VITE_API_URL || "http://44.198.25.29:3000";
-
 
   // Debounced query to avoid filtering on every keystroke
   const debouncedQuery = useDebounce(query, 300);
@@ -166,20 +167,12 @@ const ProductPage = () => {
   );
 
   return (
-    <div className="homepage">
-      <header className="navbar">
-        <h1
-          className="logo"
-          onClick={() => navigate("/Home")}
-          role="button"
-          tabIndex={0}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") navigate("/Home");
-          }}
-          aria-label="Navigate to Home"
-        >
-          PWS Products
-        </h1>
+    <div className="product-page-container">
+      {/* Navbar Component */}
+      <Navbar />
+
+      {/* Custom Product Page Header with Search */}
+      <header className="product-page-header">
         <div className="searchbar">
           <input
             type="text"
@@ -268,6 +261,9 @@ const ProductPage = () => {
           )
         )}
       </main>
+
+      {/* Footer Component */}
+      <Footer />
     </div>
   );
 };
