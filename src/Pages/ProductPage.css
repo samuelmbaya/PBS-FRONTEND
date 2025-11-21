@@ -9,24 +9,35 @@ body {
   color: #f9f9f9;
 }
 
-.product-page-container {
+.homepage {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  padding-top: 60px; /* Space for fixed navbar */
 }
 
-/* Product Page Header (below navbar) */
-.product-page-header {
+.navbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
   background: #111;
   color: #fff;
   padding: 1rem 2rem;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-  flex-wrap: wrap;
-  gap: 1rem;
+  overflow: visible !important;
+  z-index: 1000; 
+}
+
+.logo {
+  font-size: 1.6rem;
+  font-weight: bold;
+  cursor: pointer;
+  opacity: 1 !important;
+  visibility: visible !important;
 }
 
 .searchbar {
@@ -35,8 +46,8 @@ body {
   background: #222;
   padding: 0.4rem 0.8rem;
   border-radius: 8px;
-  flex: 1;
-  max-width: 400px;
+  overflow: visible;
+  z-index: 200;
 }
 
 .searchbar input {
@@ -46,7 +57,6 @@ body {
   color: #fff;
   margin-left: 0.5rem;
   font-size: 0.95rem;
-  width: 100%;
 }
 
 .nav-buttons {
@@ -64,7 +74,6 @@ body {
   font-size: 0.95rem;
   padding: 0.5rem 0.8rem;
   border-radius: 6px;
-  transition: all 0.3s ease;
 }
 
 .nav-buttons button:hover {
@@ -84,7 +93,6 @@ body {
   padding: 0.5rem 1rem;
   border-radius: 6px;
   font-size: 0.85rem;
-  transition: all 0.3s ease;
 }
 
 .logout-btn:hover {
@@ -97,6 +105,7 @@ body {
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 1.8rem;
   padding: 2rem;
+  margin-top: 80px; /* Space for fixed navbar */
   flex: 1;
 }
 
@@ -286,22 +295,16 @@ body {
 
 /* Mobile Responsive */
 @media screen and (max-width: 768px) {
-  .product-page-header {
+  .navbar {
     flex-direction: column;
-    align-items: stretch;
-  }
-
-  .searchbar {
-    max-width: 100%;
-  }
-
-  .nav-buttons {
-    justify-content: center;
+    gap: 1rem;
+    padding: 1rem;
   }
 
   .products-container {
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 1.2rem;
     padding: 1rem;
+    margin-top: 140px; /* More space for stacked navbar on mobile */
   }
 }

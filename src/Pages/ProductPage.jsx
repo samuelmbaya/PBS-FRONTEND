@@ -166,11 +166,20 @@ const ProductPage = () => {
   );
 
   return (
-    <div className="product-page-container">
-      {/* Navbar Component */}
-
-      {/* Custom Product Page Header with Search */}
-      <header className="product-page-header">
+    <div className="homepage">
+      <header className="navbar">
+        <h1
+          className="logo"
+          onClick={() => navigate("/Home")}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") navigate("/Home");
+          }}
+          aria-label="Navigate to Home"
+        >
+          PWS Products
+        </h1>
         <div className="searchbar">
           <input
             type="text"

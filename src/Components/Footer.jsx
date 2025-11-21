@@ -5,7 +5,7 @@ const Footer = () => {
   return (
     <footer className="footer">
       <div className="footer-content">
-        <div className="footer-logo">BRAND</div>
+        <div className="footer-logo">PBS</div>
         
         <div className="footer-social-icons">
           <a href="https://www.instagram.com/_samuel4422/" aria-label="Instagram">
@@ -31,7 +31,7 @@ const Footer = () => {
         </div>
 
         <div className="footer-copyright">
-          <p>© 2024 Brand Name | All Rights Reserved</p>
+          <p>© 2024 POWERED BY SAMUEL | All Rights Reserved</p>
         </div>
       </div>
     </footer>
