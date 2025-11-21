@@ -80,9 +80,9 @@ const Signup = () => {
       const data = await res.json();
 
       if (res.ok) {
-        setMessage("Registration successful! Redirecting to Home Page...");
+        setMessage("Registration successful! Redirecting to Login Page...");
         setRegisterData({ name: "", email: "", password: "", confirmPassword: "" });
-        setTimeout(() => (window.location.href = "/Home"), 2000);
+        setTimeout(() => (window.location.href = "/login"), 2000);
       } else {
         setMessage(data.error || "Registration failed");
       }
