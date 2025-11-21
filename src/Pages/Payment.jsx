@@ -258,18 +258,6 @@ const Payment = () => {
           <div className="payment-logo">PBS ELECTRICAL</div>
         </div>
 
-        {/* Breadcrumb */}
-        <div className="payment-breadcrumb">
-          <span className="breadcrumb-item" onClick={() => navigate("/Cart")}>
-            Cart
-          </span>
-          <span className="breadcrumb-separator">›</span>
-          <span className="breadcrumb-item">Information</span>
-          <span className="breadcrumb-separator">›</span>
-          <span className="breadcrumb-item">Shipping</span>
-          <span className="breadcrumb-separator">›</span>
-          <span className="breadcrumb-item active">Payment</span>
-        </div>
 
         <div className="payment-container">
           {/* Payment Section (Left) */}
