@@ -7,15 +7,17 @@
 
 body {
   overflow-x: hidden;
+  scroll-behavior: smooth;
 }
 
 .home-container {
   width: 100%;
   font-family: "Arial", sans-serif;
   color: #fff;
+  background: #000;
 }
 
-/* Hero Section */
+/* Hero Section - Nothing.tech Inspired */
 .hero {
   background: url("https://assets.weforum.org/article/image/large_Bgij__dbgp9c4Dz0fgoDeW--h0QsWyEnV8sZvNx83kE.jpg")
   no-repeat center center/cover;
@@ -34,46 +36,250 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.55);
+  background: rgba(0, 0, 0, 0.6);
 }
 
 .hero-content {
   position: relative;
   z-index: 1;
-  max-width: 850px;
-  padding: 20px;
+  max-width: 900px;
+  padding: 40px 20px;
+  animation: fadeInUp 1s ease-out;
 }
 
-.hero h1 {
-  font-size: 36px;
-  font-weight: bold;
-  margin-bottom: 20px;
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-.hero p {
-  font-size: 16px;
-  line-height: 1.6;
+.hero-title {
+  font-size: 72px;
+  font-weight: 300;
+  margin-bottom: 10px;
+  letter-spacing: -2px;
+  line-height: 1.1;
+}
+
+.hero-subtitle {
+  font-size: 24px;
+  font-weight: 600;
   margin-bottom: 30px;
+  letter-spacing: 2px;
+  color: #e63946;
 }
 
-/* Button */
+.hero-description {
+  font-size: 18px;
+  line-height: 1.8;
+  margin-bottom: 40px;
+  font-weight: 300;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.hero-link {
+  text-decoration: none;
+}
+
+/* Scroll Indicator */
+.scroll-indicator {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  color: #fff;
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  z-index: 2;
+  animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateX(-50%) translateY(0);
+  }
+  50% {
+    transform: translateX(-50%) translateY(-10px);
+  }
+}
+
+.scroll-line {
+  width: 1px;
+  height: 40px;
+  background: #fff;
+  opacity: 0.5;
+}
+
+/* Buttons */
 .shop-btn {
   background: #e63946;
-  color: #fffdfd;
-  padding: 12px 28px;
+  color: #fff;
+  padding: 16px 48px;
   border: none;
   font-size: 14px;
-  font-weight: bold;
+  font-weight: 600;
   cursor: pointer;
-  border-radius: 4px;
+  border-radius: 30px;
   transition: all 0.3s ease;
+  letter-spacing: 1px;
+  text-transform: uppercase;
 }
 
 .shop-btn:hover {
-  background: #c82333;
-  color: #fff;
+  background: #fff;
+  color: #000;
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(230, 57, 70, 0.3);
+  box-shadow: 0 8px 24px rgba(230, 57, 70, 0.3);
 }
 
-/* Footer will appear below the hero section when scrolling */
+.shop-btn-alt {
+  background: transparent;
+  color: #fff;
+  padding: 14px 40px;
+  border: 2px solid #fff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 30px;
+  transition: all 0.3s ease;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.shop-btn-alt:hover {
+  background: #fff;
+  color: #000;
+}
+
+/* Product Showcase Sections */
+.product-section {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 40px;
+  position: relative;
+  background-size: cover;
+  background-position: center;
+  transition: all 0.5s ease;
+}
+
+.product-section.dark {
+  background: #000;
+  color: #fff;
+}
+
+.product-section.light {
+  background: #f5f5f5;
+  color: #000;
+}
+
+.product-content {
+  text-align: center;
+  max-width: 800px;
+  animation: fadeIn 1s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.product-tagline {
+  font-size: 16px;
+  font-weight: 400;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  opacity: 0.7;
+}
+
+.product-name {
+  font-size: 64px;
+  font-weight: 300;
+  letter-spacing: -2px;
+  margin-bottom: 40px;
+  line-height: 1.1;
+}
+
+.product-link {
+  text-decoration: none;
+}
+
+.product-section.light .shop-btn-alt {
+  border-color: #000;
+  color: #000;
+}
+
+.product-section.light .shop-btn-alt:hover {
+  background: #000;
+  color: #fff;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+  .hero-title {
+    font-size: 48px;
+  }
+
+  .hero-subtitle {
+    font-size: 18px;
+  }
+
+  .hero-description {
+    font-size: 16px;
+  }
+
+  .product-name {
+    font-size: 42px;
+  }
+
+  .product-section {
+    padding: 60px 20px;
+    min-height: 80vh;
+  }
+
+  .shop-btn {
+    padding: 14px 36px;
+    font-size: 13px;
+  }
+
+  .shop-btn-alt {
+    padding: 12px 32px;
+    font-size: 13px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .hero-title {
+    font-size: 36px;
+  }
+
+  .hero-subtitle {
+    font-size: 16px;
+  }
+
+  .product-name {
+    font-size: 32px;
+  }
+
+  .product-tagline {
+    font-size: 14px;
+  }
+}
