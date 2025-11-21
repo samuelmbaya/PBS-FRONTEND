@@ -3,14 +3,19 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  overflow: hidden;
 } 
 
- .home-container {
-  height: 100%;
+body {
+  overflow-x: hidden;
+}
+
+.home-container {
+  min-height: 100vh;
   width: 100%;
   font-family: "Arial", sans-serif;
   color: #fff;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Hero Section */
@@ -23,7 +28,7 @@
   justify-content: center;
   text-align: center;
   position: relative;
-  overflow: hidden !important;
+  flex: 1;
 }
 
 .hero::after {
@@ -69,16 +74,10 @@
 }
 
 .shop-btn:hover {
-  background: #e63946;
+  background: #c82333;
   color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(230, 57, 70, 0.3);
 }
 
-/* Footer */
-.footer {
-  position: absolute;
-  bottom: 15px;
-  width: 100%;
-  text-align: center;
-  font-size: 12px;
-  color: #ccc;
-}
+/* Remove the old footer styles since we're using the Footer component now */
