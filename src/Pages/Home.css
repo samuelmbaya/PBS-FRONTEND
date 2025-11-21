@@ -193,7 +193,7 @@ body {
 }
 
 .product-section.light {
-  background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.)),
+  background-image: linear-gradient(rgb(255, 255, 255), rgba(0, 0, 0, 0.)),
     url("https://t3.ftcdn.net/jpg/01/67/57/12/360_F_167571200_v7hkI3uJdyP03WIknkQ5CYJzQFvf62Gs.jpg") !important;
   background-size: cover !important;
   background-position: center !important;
