@@ -185,24 +185,21 @@ body {
 }
 
 .product-section.dark {
-  background-image: linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)),
-    url("https://insideclimatenews.org/wp-content/uploads/2019/02/battery-storage-illustration-900_ge-power.jpg") !important;
+  background-image:url("https://insideclimatenews.org/wp-content/uploads/2019/02/battery-storage-illustration-900_ge-power.jpg") !important;
   background-size: cover !important;
   background-position: center !important;
   background-repeat: no-repeat !important;
 }
 
 .product-section.solar-bg {
-  background-image: linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)),
-    url("https://tamesol.com/wp-content/uploads/Tamesol-Blog-Image-1-5.jpg") !important;
+  background-image:url("https://tamesol.com/wp-content/uploads/Tamesol-Blog-Image-1-5.jpg") !important;
   background-size: cover !important;
   background-position: center !important;
   background-repeat: no-repeat !important;
 }
 
 .product-section.light {
-  background-image: linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)),
-    url("https://d382rz2cea0pah.cloudfront.net/wp-content/uploads/2025/06/MNRE-Releases-Draft-Testing-and-Approval-Guidelines-for-Solar-Inverters.jpg") !important;
+  background-image:url("https://d382rz2cea0pah.cloudfront.net/wp-content/uploads/2025/06/MNRE-Releases-Draft-Testing-and-Approval-Guidelines-for-Solar-Inverters.jpg") !important;
   background-size: cover !important;
   background-position: center !important;
   background-repeat: no-repeat !important;
