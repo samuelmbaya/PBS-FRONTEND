@@ -14,7 +14,6 @@ export const UserProvider = ({ children }) => {
       try {
         const storedUser = localStorage.getItem('user');
         const storedIsLoggedIn = localStorage.getItem('isLoggedIn');
-
         if (storedUser && storedIsLoggedIn === 'true') {
           const parsedUser = JSON.parse(storedUser);
           setCurrentUser(parsedUser);
@@ -32,7 +31,6 @@ export const UserProvider = ({ children }) => {
         setIsAuthenticated(false);
       }
     };
-
     checkAuthStatus();
   }, []);
 
@@ -106,14 +104,13 @@ const Profile = () => {
 
   const handleSaveChanges = (e) => {
     e.preventDefault();
-    
+   
     // Validate required fields
     if (!formData.name.trim() || !formData.email.trim()) {
       setMessage('Name and email are required');
       setTimeout(() => setMessage(''), 3000);
       return;
     }
-
     // Update user data
     updateUser(formData);
     setIsEditing(false);
@@ -170,31 +167,25 @@ const Profile = () => {
         <div className="profile-header">
           <div className="profile-logo">POWERED BY SAMUEL</div>
         </div>
-
-        {/* Breadcrumb */}
-        <div className="profile-breadcrumb">
-          <span className="breadcrumb-item" onClick={handleBackToProducts} style={{ cursor: 'pointer' }}>
-            Products
-          </span>
-          <span className="breadcrumb-separator">›</span>
-          <span className="breadcrumb-item active">Profile</span>
+        {/* Hero Section (Inspired by delivery-hero) */}
+        <div className="profile-hero">
+          <div className="profile-hero-content">
+            <h1 className="profile-hero-title">Your Profile</h1>
+            <p className="profile-hero-subtitle">Manage your account details and preferences</p>
+          </div>
         </div>
-
         {/* Message */}
         {message && (
           <div className={`profile-message ${message.includes('success') ? 'success' : 'error'}`}>
             {message}
           </div>
         )}
-
         {/* Profile Container */}
         <div className="profile-container">
           {/* Profile Section */}
           <div className="profile-section">
             <h2 className="section-title">Account Details</h2>
-
             <div className="greeting">Hi, {getDisplayName()}</div>
-
             <form className="profile-form" onSubmit={handleSaveChanges}>
               <div className="form-section">
                 <label htmlFor="name" className="form-label">Full Name*</label>
@@ -208,7 +199,6 @@ const Profile = () => {
                   required
                 />
               </div>
-
               <div className="form-section">
                 <label htmlFor="email" className="form-label">Email Address*</label>
                 <input
@@ -221,7 +211,6 @@ const Profile = () => {
                   required
                 />
               </div>
-
               <div className="form-section">
                 <label htmlFor="phone" className="form-label">Phone Number</label>
                 <input
@@ -234,7 +223,6 @@ const Profile = () => {
                   disabled={!isEditing}
                 />
               </div>
-
               <div className="form-section">
                 <label htmlFor="address" className="form-label">Street Address</label>
                 <input
@@ -247,7 +235,6 @@ const Profile = () => {
                   disabled={!isEditing}
                 />
               </div>
-
               <div className="form-row">
                 <div className="form-section">
                   <label htmlFor="city" className="form-label">City</label>
@@ -261,7 +248,6 @@ const Profile = () => {
                     disabled={!isEditing}
                   />
                 </div>
-
                 <div className="form-section">
                   <label htmlFor="postalCode" className="form-label">Postal Code</label>
                   <input
@@ -275,7 +261,6 @@ const Profile = () => {
                   />
                 </div>
               </div>
-
               {isEditing ? (
                 <div className="button-group">
                   <button type="submit" className="save-changes-btn">
@@ -286,19 +271,37 @@ const Profile = () => {
                   </button>
                 </div>
               ) : (
-                <>
-                  <button type="button" onClick={() => setIsEditing(true)} className="edit-profile-btn">
-                    Edit Profile
-                  </button>
-                  <button type="button" onClick={handleBackToProducts} className="secondary-btn">
-                    Continue Shopping
-                  </button>
-                  <button type="button" onClick={handleLogout} className="logout-btn">
-                    Log Out
-                  </button>
-                </>
+                <button type="button" onClick={() => setIsEditing(true)} className="edit-profile-btn">
+                  Edit Profile
+                </button>
               )}
             </form>
+          </div>
+          {/* Account Actions Sidebar (Now populated) */}
+          <div className="account-actions">
+            <h3>Quick Actions</h3>
+            <div className="action-card">
+              <div className="action-icon">🛒</div>
+              <div className="action-content">
+                <h4>Your Orders</h4>
+                <p>Track, return, or buy things again</p>
+              </div>
+            </div>
+            <div className="action-card">
+              <div className="action-icon">❤️</div>
+              <div className="action-content">
+                <h4>Wishlist</h4>
+                <p>View saved items</p>
+              </div>
+            </div>
+            <div className="action-buttons">
+              <button type="button" onClick={handleBackToProducts} className="secondary-btn">
+                Continue Shopping
+              </button>
+              <button type="button" onClick={handleLogout} className="logout-btn">
+                Log Out
+              </button>
+            </div>
           </div>
         </div>
       </div>
