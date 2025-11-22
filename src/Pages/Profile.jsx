@@ -283,9 +283,14 @@ const Profile = () => {
                   </button>
                 </div>
               ) : (
-                <button type="button" onClick={() => setIsEditing(true)} className="edit-profile-btn">
-                  Edit Profile
-                </button>
+                <div className="non-editing-buttons">
+                  <button type="button" onClick={() => setIsEditing(true)} className="edit-profile-btn">
+                    Edit Profile
+                  </button>
+                  <button type="button" onClick={handleLogout} className="logout-btn">
+                    Log Out
+                  </button>
+                </div>
               )}
             </form>
           </div>
@@ -319,11 +324,6 @@ const Profile = () => {
                 <h4>Products</h4>
                 <p>Continue shopping</p>
               </div>
-            </div>
-            <div className="action-buttons">
-              <button type="button" onClick={handleLogout} className="logout-btn">
-                Log Out
-              </button>
             </div>
           </div>
         </div>
