@@ -223,7 +223,7 @@ const Login = () => {
             <a href="/privacy">Privacy Policy</a>.
           </small>
 
-          <p className="social-text">or login with social platforms</p>
+          <p className="social-text">our social platforms</p>
           <div className="social-icons">
             <a href="https://www.instagram.com/_samuel4422/" target="_blank" rel="noopener noreferrer">
               <i className="bx bxl-instagram"></i>
