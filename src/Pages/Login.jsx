@@ -138,10 +138,10 @@ const Login = () => {
       <div className="login-left">
         <div className="login-image-overlay"></div>
         <div className="video-overlay">
-          <h2>Welcome back to SneakerVerse</h2>
+          <h2>Welcome Back</h2>
           <p>Access your account and explore premium designs.</p>
           <span>
-            <strong>SneakerVerse</strong> — Your gateway to fashion excellence.
+            <strong>Powered By Samuel</strong> — Innovation you can trust.
           </span>
         </div>
       </div>

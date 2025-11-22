@@ -114,10 +114,10 @@ const Signup = () => {
       <div className="signup-left">
         <div className="signup-image-overlay"></div>
         <div className="video-overlay">
-          <h2>Join SneakerVerse Today</h2>
-          <p>Create your account and unlock exclusive access to premium sneaker designs.</p>
+          <h2>Get Started Today</h2>
+          <p>Join thousands making the switch to sustainable energy.</p>
           <span>
-            <strong>SneakerVerse</strong> — Where style meets innovation.
+            <strong>Powered By Samuel</strong> — Affordable. Clean. Reliable.
           </span>
         </div>
       </div>
