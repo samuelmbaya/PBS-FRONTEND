@@ -128,8 +128,8 @@ body {
 }
 
 .category-btn.active {
-  background: #e63946;
-  border-color: #e63946;
+  background: #000;
+  border-color: #000;
   color: #fff;
 }
 
@@ -236,7 +236,7 @@ body {
 .add-cart-btn-modern {
   width: 100%;
   padding: 14px;
-  background: #e63946;
+  background: #000;
   color: #fff;
   border: none;
   border-radius: 8px;
@@ -249,7 +249,7 @@ body {
 }
 
 .add-cart-btn-modern:hover {
-  background: #000;
+  background: #333;
   color: #fff;
   transform: translateY(-2px);
 }
