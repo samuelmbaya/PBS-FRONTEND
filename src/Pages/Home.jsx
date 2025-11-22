@@ -1,10 +1,52 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../Components/Navbar";
 import Footer from "../Components/Footer";
+import emailjs from '@emailjs/browser';
 import "./Home.css";
 
 const Home = () => {
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    message: ''
+  });
+  const [status, setStatus] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+const handleSubmit = (e) => {
+  e.preventDefault();
+  setLoading(true);
+  setStatus('');
+
+  // Replace with your EmailJS credentials
+const templateParams = {
+  from_name: `${formData.firstName} ${formData.lastName}`,
+  from_email: formData.email,
+  message: formData.message,
+  time: new Date().toLocaleString('en-ZA', { timeZone: 'Africa/Johannesburg' }), // SA time
+};
+
+  emailjs.send('service_xtqs246', 'template_7eg8e1i', templateParams, 'aEC3095geTrpzu0k1')
+    .then((response) => {
+      console.log('SUCCESS!', response.status, response.text);
+      setStatus('Message sent successfully!');
+      setFormData({ firstName: '', lastName: '', email: '', message: '' });
+    }, (error) => {
+      console.log('FAILED...', error);
+      setStatus('Failed to send message. Please try again.');
+    })
+    .finally(() => {
+      setLoading(false);
+    });
+};
+
   return (
     <div className="home-container">
       <Navbar />
@@ -95,33 +137,63 @@ const Home = () => {
         </div>
 
         <div className="contact-right">
-          <form className="contactForm">
+          <form className="contactForm" onSubmit={handleSubmit}>
             <h3>Contact Us</h3>
 
             <div className="formRow">
               <div className="formGroup">
                 <label>First name</label>
-                <input type="text" placeholder="Jane" />
+                <input 
+                  type="text" 
+                  name="firstName"
+                  value={formData.firstName}
+                  onChange={handleInputChange}
+                  placeholder="Jane" 
+                  required
+                />
               </div>
               <div className="formGroup">
                 <label>Last name</label>
-                <input type="text" placeholder="Smitherton" />
+                <input 
+                  type="text" 
+                  name="lastName"
+                  value={formData.lastName}
+                  onChange={handleInputChange}
+                  placeholder="Smitherton" 
+                  required
+                />
               </div>
             </div>
 
             <div className="formGroup">
               <label>Email address</label>
-              <input type="email" placeholder="email@janesfakedomain.net" />
+              <input 
+                type="email" 
+                name="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                placeholder="email@janesfakedomain.net" 
+                required
+              />
             </div>
 
             <div className="formGroup">
               <label>Your message</label>
-              <textarea placeholder="Enter your question or message" rows="5"></textarea>
+              <textarea 
+                name="message"
+                value={formData.message}
+                onChange={handleInputChange}
+                placeholder="Enter your question or message" 
+                rows="5"
+                required
+              ></textarea>
             </div>
 
-            <button type="submit" className="submitButton">
-              Submit
+            <button type="submit" className="submitButton" disabled={loading}>
+              {loading ? 'Sending...' : 'Submit'}
             </button>
+
+            {status && <p className={`status-message ${status.includes('success') ? 'success' : 'error'}`}>{status}</p>}
           </form>
         </div>
       </section>
