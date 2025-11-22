@@ -7,10 +7,6 @@ const Login = () => {
   const navigate = useNavigate();
   const apiUrl = import.meta.env.VITE_API_URL || "http://44.198.25.29:3000";
 
-  useEffect(() => {
-    console.log("API URL being used:", apiUrl);
-  }, []);
-
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -71,10 +67,10 @@ const Login = () => {
   const handleLoginInputChange = (e) => {
     const { name, value } = e.target;
     setLoginData((prev) => ({ ...prev, [name]: value }));
+    if (message) setMessage("");
   };
 
   const handleRecaptcha = useCallback((token) => {
-    console.log("reCAPTCHA token received:", token);
     setToken(token);
   }, []);
 
@@ -137,102 +133,103 @@ const Login = () => {
   };
 
   return (
-    <div className="login-page-container">
-      {/* Hero Section */}
-      <div className="login-hero">
-        <div className="login-hero-content">
-          <h1 className="login-hero-title">Welcome Back</h1>
-          <p className="login-hero-subtitle">Sign in to access your account</p>
+    <div className="login-container">
+      {/* Left Side - Video Background */}
+      <div className="login-left">
+        <video
+          className="login-video"
+          autoPlay
+          loop
+          muted
+          playsInline
+        >
+          <source src="https://cdn.coverr.co/videos/coverr-abstract-dark-digital-wave-7279/1080p.mp4" type="video/mp4" />
+        </video>
+        <div className="video-overlay">
+          <h2>Welcome back to SneakerVerse</h2>
+          <p>Access your account and explore premium designs.</p>
+          <span>
+            <strong>SneakerVerse</strong> — Your gateway to fashion excellence.
+          </span>
         </div>
       </div>
 
-      {/* Messages */}
-      {message && (
-        <div className={`message ${message.includes("successful") ? "success" : "error"}`}>
-          {message}
-        </div>
-      )}
-
-      {isAuthenticated && currentUser && showUserGreeting && (
-        <div className="greeting-message">
-          Hi, {currentUser.name || currentUser.email}! Welcome back.
-        </div>
-      )}
-
-      {/* Main Content */}
-      <div className="login-content">
-        <div className="login-form-card">
-          <h2 className="form-section-title">Log In</h2>
-
-          <form onSubmit={handleLogin} className="login-form">
-            <div className="form-group">
-              <label className="form-label" htmlFor="username">
-                Email or Username
-              </label>
-              <input
-                type="text"
-                id="username"
-                name="username"
-                className="form-input"
-                placeholder="Enter your email or username"
-                value={loginData.username}
-                onChange={handleLoginInputChange}
-                disabled={isLoading}
-                required
-              />
-            </div>
-
-            <div className="form-group">
-              <label className="form-label" htmlFor="password">
-                Password
-              </label>
-              <input
-                type="password"
-                id="password"
-                name="password"
-                className="form-input"
-                placeholder="Enter your password"
-                value={loginData.password}
-                onChange={handleLoginInputChange}
-                disabled={isLoading}
-                required
-              />
-            </div>
-
-            <div className="form-group recaptcha-container">
-              <ReCaptcha
-                sitekey="6LeF6AcsAAAAAAOswhxu2aHDKaLBZS4YgD-FdH61"
-                callback={handleRecaptcha}
-              />
-            </div>
-
-            <div className="login-actions">
-              <button
-                type="button"
-                onClick={handleSkipToHome}
-                className="skip-home-btn"
-              >
-                Skip to Home
-              </button>
-              <button
-                disabled={!submitEnabled || isLoading}
-                type="submit"
-                className="login-submit-btn"
-              >
-                {isLoading && <span className="btn-spinner"></span>}
-                {isLoading ? "Logging in..." : "Log In"}
-              </button>
-            </div>
-          </form>
-
-          <div className="auth-links">
-            <p>
-              Don't have an account?{" "}
-              <button onClick={goToSignup} className="link-btn">
-                Sign up
-              </button>
-            </p>
+      {/* Right Side - Login Form */}
+      <div className="login-right">
+        {message && (
+          <div className={`login-message ${message.includes("successful") ? "success" : "error"}`}>
+            {message}
           </div>
+        )}
+
+        {isAuthenticated && currentUser && showUserGreeting && (
+          <div className="greeting-message">
+            Hi, {currentUser.name || currentUser.email}! Welcome back.
+          </div>
+        )}
+
+        <form className="login-form" onSubmit={handleLogin}>
+          <h2>Log in to your account</h2>
+
+          <label htmlFor="username">Email address*</label>
+          <input
+            type="email"
+            id="username"
+            name="username"
+            placeholder="Enter your email"
+            value={loginData.username}
+            onChange={handleLoginInputChange}
+            disabled={isLoading}
+            required
+          />
+
+          <label htmlFor="password">Password*</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Enter your password"
+            value={loginData.password}
+            onChange={handleLoginInputChange}
+            disabled={isLoading}
+            required
+          />
+
+          <div className="recaptcha-wrapper">
+            <ReCaptcha
+              sitekey="6LeF6AcsAAAAAAOswhxu2aHDKaLBZS4YgD-FdH61"
+              callback={handleRecaptcha}
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="login-button"
+            disabled={!submitEnabled || isLoading}
+          >
+            {isLoading ? "Logging in..." : "Log in"}
+          </button>
+
+          <p className="footer-text">
+            Don't have an account?{" "}
+            <button type="button" onClick={goToSignup} className="link-button">
+              Sign Up
+            </button>
+          </p>
+
+          <button
+            type="button"
+            onClick={handleSkipToHome}
+            className="skip-button"
+          >
+            Skip to Home
+          </button>
+
+          <small>
+            By logging in, you agree to our{" "}
+            <a href="/terms">Terms of Service</a> and{" "}
+            <a href="/privacy">Privacy Policy</a>.
+          </small>
 
           <p className="social-text">or login with social platforms</p>
           <div className="social-icons">
@@ -249,7 +246,7 @@ const Login = () => {
               <i className="bx bxl-linkedin"></i>
             </a>
           </div>
-        </div>
+        </form>
       </div>
     </div>
   );
