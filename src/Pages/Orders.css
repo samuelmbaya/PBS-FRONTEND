@@ -25,7 +25,7 @@ body {
 /* Hero Section */
 .orders-hero {
   height: 40vh;
-  background: linear-gradient(rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.612)),
+  background: linear-gradient(#ffffff2b, #ffffff3d),
     url("https://media.istockphoto.com/id/1428709516/photo/shopping-online-woman-hand-online-shopping-on-laptop-computer-with-virtual-graphic-icon.jpg?s=612x612&w=0&k=20&c=ROAncmFL4lbSQdU4VOhyXu-43ngzfEqHE5ZZAw5FtYk=") center/cover;
   display: flex;
   align-items: center;

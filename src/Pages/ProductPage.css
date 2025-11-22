@@ -25,7 +25,7 @@ body {
 /* Hero Section */
 .products-hero {
   height: 50vh;
-  background: 
+  background: linear-gradient(#ffffff2b, #ffffff3d),
     url("https://images.unsplash.com/photo-1509391366360-2e959784a276?w=1600") center/cover;
   display: flex;
   align-items: center;
