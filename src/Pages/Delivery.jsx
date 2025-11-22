@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 import './Delivery.css';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../Components/Navbar';
@@ -6,9 +6,7 @@ import Footer from '../Components/Footer';
 
 const Delivery = ({ onDeliveryData }) => {
   const navigate = useNavigate();
-  const dropdownRef = useRef(null);
 
-  // Country data with flags and dial codes
   const countries = [
     { code: 'ZA', name: 'South Africa', flag: '🇿🇦', dialCode: '+27' },
     { code: 'US', name: 'United States', flag: '🇺🇸', dialCode: '+1' },
@@ -56,26 +54,8 @@ const Delivery = ({ onDeliveryData }) => {
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showCountryDropdown, setShowCountryDropdown] = useState(false);
 
   const selectedCountry = countries.find(c => c.code === deliveryData.country) || countries[0];
-
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setShowCountryDropdown(false);
-      }
-    };
-
-    if (showCountryDropdown) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [showCountryDropdown]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -84,29 +64,31 @@ const Delivery = ({ onDeliveryData }) => {
     if (onDeliveryData) onDeliveryData(updatedData);
   };
 
-  const handleCountrySelect = (country) => {
-    const updatedData = { 
-      ...deliveryData, 
-      country: country.code,
-      countryName: country.name,
-      phoneNumber: country.dialCode + ' '
-    };
-    setDeliveryData(updatedData);
-    setShowCountryDropdown(false);
-    if (onDeliveryData) onDeliveryData(updatedData);
+  const handleCountryChange = (e) => {
+    const countryCode = e.target.value;
+    const country = countries.find(c => c.code === countryCode);
+    
+    if (country) {
+      const updatedData = { 
+        ...deliveryData, 
+        country: country.code,
+        countryName: country.name,
+        phoneNumber: country.dialCode + ' '
+      };
+      setDeliveryData(updatedData);
+      if (onDeliveryData) onDeliveryData(updatedData);
+    }
   };
 
   const handlePhoneChange = (e) => {
-    let value = e.target.value;
+    const value = e.target.value;
     const updatedData = { ...deliveryData, phoneNumber: value };
     setDeliveryData(updatedData);
     if (onDeliveryData) onDeliveryData(updatedData);
   };
 
   const handleContinueToPayment = async () => {
-    const requiredFields = [
-      'country', 'name', 'lastName', 'streetAddress', 'city', 'province', 'phoneNumber'
-    ];
+    const requiredFields = ['country', 'name', 'lastName', 'streetAddress', 'city', 'province', 'phoneNumber'];
     const missingFields = requiredFields.filter(field => !deliveryData[field]);
 
     if (missingFields.length > 0) {
@@ -134,22 +116,6 @@ const Delivery = ({ onDeliveryData }) => {
           console.warn("Could not parse stored user data");
         }
       }
-
-      const userCart = JSON.parse(localStorage.getItem(`cart_${userEmail}`) || '[]');
-      
-      const totalAmount = userCart.reduce(
-        (sum, item) => sum + (item.price || 0) * (item.quantity || 1), 
-        0
-      );
-
-      const orderItems = userCart.map(item => ({
-        _id: item._id || item.id || Date.now().toString(),
-        productId: item._id || item.id || "unknown",
-        name: item.name || "Unknown Product",
-        quantity: item.quantity || 1,
-        price: item.price || 0,
-        imageUrl: item.imageUrl || item.imageURL || item.image || "https://via.placeholder.com/80"
-      }));
 
       localStorage.setItem('deliveryData', JSON.stringify(deliveryData));
 
@@ -187,47 +153,24 @@ const Delivery = ({ onDeliveryData }) => {
           <h2 className="form-section-title">Shipping Address</h2>
 
           <div className="delivery-form">
-            {/* Country Selector with Flags */}
+            {/* Country Selector - Native Select (100% reliable) */}
             <div className="form-group">
               <label className="form-label">Country / Region</label>
-              <div className="country-selector" ref={dropdownRef}>
-                <button
-                  type="button"
-                  className="country-select-btn"
-                  onClick={() => {
-                    console.log('Dropdown clicked, current state:', showCountryDropdown);
-                    setShowCountryDropdown(!showCountryDropdown);
-                  }}
+              <div className="country-select-wrapper">
+                <span className="selected-flag-icon">{selectedCountry.flag}</span>
+                <select
+                  name="country"
+                  value={deliveryData.country}
+                  onChange={handleCountryChange}
+                  className="form-input country-select-input"
+                  required
                 >
-                  <span className="country-flag">{selectedCountry.flag}</span>
-                  <span className="country-name">{selectedCountry.name}</span>
-                  <span className="dropdown-arrow">{showCountryDropdown ? '▲' : '▼'}</span>
-                </button>
-                
-                {showCountryDropdown && (
-                  <div className="country-dropdown">
-                    <div className="country-dropdown-scroll">
-                      {countries.map((country) => (
-                        <button
-                          key={country.code}
-                          type="button"
-                          className={`country-option ${country.code === deliveryData.country ? 'selected' : ''}`}
-                          onClick={() => {
-                            console.log('Country selected:', country.name);
-                            handleCountrySelect(country);
-                          }}
-                        >
-                          <span className="country-flag">{country.flag}</span>
-                          <span className="country-name">{country.name}</span>
-                          <span className="country-dial-code">{country.dialCode}</span>
-                          {country.code === deliveryData.country && (
-                            <span className="check-mark">✓</span>
-                          )}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
+                  {countries.map((country) => (
+                    <option key={country.code} value={country.code}>
+                      {country.flag} {country.name} ({country.dialCode})
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
 
