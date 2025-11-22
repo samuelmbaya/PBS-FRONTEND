@@ -5,9 +5,14 @@
   box-sizing: border-box;
 } 
 
+html,
 body {
+  overflow-y: auto !important;
   overflow-x: hidden;
+  height: auto !important;
   scroll-behavior: smooth;
+  margin: 0;
+  padding: 0;
 }
 
 .home-container {
@@ -15,6 +20,7 @@ body {
   font-family: "Arial", sans-serif;
   color: #fff;
   background: #000;
+  overflow-y: auto;
 }
 
 /* Hero Section - Nothing.tech Inspired */
@@ -177,7 +183,7 @@ body {
 }
 
 .product-section.dark {
-  background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.)),
+  background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
     url("https://insideclimatenews.org/wp-content/uploads/2019/02/battery-storage-illustration-900_ge-power.jpg") !important;
   background-size: cover !important;
   background-position: center !important;
@@ -193,7 +199,7 @@ body {
 }
 
 .product-section.light {
-  background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.)),
+  background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
     url("https://d382rz2cea0pah.cloudfront.net/wp-content/uploads/2025/06/MNRE-Releases-Draft-Testing-and-Approval-Guidelines-for-Solar-Inverters.jpg") !important;
   background-size: cover !important;
   background-position: center !important;
@@ -237,13 +243,13 @@ body {
 }
 
 .product-section.light .shop-btn-alt {
-  border-color: #000;
-  color: #000;
+  border-color: #fff;
+  color: #fff;
 }
 
 .product-section.light .shop-btn-alt:hover {
-  background: #000;
-  color: #fff;
+  background: #fff;
+  color: #000;
 }
 
 /* Responsive Design */
@@ -295,5 +301,5 @@ body {
 
   .product-tagline {
     font-size: 14px;
-}
   }
+}

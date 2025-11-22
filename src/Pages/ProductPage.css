@@ -5,12 +5,21 @@
   box-sizing: border-box;
 }
 
+html,
+body {
+  overflow-y: auto !important;
+  overflow-x: hidden;
+  height: auto !important;
+  scroll-behavior: smooth;
+}
+
 .product-page-container {
   width: 100%;
   min-height: 100vh;
   background: #000;
   color: #fff;
   font-family: "Arial", sans-serif;
+  overflow-y: auto;
 }
 
 /* Hero Section */
