@@ -179,6 +179,36 @@ body {
   gap: 20px;
 }
 
+/* Delivery Method Options */
+.delivery-method-options {
+  display: flex;
+  gap: 32px;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.03);
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.method-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  color: #000;
+  transition: color 0.2s ease;
+}
+
+.method-option:hover {
+  color: #e63946;
+}
+
+.method-option input[type="radio"] {
+  width: auto;
+  margin: 0;
+  accent-color: #e63946;
+}
+
 /* Country Selector - FIXED */
 .country-selector {
   position: relative;
@@ -503,6 +533,16 @@ body {
     gap: 16px;
   }
 
+  .delivery-method-options {
+    flex-direction: column;
+    gap: 16px;
+    padding: 12px;
+  }
+
+  .method-option {
+    justify-content: flex-start;
+  }
+
   .phone-input-wrapper {
     flex-direction: column;
   }
@@ -557,5 +597,10 @@ body {
   .country-dial-code {
     font-size: 12px;
     min-width: 45px;
+  }
+
+  .delivery-method-options {
+    gap: 12px;
+    padding: 8px;
   }
 }

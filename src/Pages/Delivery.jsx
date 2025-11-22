@@ -43,6 +43,7 @@ const Delivery = ({ onDeliveryData }) => {
   const [deliveryData, setDeliveryData] = useState({
     country: 'ZA',
     countryName: 'South Africa',
+    deliveryMethod: 'delivery',
     name: '',
     lastName: '',
     streetAddress: '',
@@ -50,6 +51,7 @@ const Delivery = ({ onDeliveryData }) => {
     postalCode: '',
     city: '',
     province: '',
+    pickupLocation: '',
     phoneNumber: ''
   });
 
@@ -60,6 +62,31 @@ const Delivery = ({ onDeliveryData }) => {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     const updatedData = { ...deliveryData, [name]: value };
+    setDeliveryData(updatedData);
+    if (onDeliveryData) onDeliveryData(updatedData);
+  };
+
+  const handleMethodChange = (e) => {
+    const method = e.target.value;
+    let updatedData = { ...deliveryData, deliveryMethod: method };
+
+    if (method === 'pickup') {
+      // Reset delivery address fields
+      updatedData = {
+        ...updatedData,
+        name: '',
+        lastName: '',
+        streetAddress: '',
+        apartment: '',
+        postalCode: '',
+        city: '',
+        province: ''
+      };
+    } else {
+      // Reset pickup location
+      updatedData = { ...updatedData, pickupLocation: '' };
+    }
+
     setDeliveryData(updatedData);
     if (onDeliveryData) onDeliveryData(updatedData);
   };
@@ -120,7 +147,13 @@ const Delivery = ({ onDeliveryData }) => {
   };
 
   const handleContinueToPayment = async () => {
-    const requiredFields = ['country', 'name', 'lastName', 'streetAddress', 'city', 'province', 'phoneNumber'];
+    let requiredFields = [];
+    if (deliveryData.deliveryMethod === 'delivery') {
+      requiredFields = ['name', 'lastName', 'streetAddress', 'city', 'province', 'phoneNumber'];
+    } else {
+      requiredFields = ['pickupLocation', 'phoneNumber'];
+    }
+
     const missingFields = requiredFields.filter(field => !deliveryData[field]);
 
     if (missingFields.length > 0) {
@@ -186,7 +219,9 @@ const Delivery = ({ onDeliveryData }) => {
 
       <div className="delivery-content">
         <div className="delivery-form-card">
-          <h2 className="form-section-title">Shipping Address</h2>
+          <h2 className="form-section-title">
+            {deliveryData.deliveryMethod === 'delivery' ? 'Shipping Address' : 'Pickup Information'}
+          </h2>
 
           <div className="delivery-form">
             {/* Country Selector - Native Select */}
@@ -210,95 +245,143 @@ const Delivery = ({ onDeliveryData }) => {
               </div>
             </div>
 
-            <div className="form-row">
-              <div className="form-group">
-                <label className="form-label">First Name</label>
-                <input
-                  type="text"
-                  name="name"
-                  placeholder="John"
-                  value={deliveryData.name}
-                  onChange={handleInputChange}
-                  className="form-input"
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label className="form-label">Last Name</label>
-                <input
-                  type="text"
-                  name="lastName"
-                  placeholder="Doe"
-                  value={deliveryData.lastName}
-                  onChange={handleInputChange}
-                  className="form-input"
-                  required
-                />
-              </div>
-            </div>
-
+            {/* Delivery Method Selector */}
             <div className="form-group">
-              <label className="form-label">Street Address</label>
-              <input
-                type="text"
-                name="streetAddress"
-                placeholder="123 Main Street"
-                value={deliveryData.streetAddress}
-                onChange={handleInputChange}
-                className="form-input"
-                required
-              />
-            </div>
-
-            <div className="form-group">
-              <label className="form-label">Apartment, suite, etc. (optional)</label>
-              <input
-                type="text"
-                name="apartment"
-                placeholder="Apartment 4B, Unit 2"
-                value={deliveryData.apartment}
-                onChange={handleInputChange}
-                className="form-input"
-              />
-            </div>
-
-            <div className="form-row three-cols">
-              <div className="form-group">
-                <label className="form-label">Postal Code</label>
-                <input
-                  type="text"
-                  name="postalCode"
-                  placeholder="2000"
-                  value={deliveryData.postalCode}
-                  onChange={handleInputChange}
-                  className="form-input"
-                />
+              <label className="form-label">Delivery Method</label>
+              <div className="delivery-method-options">
+                <label className="method-option">
+                  <input
+                    type="radio"
+                    name="deliveryMethod"
+                    value="delivery"
+                    checked={deliveryData.deliveryMethod === 'delivery'}
+                    onChange={handleMethodChange}
+                  />
+                  <span>Delivery to address</span>
+                </label>
+                <label className="method-option">
+                  <input
+                    type="radio"
+                    name="deliveryMethod"
+                    value="pickup"
+                    checked={deliveryData.deliveryMethod === 'pickup'}
+                    onChange={handleMethodChange}
+                  />
+                  <span>Pickup from store</span>
+                </label>
               </div>
+            </div>
+
+            {/* Conditional Form Content */}
+            {deliveryData.deliveryMethod === 'delivery' ? (
+              <>
+                <div className="form-row">
+                  <div className="form-group">
+                    <label className="form-label">First Name</label>
+                    <input
+                      type="text"
+                      name="name"
+                      placeholder="John"
+                      value={deliveryData.name}
+                      onChange={handleInputChange}
+                      className="form-input"
+                      required
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Last Name</label>
+                    <input
+                      type="text"
+                      name="lastName"
+                      placeholder="Doe"
+                      value={deliveryData.lastName}
+                      onChange={handleInputChange}
+                      className="form-input"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">Street Address</label>
+                  <input
+                    type="text"
+                    name="streetAddress"
+                    placeholder="123 Main Street"
+                    value={deliveryData.streetAddress}
+                    onChange={handleInputChange}
+                    className="form-input"
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">Apartment, suite, etc. (optional)</label>
+                  <input
+                    type="text"
+                    name="apartment"
+                    placeholder="Apartment 4B, Unit 2"
+                    value={deliveryData.apartment}
+                    onChange={handleInputChange}
+                    className="form-input"
+                  />
+                </div>
+
+                <div className="form-row three-cols">
+                  <div className="form-group">
+                    <label className="form-label">Postal Code</label>
+                    <input
+                      type="text"
+                      name="postalCode"
+                      placeholder="2000"
+                      value={deliveryData.postalCode}
+                      onChange={handleInputChange}
+                      className="form-input"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">City</label>
+                    <input
+                      type="text"
+                      name="city"
+                      placeholder="Johannesburg"
+                      value={deliveryData.city}
+                      onChange={handleInputChange}
+                      className="form-input"
+                      required
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Province</label>
+                    <input
+                      type="text"
+                      name="province"
+                      placeholder="Gauteng"
+                      value={deliveryData.province}
+                      onChange={handleInputChange}
+                      className="form-input"
+                      required
+                    />
+                  </div>
+                </div>
+              </>
+            ) : (
               <div className="form-group">
-                <label className="form-label">City</label>
-                <input
-                  type="text"
-                  name="city"
-                  placeholder="Johannesburg"
-                  value={deliveryData.city}
+                <label className="form-label">Pickup Location</label>
+                <select
+                  name="pickupLocation"
+                  value={deliveryData.pickupLocation}
                   onChange={handleInputChange}
                   className="form-input"
                   required
-                />
+                >
+                  <option value="">Select a pickup location</option>
+                  <option value="main-store">Main Store - {selectedCountry.name}</option>
+                  <option value="downtown-branch">Downtown Branch - {selectedCountry.name}</option>
+                  <option value="outlet-center">Outlet Center - {selectedCountry.name}</option>
+                </select>
               </div>
-              <div className="form-group">
-                <label className="form-label">Province</label>
-                <input
-                  type="text"
-                  name="province"
-                  placeholder="Gauteng"
-                  value={deliveryData.province}
-                  onChange={handleInputChange}
-                  className="form-input"
-                  required
-                />
-              </div>
-            </div>
+            )}
 
             {/* Phone Number with Flag and Auto-formatting */}
             <div className="form-group">
