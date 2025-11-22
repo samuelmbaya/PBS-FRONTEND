@@ -15,7 +15,7 @@ import Signup from './Pages/Signup';
 import Orders from './Pages/Orders';
 
 // Import the FaceIOProvider (create this file as per previous instructions)
-import { FaceIOProvider } from './contexts/FaceIOContext'; // Adjust path if needed
+import { FaceIOProvider } from './Components/FaceIOContext'; // Adjust path if needed
 
 function App() {
   return (
