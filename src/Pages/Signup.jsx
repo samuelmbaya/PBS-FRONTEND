@@ -110,17 +110,9 @@ const Signup = () => {
 
   return (
     <div className="signup-container">
-      {/* Left Side - Video Background */}
+      {/* Left Side - Background Image */}
       <div className="signup-left">
-        <video
-          className="signup-video"
-          autoPlay
-          loop
-          muted
-          playsInline
-        >
-          <source src="https://cdn.coverr.co/videos/coverr-neon-lights-in-the-night-6807/1080p.mp4" type="video/mp4" />
-        </video>
+        <div className="signup-image-overlay"></div>
         <div className="video-overlay">
           <h2>Join SneakerVerse Today</h2>
           <p>Create your account and unlock exclusive access to premium sneaker designs.</p>
