@@ -286,41 +286,19 @@ const Profile = () => {
                   </button>
                 </div>
               ) : (
-                <button type="button" onClick={() => setIsEditing(true)} className="edit-profile-btn">
-                  Edit Profile
-                </button>
+                <>
+                  <button type="button" onClick={() => setIsEditing(true)} className="edit-profile-btn">
+                    Edit Profile
+                  </button>
+                  <button type="button" onClick={handleBackToProducts} className="secondary-btn">
+                    Continue Shopping
+                  </button>
+                  <button type="button" onClick={handleLogout} className="logout-btn">
+                    Log Out
+                  </button>
+                </>
               )}
             </form>
-          </div>
-
-          {/* Account Actions Sidebar */}
-          <div className="account-actions">
-            <h3>Account Actions</h3>
-
-            <div className="action-card">
-              <div className="action-icon">👤</div>
-              <div className="action-content">
-                <h4>Member Since</h4>
-                <p>{currentUser.loginTime ? new Date(currentUser.loginTime).toLocaleDateString() : 'N/A'}</p>
-              </div>
-            </div>
-
-            <div className="action-card">
-              <div className="action-icon">📧</div>
-              <div className="action-content">
-                <h4>Email Verified</h4>
-                <p>{currentUser.emailVerified ? 'Yes' : 'Not yet'}</p>
-              </div>
-            </div>
-
-            <div className="action-buttons">
-              <button onClick={handleBackToProducts} className="secondary-btn">
-                Continue Shopping
-              </button>
-              <button onClick={handleLogout} className="logout-btn">
-                Log Out
-              </button>
-            </div>
           </div>
         </div>
       </div>
