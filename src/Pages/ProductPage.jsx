@@ -198,79 +198,92 @@ const ProductPage = () => {
       </div>
 
       {/* Products Grid */}
-      <main className="products-grid-modern">
-        {loading && (
-          <div className="loading-state">
-            <div className="loading-spinner"></div>
-            <p>Loading products...</p>
-          </div>
-        )}
-        
-        {error && (
-          <div className="error-state">
-            <p>⚠️ {error}</p>
-            <p>Please check if the server is running.</p>
-          </div>
-        )}
-        
-        {!loading && !error && (
-          filteredProducts.length > 0 ? (
-            filteredProducts.map((product) => {
-              const cartItem = cart.find((item) => item._id === product._id);
-              const imageSrc = product.imageUrl || product.imageURL || "https://via.placeholder.com/300";
-              const inWishlist = isInWishlist(product._id);
+      <main className="products-content">
+        <div className="products-grid-modern">
+          {loading && (
+            <div className="loading-state">
+              <div className="loading-spinner"></div>
+              <p>Loading products...</p>
+            </div>
+          )}
+          
+          {error && (
+            <div className="error-state">
+              <p>⚠️ {error}</p>
+              <p>Please check if the server is running.</p>
+            </div>
+          )}
+          
+          {!loading && !error && (
+            filteredProducts.length > 0 ? (
+              filteredProducts.map((product) => {
+                const cartItem = cart.find((item) => item._id === product._id);
+                const imageSrc = product.imageUrl || product.imageURL || "https://via.placeholder.com/300";
+                const inWishlist = isInWishlist(product._id);
 
-              return (
-                <div className="modern-product-card" key={product._id}>
-                  <div className="product-image-container">
-                    <img
-                      src={imageSrc}
-                      alt={product.name || "Product"}
-                      className="modern-product-img"
-                    />
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        toggleWishlist(product);
-                      }}
-                      className={`wishlist-icon ${inWishlist ? "active" : ""}`}
-                      aria-label="Add to wishlist"
-                    >
-                      {inWishlist ? "♥" : "♡"}
-                    </button>
-                  </div>
-
-                  <div className="product-info-modern">
-                    <h3 className="product-name-modern">{product.name || "Unnamed Product"}</h3>
-                    <p className="product-price-modern">
-                      R {typeof product.price === "number" ? product.price.toLocaleString() : "0.00"}
-                    </p>
-                    
-                    {cartItem ? (
-                      <div className="in-cart-badge">
-                        ✓ In Cart (Qty: {cartItem.quantity || 1})
-                      </div>
-                    ) : (
+                return (
+                  <div className="modern-product-card" key={product._id}>
+                    <div className="product-image-container">
+                      <img
+                        src={imageSrc}
+                        alt={product.name || "Product"}
+                        className="modern-product-img"
+                      />
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          addToCart(product);
+                          toggleWishlist(product);
                         }}
-                        className="add-cart-btn-modern"
+                        className={`wishlist-icon ${inWishlist ? "active" : ""}`}
+                        aria-label="Add to wishlist"
                       >
-                        Add to Cart
+                        {inWishlist ? "♥" : "♡"}
                       </button>
-                    )}
+                    </div>
+
+                    <div className="product-info-modern">
+                      <h3 className="product-name-modern">{product.name || "Unnamed Product"}</h3>
+                      <p className="product-price-modern">
+                        R {typeof product.price === "number" ? product.price.toLocaleString() : "0.00"}
+                      </p>
+                      
+                      {cartItem ? (
+                        <div className="in-cart-badge">
+                          ✓ In Cart (Qty: {cartItem.quantity || 1})
+                        </div>
+                      ) : (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            addToCart(product);
+                          }}
+                          className="add-cart-btn-modern"
+                        >
+                          Add to Cart
+                        </button>
+                      )}
+                    </div>
                   </div>
-                </div>
-              );
-            })
-          ) : (
-            <div className="no-products">
-              <p>No products found matching your criteria.</p>
-            </div>
-          )
-        )}
+                );
+              })
+            ) : (
+              <div className="no-products">
+                <div className="no-products-icon">🔍</div>
+                <h2>No products found</h2>
+                <p>Try adjusting your search or category filters.</p>
+                <button
+                  onClick={() => {
+                    setQuery("");
+                    setSelectedCategory("all");
+                  }}
+                  className="shop-now-btn"
+                >
+                  Clear Filters
+                </button>
+              </div>
+            )
+          )}
+        </div>
       </main>
 
       <Footer />
