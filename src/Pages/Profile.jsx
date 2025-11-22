@@ -97,6 +97,18 @@ const Profile = () => {
     window.location.href = '/ProductPage';
   };
 
+  const handleOrders = () => {
+    window.location.href = '/orders';
+  };
+
+  const handleCart = () => {
+    window.location.href = '/cart';
+  };
+
+  const handleWishlist = () => {
+    window.location.href = '/wishlist';
+  };
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
@@ -280,24 +292,35 @@ const Profile = () => {
           {/* Account Actions Sidebar (Now populated) */}
           <div className="account-actions">
             <h3>Quick Actions</h3>
-            <div className="action-card">
-              <div className="action-icon">🛒</div>
+            <div className="action-card" onClick={handleOrders}>
+              <div className="action-icon">📦</div>
               <div className="action-content">
                 <h4>Your Orders</h4>
                 <p>Track, return, or buy things again</p>
               </div>
             </div>
-            <div className="action-card">
+            <div className="action-card" onClick={handleCart}>
+              <div className="action-icon">🛒</div>
+              <div className="action-content">
+                <h4>Cart</h4>
+                <p>Review items in your cart</p>
+              </div>
+            </div>
+            <div className="action-card" onClick={handleWishlist}>
               <div className="action-icon">❤️</div>
               <div className="action-content">
                 <h4>Wishlist</h4>
                 <p>View saved items</p>
               </div>
             </div>
+            <div className="action-card" onClick={handleBackToProducts}>
+              <div className="action-icon">🛍️</div>
+              <div className="action-content">
+                <h4>Products</h4>
+                <p>Continue shopping</p>
+              </div>
+            </div>
             <div className="action-buttons">
-              <button type="button" onClick={handleBackToProducts} className="secondary-btn">
-                Continue Shopping
-              </button>
               <button type="button" onClick={handleLogout} className="logout-btn">
                 Log Out
               </button>

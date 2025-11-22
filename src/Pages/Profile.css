@@ -49,7 +49,7 @@ body {
   text-transform: uppercase;
 }
 
-/* Hero Section (New, inspired by delivery-hero) */
+/* Hero Section (Inspired by delivery-hero) */
 .profile-hero {
   height: 30vh;
   background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.9)),
@@ -320,6 +320,7 @@ body {
 .action-card:hover {
   border-color: rgba(230, 57, 70, 0.2);
   background: rgba(230, 57, 70, 0.05);
+  transform: translateX(4px);
 }
 .action-icon {
   font-size: 28px;
@@ -354,25 +355,6 @@ body {
   margin-top: auto;
   padding-top: 32px;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
-.secondary-btn {
-  width: 100%;
-  padding: 16px;
-  font-size: 14px;
-  font-weight: 600;
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 8px;
-  color: rgba(255, 255, 255, 0.7);
-  cursor: pointer;
-  transition: all 0.3s ease;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-.secondary-btn:hover {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.3);
-  color: #fff;
 }
 .logout-btn {
   width: 100%;
@@ -480,5 +462,13 @@ body {
   .profile-form input {
     padding: 14px 16px;
     font-size: 15px;
+  }
+  .action-card {
+    padding: 16px;
+  }
+  .action-icon {
+    font-size: 24px;
+    width: 44px;
+    height: 44px;
   }
 }
