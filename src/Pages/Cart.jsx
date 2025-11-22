@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Cart.css";
+import Navbar from "../Components/Navbar";
+import Footer from "../Components/Footer";
 
 const Cart = () => {
   const [cart, setCart] = useState([]);
@@ -23,19 +25,23 @@ const Cart = () => {
         );
         setCart(userCart);
       } else {
-        alert("Please log in to view your cart.");
-        navigate("/");
+        // Prevent multiple alerts with sessionStorage flag
+        if (!sessionStorage.getItem("cartAlertShown")) {
+          alert("Please log in to view your cart.");
+          sessionStorage.setItem("cartAlertShown", "true");
+        }
+        navigate("/", { replace: true });
       }
     } catch (err) {
       console.error("Error loading cart:", err);
       alert("Error loading cart, please login again.");
-      navigate("/");
+      navigate("/", { replace: true });
     }
   }, [navigate]);
 
   // Save cart updates to localStorage
   useEffect(() => {
-    if (currentUser && currentUser.email) {
+    if (currentUser?.email) {
       localStorage.setItem(`cart_${currentUser.email}`, JSON.stringify(cart));
     }
   }, [cart, currentUser]);
@@ -72,60 +78,138 @@ const Cart = () => {
     );
   };
 
+  const getItemCount = () => {
+    return cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
+  };
+
   const handleContinueShopping = () => {
     navigate("/ProductPage");
   };
 
+  const handleCheckout = () => {
+    navigate("/delivery");
+  };
+
   return (
-    <div className="cart-page dark">
-      <div className="cart-header">
-        <h1>Your Cart</h1>
-        <button onClick={handleContinueShopping} className="continue-shopping-btn">
-          Continue Shopping
-        </button>
-      </div>
+    <div className="cart-page-container">
+      <Navbar />
 
-      {cart.length === 0 ? (
-        <p>Your cart is empty.</p>
-      ) : (
-        <>
-          <div className="cart-items">
-            {cart.map((item) => (
-              <div className="cart-item" key={item._id}>
-                <img
-                  src={item.imageUrl || "https://via.placeholder.com/100"}
-                  alt={item.name}
-                  className="cart-item-img"
-                />
+      {/* Hero Section */}
+      <section className="cart-hero">
+        <div className="cart-hero-content">
+          <h1 className="cart-hero-title">Shopping Cart</h1>
+          <p className="cart-hero-subtitle">
+            {cart.length === 0 
+              ? "Your cart is empty" 
+              : `${getItemCount()} ${getItemCount() === 1 ? 'item' : 'items'} in your cart`}
+          </p>
+        </div>
+      </section>
 
-                <div className="cart-item-info">
-                  <h3>{item.name}</h3>
-                  <p>R {item.price ? item.price.toLocaleString() : "0.00"}</p>
-                  <div className="quantity-controls">
-                    <button onClick={() => decreaseQuantity(item._id)}>-</button>
-                    <span>{item.quantity || 1}</span>
-                    <button onClick={() => increaseQuantity(item._id)}>+</button>
-                  </div>
-                </div>
-
-                <button
-                  onClick={() => removeFromCart(item._id)}
-                  className="remove-btn"
-                >
-                  Remove
-                </button>
-              </div>
-            ))}
-          </div>
-
-          <div className="cart-summary">
-            <h2>Total: R {getTotal().toLocaleString()}</h2>
-            <button onClick={() => navigate("/delivery")} className="checkout-btn">
-              Proceed to Checkout
+      {/* Main Content */}
+      <div className="cart-content">
+        {cart.length === 0 ? (
+          <div className="empty-cart">
+            <div className="empty-cart-icon">🛒</div>
+            <h2>Your cart is empty</h2>
+            <p>Add some products to get started</p>
+            <button onClick={handleContinueShopping} className="shop-now-btn">
+              Start Shopping
             </button>
           </div>
-        </>
-      )}
+        ) : (
+          <div className="cart-layout">
+            {/* Cart Items */}
+            <div className="cart-items-section">
+              {cart.map((item) => (
+                <div className="cart-card" key={item._id}>
+                  <div className="cart-item-image-container">
+                    <img
+                      src={item.imageUrl || item.imageURL || "https://via.placeholder.com/200"}
+                      alt={item.name}
+                      className="cart-item-img"
+                    />
+                  </div>
+
+                  <div className="cart-item-details">
+                    <h3 className="cart-item-name">{item.name}</h3>
+                    <p className="cart-item-price">
+                      R {item.price ? item.price.toLocaleString() : "0.00"}
+                    </p>
+
+                    <div className="cart-item-actions">
+                      <div className="quantity-controls">
+                        <button
+                          onClick={() => decreaseQuantity(item._id)}
+                          className="qty-btn"
+                          aria-label="Decrease quantity"
+                        >
+                          −
+                        </button>
+                        <span className="qty-display">{item.quantity || 1}</span>
+                        <button
+                          onClick={() => increaseQuantity(item._id)}
+                          className="qty-btn"
+                          aria-label="Increase quantity"
+                        >
+                          +
+                        </button>
+                      </div>
+
+                      <button
+                        onClick={() => removeFromCart(item._id)}
+                        className="remove-item-btn"
+                        aria-label={`Remove ${item.name}`}
+                      >
+                        <span className="remove-icon">✕</span>
+                        Remove
+                      </button>
+                    </div>
+
+                    <div className="item-subtotal">
+                      Subtotal: R {((item.price || 0) * (item.quantity || 1)).toLocaleString()}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Cart Summary */}
+            <div className="cart-summary-section">
+              <div className="cart-summary-card">
+                <h2 className="summary-title">Order Summary</h2>
+                
+                <div className="summary-row">
+                  <span>Subtotal ({getItemCount()} items)</span>
+                  <span>R {getTotal().toLocaleString()}</span>
+                </div>
+
+                <div className="summary-row">
+                  <span>Shipping</span>
+                  <span className="free-shipping">Free</span>
+                </div>
+
+                <div className="summary-divider"></div>
+
+                <div className="summary-row summary-total">
+                  <span>Total</span>
+                  <span>R {getTotal().toLocaleString()}</span>
+                </div>
+
+                <button onClick={handleCheckout} className="checkout-btn">
+                  Proceed to Checkout
+                </button>
+
+                <button onClick={handleContinueShopping} className="continue-shopping-link">
+                  Continue Shopping
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      <Footer />
     </div>
   );
 };
