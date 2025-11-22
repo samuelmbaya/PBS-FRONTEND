@@ -25,7 +25,7 @@ body {
 /* Hero Section */
 .wishlist-hero {
   height: 40vh;
-  background: url("https://images.unsplash.com/photo-1522199710521-72d69614c702?w=1600") center/cover;
+  background: url("https://images.unsplash.com/photo-1509391366360-2e959784a276?w=1600") center/cover;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -240,7 +240,7 @@ body {
 
 .continue-btn {
   padding: 16px 48px;
-  background: #e63946;
+  background: #000;
   color: #fff;
   border: none;
   border-radius: 8px;
@@ -253,7 +253,7 @@ body {
 }
 
 .continue-btn:hover {
-  background: #000;
+  background: #333;
   color: #fff;
   transform: translateY(-2px);
 }
