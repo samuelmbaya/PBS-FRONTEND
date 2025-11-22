@@ -50,7 +50,7 @@ const Delivery = ({ onDeliveryData }) => {
     postalCode: '',
     city: '',
     province: '',
-    phoneNumber: '+27 '
+    phoneNumber: ''
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -73,7 +73,7 @@ const Delivery = ({ onDeliveryData }) => {
         ...deliveryData, 
         country: country.code,
         countryName: country.name,
-        phoneNumber: country.dialCode + ' '
+        phoneNumber: '' // Reset phone number when country changes
       };
       setDeliveryData(updatedData);
       if (onDeliveryData) onDeliveryData(updatedData);
@@ -81,8 +81,40 @@ const Delivery = ({ onDeliveryData }) => {
   };
 
   const handlePhoneChange = (e) => {
-    const value = e.target.value;
-    const updatedData = { ...deliveryData, phoneNumber: value };
+    let value = e.target.value;
+    
+    // Remove all non-digit characters
+    let digits = value.replace(/\D/g, '');
+    
+    // Don't allow user to delete the dial code digits
+    const dialCodeDigits = selectedCountry.dialCode.replace(/\D/g, '');
+    
+    // If user tries to delete dial code, prevent it
+    if (digits.length < dialCodeDigits.length) {
+      digits = dialCodeDigits;
+    }
+    
+    // Format the number with the dial code
+    let formattedNumber = selectedCountry.dialCode + ' ';
+    
+    // Get the digits after the dial code
+    const phoneDigits = digits.slice(dialCodeDigits.length);
+    
+    // Add formatting based on length
+    if (phoneDigits.length > 0) {
+      // Group digits in chunks of 3 or 2 depending on the number
+      if (phoneDigits.length <= 3) {
+        formattedNumber += phoneDigits;
+      } else if (phoneDigits.length <= 6) {
+        formattedNumber += phoneDigits.slice(0, 3) + ' ' + phoneDigits.slice(3);
+      } else if (phoneDigits.length <= 9) {
+        formattedNumber += phoneDigits.slice(0, 3) + ' ' + phoneDigits.slice(3, 6) + ' ' + phoneDigits.slice(6);
+      } else {
+        formattedNumber += phoneDigits.slice(0, 3) + ' ' + phoneDigits.slice(3, 6) + ' ' + phoneDigits.slice(6, 10);
+      }
+    }
+    
+    const updatedData = { ...deliveryData, phoneNumber: formattedNumber.trim() };
     setDeliveryData(updatedData);
     if (onDeliveryData) onDeliveryData(updatedData);
   };
@@ -96,8 +128,12 @@ const Delivery = ({ onDeliveryData }) => {
       return;
     }
 
+    // Validate phone number length (should have at least 9 digits after dial code)
     const phoneDigits = deliveryData.phoneNumber.replace(/\D/g, '');
-    if (phoneDigits.length < 10) {
+    const dialCodeDigits = selectedCountry.dialCode.replace(/\D/g, '');
+    const actualPhoneDigits = phoneDigits.slice(dialCodeDigits.length);
+    
+    if (actualPhoneDigits.length < 9) {
       alert('Please enter a valid phone number');
       return;
     }
@@ -153,7 +189,7 @@ const Delivery = ({ onDeliveryData }) => {
           <h2 className="form-section-title">Shipping Address</h2>
 
           <div className="delivery-form">
-            {/* Country Selector - Native Select (100% reliable) */}
+            {/* Country Selector - Native Select */}
             <div className="form-group">
               <label className="form-label">Country / Region</label>
               <div className="country-select-wrapper">
@@ -264,7 +300,7 @@ const Delivery = ({ onDeliveryData }) => {
               </div>
             </div>
 
-            {/* Phone Number with Flag */}
+            {/* Phone Number with Flag and Auto-formatting */}
             <div className="form-group">
               <label className="form-label">Phone Number</label>
               <div className="phone-input-wrapper">
@@ -275,13 +311,18 @@ const Delivery = ({ onDeliveryData }) => {
                 <input
                   type="tel"
                   name="phoneNumber"
-                  placeholder="12 345 6789"
+                  placeholder="123 456 789"
                   value={deliveryData.phoneNumber}
                   onChange={handlePhoneChange}
                   className="form-input phone-input"
                   required
                 />
               </div>
+              {deliveryData.phoneNumber && (
+                <div className="phone-helper-text">
+                  Full number: {deliveryData.phoneNumber}
+                </div>
+              )}
             </div>
           </div>
 
