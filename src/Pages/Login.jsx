@@ -1,17 +1,14 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Login.css";
-
 import ReCaptcha from "../Components/reCaptcha";
 
 const Login = () => {
   const navigate = useNavigate();
-
   const apiUrl = import.meta.env.VITE_API_URL || "http://44.198.25.29:3000";
 
   useEffect(() => {
     console.log("API URL being used:", apiUrl);
-    console.log("All env variables:", import.meta.env);
   }, []);
 
   const [isLoading, setIsLoading] = useState(false);
@@ -33,7 +30,6 @@ const Login = () => {
     }
   }, [token]);
 
-  // ✅ Check localStorage for existing session
   useEffect(() => {
     try {
       const storedUser = localStorage.getItem("user");
@@ -52,7 +48,6 @@ const Login = () => {
     }
   }, []);
 
-  // ✅ Save user session
   const saveUserToLocalStorage = (userData) => {
     try {
       localStorage.setItem("user", JSON.stringify(userData));
@@ -73,25 +68,20 @@ const Login = () => {
     }
   };
 
-  // ✅ Handle input change
   const handleLoginInputChange = (e) => {
     const { name, value } = e.target;
     setLoginData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // ✅ Handle reCAPTCHA token - wrapped in useCallback
   const handleRecaptcha = useCallback((token) => {
     console.log("reCAPTCHA token received:", token);
     setToken(token);
   }, []);
 
-  // ✅ Handle login
   const handleLogin = async (e) => {
     e.preventDefault();
     setMessage("");
     setIsLoading(true);
-
-    console.log("Attempting login to:", `${apiUrl}/signin`);
 
     try {
       const response = await fetch(`${apiUrl}/signin`, {
@@ -138,7 +128,7 @@ const Login = () => {
     if (isAuthenticated && currentUser) {
       navigate("/ProtectedRoutez");
     } else {
-      alert("You must be logged in to access this page.");
+      setMessage("You must be logged in to access this page.");
     }
   };
 
@@ -147,86 +137,117 @@ const Login = () => {
   };
 
   return (
-    <div className="login-body">
-      <div className="login-container">
-        {message && (
-          <div className={`message ${message.includes("successful") ? "success" : "error"}`}>
-            {message}
-          </div>
-        )}
+    <div className="login-page-container">
+      {/* Hero Section */}
+      <div className="login-hero">
+        <div className="login-hero-content">
+          <h1 className="login-hero-title">Welcome Back</h1>
+          <p className="login-hero-subtitle">Sign in to access your account</p>
+        </div>
+      </div>
 
-        {isAuthenticated && currentUser && showUserGreeting && (
-          <div className="greeting-message">
-            Hi, {currentUser.name || currentUser.email}! Welcome back.
-          </div>
-        )}
+      {/* Messages */}
+      {message && (
+        <div className={`message ${message.includes("successful") ? "success" : "error"}`}>
+          {message}
+        </div>
+      )}
 
-        <div className="login-form-box">
-          <div className="form-container">
-            <h1>Log In</h1>
-            <form onSubmit={handleLogin}>
-              <div className="input-box">
-                <input
-                  type="text"
-                  name="username"
-                  placeholder="Email or Username"
-                  value={loginData.username}
-                  onChange={handleLoginInputChange}
-                  disabled={isLoading}
-                  required
-                />
-                <i className="bx bxs-user"></i>
-              </div>
+      {isAuthenticated && currentUser && showUserGreeting && (
+        <div className="greeting-message">
+          Hi, {currentUser.name || currentUser.email}! Welcome back.
+        </div>
+      )}
 
-              <div className="input-box">
-                <input
-                  type="password"
-                  name="password"
-                  placeholder="Password"
-                  value={loginData.password}
-                  onChange={handleLoginInputChange}
-                  disabled={isLoading}
-                  required
-                />
-                <i className="bx bxs-lock-alt"></i>
-              </div>
+      {/* Main Content */}
+      <div className="login-content">
+        <div className="login-form-card">
+          <h2 className="form-section-title">Log In</h2>
 
-              {/* ✅ Updated reCaptcha block */}
-              <div className="reCaptcha">
-                <ReCaptcha
-                  sitekey="6LeF6AcsAAAAAAOswhxu2aHDKaLBZS4YgD-FdH61"
-                  callback={handleRecaptcha}
-                />
-              </div>
+          <form onSubmit={handleLogin} className="login-form">
+            <div className="form-group">
+              <label className="form-label" htmlFor="username">
+                Email or Username
+              </label>
+              <input
+                type="text"
+                id="username"
+                name="username"
+                className="form-input"
+                placeholder="Enter your email or username"
+                value={loginData.username}
+                onChange={handleLoginInputChange}
+                disabled={isLoading}
+                required
+              />
+            </div>
 
+            <div className="form-group">
+              <label className="form-label" htmlFor="password">
+                Password
+              </label>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                className="form-input"
+                placeholder="Enter your password"
+                value={loginData.password}
+                onChange={handleLoginInputChange}
+                disabled={isLoading}
+                required
+              />
+            </div>
+
+            <div className="form-group recaptcha-container">
+              <ReCaptcha
+                sitekey="6LeF6AcsAAAAAAOswhxu2aHDKaLBZS4YgD-FdH61"
+                callback={handleRecaptcha}
+              />
+            </div>
+
+            <div className="login-actions">
+              <button
+                type="button"
+                onClick={handleSkipToHome}
+                className="skip-home-btn"
+              >
+                Skip to Home
+              </button>
               <button
                 disabled={!submitEnabled || isLoading}
                 type="submit"
-                className="login-btn"
+                className="login-submit-btn"
               >
-                {isLoading ? "Logging in..." : "Login"}
-              </button>
-            </form>
-
-            <div className="auth-links">
-              <p>
-                Don't have an account?{" "}
-                <button onClick={goToSignup} className="link-btn">
-                  Sign up
-                </button>
-              </p>
-              <button onClick={handleSkipToHome} className="skip-btn">
-                Skip to Home
+                {isLoading && <span className="btn-spinner"></span>}
+                {isLoading ? "Logging in..." : "Log In"}
               </button>
             </div>
+          </form>
 
-            <p className="social-text">or login with social platforms</p>
-            <div className="social-icons">
-              <a href="https://www.instagram.com/_samuel4422/"><i className="bx bxl-instagram"></i></a>
-              <a href="https://wa.me/27817118312"><i className="bx bxl-whatsapp"></i></a>
-              <a href="https://github.com/samuelmbaya"><i className="bx bxl-github"></i></a>
-              <a href="https://www.linkedin.com/in/samuel-mbaya-8316b0344/"><i className="bx bxl-linkedin"></i></a>
-            </div>
+          <div className="auth-links">
+            <p>
+              Don't have an account?{" "}
+              <button onClick={goToSignup} className="link-btn">
+                Sign up
+              </button>
+            </p>
+          </div>
+
+          <p className="social-text">or login with social platforms</p>
+          <div className="social-icons">
+            <a href="https://www.instagram.com/_samuel4422/" target="_blank" rel="noopener noreferrer">
+              <i className="bx bxl-instagram"></i>
+            </a>
+            <a href="https://wa.me/27817118312" target="_blank" rel="noopener noreferrer">
+              <i className="bx bxl-whatsapp"></i>
+            </a>
+            <a href="https://github.com/samuelmbaya" target="_blank" rel="noopener noreferrer">
+              <i className="bx bxl-github"></i>
+            </a>
+            <a href="https://www.linkedin.com/in/samuel-mbaya-8316b0344/" target="_blank" rel="noopener noreferrer">
+              <i className="bx bxl-linkedin"></i>
+            </a>
           </div>
         </div>
       </div>
