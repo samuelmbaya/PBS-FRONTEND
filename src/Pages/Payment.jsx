@@ -310,11 +310,11 @@ const Payment = () => {
           <div className="payment-logo">PBS ELECTRICAL</div>
         </div>
 
-        <div className="payment-breadcrumb">
+        {/* <div className="payment-breadcrumb">
           <span className="breadcrumb-item">Cart</span>
           <span className="breadcrumb-separator">›</span>
           <span className="breadcrumb-item active">Payment</span>
-        </div>
+        </div> */}
 
         <div className="payment-container">
           {/* Payment Section (Left) */}
