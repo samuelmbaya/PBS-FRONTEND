@@ -6,36 +6,48 @@ import Footer from "../Components/Footer";
 
 const Wishlist = () => {
   const [wishlist, setWishlist] = useState([]);
+  const [cart, setCart] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    try {
-      const storedUser = localStorage.getItem("user");
-      const storedIsLoggedIn = localStorage.getItem("isLoggedIn");
+    const checkAuthAndLoadUserData = () => {
+      try {
+        const storedUser = localStorage.getItem("user");
+        const storedIsLoggedIn = localStorage.getItem("isLoggedIn");
 
-      if (storedUser && storedIsLoggedIn === "true") {
-        const parsedUser = JSON.parse(storedUser);
-        setCurrentUser(parsedUser);
-
-        // Load user's wishlist safely
-        const userWishlist = JSON.parse(
-          localStorage.getItem(`wishlist_${parsedUser.email}`) || "[]"
-        );
-        setWishlist(userWishlist);
-      } else {
-        // Prevent multiple alerts with sessionStorage flag
-        if (!sessionStorage.getItem("wishlistAlertShown")) {
-          alert("Please log in to view your wishlist.");
-          sessionStorage.setItem("wishlistAlertShown", "true");
+        if (storedUser && storedIsLoggedIn === "true") {
+          const parsedUser = JSON.parse(storedUser);
+          setCurrentUser(parsedUser);
+          loadUserSpecificData(parsedUser.email);
+        } else {
+          // Prevent multiple alerts with sessionStorage flag
+          if (!sessionStorage.getItem("wishlistAlertShown")) {
+            alert("Please log in to view your wishlist.");
+            sessionStorage.setItem("wishlistAlertShown", "true");
+          }
+          navigate("/", { replace: true });
         }
+      } catch (err) {
+        console.error("Error loading wishlist:", err);
+        alert("Error loading wishlist, please login again.");
         navigate("/", { replace: true });
       }
-    } catch (err) {
-      console.error("Error loading wishlist:", err);
-      alert("Error loading wishlist, please login again.");
-      navigate("/", { replace: true });
-    }
+    };
+
+    const loadUserSpecificData = (userEmail) => {
+      // Load user's wishlist safely
+      const userWishlist = JSON.parse(
+        localStorage.getItem(`wishlist_${userEmail}`) || "[]"
+      );
+      setWishlist(userWishlist);
+
+      // Load user's cart for badge count
+      const userCart = JSON.parse(localStorage.getItem(`cart_${userEmail}`) || "[]");
+      setCart(userCart);
+    };
+
+    checkAuthAndLoadUserData();
   }, [navigate]);
 
   // Persist wishlist changes to localStorage
@@ -54,13 +66,15 @@ const Wishlist = () => {
     );
   };
 
+  const getCartItemCount = () => cart.reduce((total, item) => total + (item.quantity || 1), 0);
+
   const handleContinueShopping = () => {
     navigate("/ProductPage");
   };
 
   return (
     <div className="wishlist-page-container">
-      <Navbar />
+      <Navbar cartCount={getCartItemCount()} wishlistCount={wishlist.length} />
 
       {/* Hero Section */}
       <section className="wishlist-hero">
