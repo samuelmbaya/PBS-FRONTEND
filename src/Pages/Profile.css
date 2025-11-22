@@ -281,18 +281,21 @@ body {
   color: #fff;
 }
 
-/* Non-editing button group for edit and logout alignment */
+/* Non-editing button group for edit and logout alignment - Inline row */
 .non-editing-buttons {
   display: flex;
+  flex-direction: row; /* Ensure row for inline */
   gap: 16px;
   margin-top: 40px;
   padding-top: 32px;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
   align-items: center;
+  justify-content: space-between; /* Space them evenly for inline feel */
 }
 .non-editing-buttons .edit-profile-btn,
 .non-editing-buttons .logout-btn {
-  flex: 1;
+  flex: 1; /* Equal width */
+  max-width: 200px; /* Cap width for balance */
 }
 
 /* Account Actions Sidebar (Right Side) */
