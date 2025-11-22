@@ -117,7 +117,7 @@ const templateParams = {
             </p>
           </div>
 
-          <div className="aboutSection">
+          <div className="aboutSection" id="about">
             <h3>What We're About</h3>
             <p>
               At Powered By Samuel, we cover everything from the hottest solar drops and detailed
@@ -136,7 +136,7 @@ const templateParams = {
           </div>
         </div>
 
-        <div className="contact-right">
+        <div className="contact-right" id="contact">
           <form className="contactForm" onSubmit={handleSubmit}>
             <h3>Contact Us</h3>
 
