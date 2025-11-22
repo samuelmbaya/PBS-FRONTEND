@@ -129,7 +129,7 @@ body {
   flex: 1;
   max-width: 1400px;
   margin: 0 auto;
-  padding: 0 40px;
+  padding: 0 40px 0 40px;
 }
 @media (max-width: 1024px) {
   .profile-container {
@@ -142,10 +142,12 @@ body {
 .profile-section {
   padding: 40px 0;
   background: transparent;
+  margin-right: 400px;
 }
 @media (max-width: 1024px) {
   .profile-section {
     padding: 32px 0;
+    margin-right: 0;
   }
 }
 
@@ -325,16 +327,24 @@ body {
   display: flex;
   flex-direction: column;
   gap: 24px;
-  position: sticky;
-  top: 0;
-  height: fit-content;
-  align-self: start;
+  position: fixed;
+  top: 140px;
+  right: 40px;
+  width: 400px;
+  height: calc(100vh - 140px);
+  overflow-y: auto;
+  z-index: 10;
 }
 @media (max-width: 1024px) {
   .account-actions {
+    position: static;
     border-left: none;
     border-top: 1px solid rgba(0, 0, 0, 0.08);
     padding: 40px 0;
+    width: auto;
+    height: auto;
+    right: auto;
+    top: auto;
   }
 }
 .account-actions h3 {
