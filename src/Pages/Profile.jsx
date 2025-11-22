@@ -8,6 +8,7 @@ const UserContext = createContext();
 export const UserProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const checkAuthStatus = () => {
@@ -29,6 +30,8 @@ export const UserProvider = ({ children }) => {
         localStorage.removeItem('wishlist');
         setCurrentUser(null);
         setIsAuthenticated(false);
+      } finally {
+        setLoading(false);
       }
     };
     checkAuthStatus();
@@ -48,7 +51,7 @@ export const UserProvider = ({ children }) => {
   };
 
   return (
-    <UserContext.Provider value={{ currentUser, isAuthenticated, logout, updateUser }}>
+    <UserContext.Provider value={{ currentUser, isAuthenticated, loading, logout, updateUser }}>
       {children}
     </UserContext.Provider>
   );
@@ -63,7 +66,7 @@ export const useUser = () => {
 
 // Profile Component
 const Profile = () => {
-  const { currentUser, logout, updateUser } = useUser();
+  const { currentUser, loading, logout, updateUser } = useUser();
   const [isEditing, setIsEditing] = useState(false);
   const [message, setMessage] = useState('');
   const [formData, setFormData] = useState({
@@ -76,6 +79,8 @@ const Profile = () => {
   });
 
   useEffect(() => {
+    if (loading) return;
+
     if (!currentUser) {
       window.location.href = '/login';
       return;
@@ -89,7 +94,7 @@ const Profile = () => {
       city: currentUser.city || '',
       postalCode: currentUser.postalCode || ''
     });
-  }, [currentUser]);
+  }, [currentUser, loading]);
 
   const handleLogout = () => {
     logout();
@@ -155,6 +160,19 @@ const Profile = () => {
     if (currentUser.email) return currentUser.email.split('@')[0];
     return 'User';
   };
+
+  if (loading) {
+    return (
+      <div className="profile-fullscreen">
+        <div className="profile-wrapper">
+          <div className="profile-header">
+            <div className="profile-logo">POWERED BY SAMUEL</div>
+          </div>
+          <div style={{ textAlign: 'center', padding: '40px' }}>Loading...</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="profile-fullscreen">
