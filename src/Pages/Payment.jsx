@@ -22,6 +22,7 @@ const Payment = () => {
 
   // Promo code
   const [promoCode, setPromoCode] = useState("");
+  const [promoApplied, setPromoApplied] = useState(false);
 
   // Loading state for processing payment
   const [loading, setLoading] = useState(false);
@@ -59,8 +60,30 @@ const Payment = () => {
   // Calculate shipping (free for now, but can be modified)
   const shipping = 0;
 
+  // Calculate discount
+  const discount = promoApplied ? subtotal * 0.1 : 0;
+
   // Calculate total
-  const totalPrice = subtotal + shipping;
+  const totalPrice = subtotal + shipping - discount;
+
+  // Update quantity
+  const updateQuantity = (productId, change) => {
+    const updatedCart = cart.map((item) => {
+      if (item._id === productId) {
+        const newQuantity = Math.max(1, (item.quantity || 1) + change);
+        return { ...item, quantity: newQuantity };
+      }
+      return item;
+    });
+    setCart(updatedCart);
+
+    if (currentUser?.email) {
+      localStorage.setItem(
+        `cart_${currentUser.email}`,
+        JSON.stringify(updatedCart)
+      );
+    }
+  };
 
   // Remove item from cart and update localStorage
   const removeFromCart = (productId) => {
@@ -73,24 +96,6 @@ const Payment = () => {
         JSON.stringify(updatedCart)
       );
     }
-  };
-
-  // Luhn algorithm to validate credit card number
-  const isValidCard = (num) => {
-    const value = num.replace(/\s/g, "");
-    if (!/^\d+$/.test(value)) return false;
-    let sum = 0;
-    let shouldDouble = false;
-    for (let i = value.length - 1; i >= 0; i--) {
-      let digit = parseInt(value.charAt(i));
-      if (shouldDouble) {
-        digit *= 2;
-        if (digit > 9) digit -= 9;
-      }
-      sum += digit;
-      shouldDouble = !shouldDouble;
-    }
-    return sum % 10 === 0;
   };
 
   // Format card number as "#### #### #### ####"
@@ -110,17 +115,15 @@ const Payment = () => {
   const isValidEmail = (email) =>
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
-  // Expiry date validation helper
-  const isExpiryValid = (expiry) => {
-    if (!/^\d{2}\/\d{2}$/.test(expiry)) return false;
-    const [monthStr, yearStr] = expiry.split("/");
-    const month = parseInt(monthStr, 10);
-    const year = parseInt("20" + yearStr, 10);
-    if (month < 1 || month > 12) return false;
-
-    const now = new Date();
-    const expiryDate = new Date(year, month, 0, 23, 59, 59);
-    return expiryDate >= now;
+  // Apply promo code
+  const applyPromoCode = () => {
+    if (promoCode.toUpperCase() === "PBS2025") {
+      setPromoApplied(true);
+      alert("Promo code applied! You saved 10%");
+    } else {
+      alert("Invalid promo code");
+      setPromoApplied(false);
+    }
   };
 
   // Handle order placement with backend integration
@@ -136,21 +139,6 @@ const Payment = () => {
 
       if (!number || !name || !expiry || !cvc) {
         alert("Please fill all card details!");
-        return;
-      }
-
-      if (!isExpiryValid(expiry)) {
-        alert("Invalid or expired expiration date. Use MM/YY format.");
-        return;
-      }
-
-      if (!/^\d{3,4}$/.test(cvc)) {
-        alert("Invalid CVC");
-        return;
-      }
-
-      if (!isValidCard(number)) {
-        alert("Invalid card number");
         return;
       }
     } else if (paymentMethod === "paypal") {
@@ -258,6 +246,11 @@ const Payment = () => {
           <div className="payment-logo">PBS ELECTRICAL</div>
         </div>
 
+        <div className="payment-breadcrumb">
+          <span className="breadcrumb-item">Cart</span>
+          <span className="breadcrumb-separator">›</span>
+          <span className="breadcrumb-item active">Payment</span>
+        </div>
 
         <div className="payment-container">
           {/* Payment Section (Left) */}
@@ -274,7 +267,7 @@ const Payment = () => {
                     checked={paymentMethod === "credit-card"}
                     onChange={() => setPaymentMethod("credit-card")}
                   />
-                  Credit Card
+                  💳 Credit Card
                 </label>
                 <label htmlFor="paypal">
                   <input
@@ -443,7 +436,23 @@ const Payment = () => {
                       />
                       <div className="cart-item-info">
                         <p>{item.name}</p>
-                        <p>Qty: {item.quantity || 1}</p>
+                        <div className="quantity-controls">
+                          <button
+                            className="quantity-btn"
+                            onClick={() => updateQuantity(item._id, -1)}
+                          >
+                            −
+                          </button>
+                          <span className="quantity-display">
+                            {item.quantity || 1}
+                          </span>
+                          <button
+                            className="quantity-btn"
+                            onClick={() => updateQuantity(item._id, 1)}
+                          >
+                            +
+                          </button>
+                        </div>
                         <button
                           className="remove-btn"
                           onClick={() => removeFromCart(item._id)}
@@ -467,8 +476,13 @@ const Payment = () => {
                       value={promoCode}
                       onChange={(e) => setPromoCode(e.target.value)}
                     />
-                    <button className="apply-btn">Apply</button>
+                    <button className="apply-btn" onClick={applyPromoCode}>
+                      Apply
+                    </button>
                   </div>
+                  {promoApplied && (
+                    <p className="promo-success">✓ Code PBS2025 applied!</p>
+                  )}
                 </div>
 
                 {/* Order Totals */}
@@ -477,6 +491,14 @@ const Payment = () => {
                     <span>Subtotal</span>
                     <span>R {subtotal.toFixed(2)}</span>
                   </div>
+                  {promoApplied && (
+                    <div className="total-row discount-row">
+                      <span>Discount (10%)</span>
+                      <span className="discount-amount">
+                        -R {discount.toFixed(2)}
+                      </span>
+                    </div>
+                  )}
                   <div className="total-row">
                     <span>Shipping</span>
                     <span>{shipping === 0 ? "Free" : `R ${shipping.toFixed(2)}`}</span>
