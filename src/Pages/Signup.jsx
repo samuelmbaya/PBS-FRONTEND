@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import "./Signup.css";
 
 const Signup = () => {
-  // ✅ Use Vite environment variable
+  const navigate = useNavigate();
   const API_BASE_URL = import.meta.env.VITE_API_URL || "http://44.198.25.29:3000";
 
   const [isLoading, setIsLoading] = useState(false);
@@ -41,6 +42,7 @@ const Signup = () => {
   const handleRegisterInputChange = (e) => {
     const { name, value } = e.target;
     setRegisterData((prev) => ({ ...prev, [name]: value }));
+    if (message) setMessage("");
   };
 
   const handleRegister = async (e) => {
@@ -82,7 +84,7 @@ const Signup = () => {
       if (res.ok) {
         setMessage("Registration successful! Redirecting to Login Page...");
         setRegisterData({ name: "", email: "", password: "", confirmPassword: "" });
-        setTimeout(() => (window.location.href = "/login"), 2000);
+        setTimeout(() => navigate("/login"), 2000);
       } else {
         setMessage(data.error || "Registration failed");
       }
@@ -96,118 +98,143 @@ const Signup = () => {
 
   const handleSkipToHome = () => {
     if (isAuthenticated && currentUser) {
-      window.location.href = "/ProtectedRoutez";
+      navigate("/ProtectedRoutez");
     } else {
-      alert("You must be logged in to access this page.");
+      setMessage("You must be logged in to access this page.");
     }
   };
 
   const goToLogin = () => {
-    window.location.href = "/login";
+    navigate("/login");
   };
 
   return (
-    <div className="signup-body">
-      <div className="signup-container">
+    <div className="signup-container">
+      {/* Left Side - Video Background */}
+      <div className="signup-left">
+        <video
+          className="signup-video"
+          autoPlay
+          loop
+          muted
+          playsInline
+        >
+          <source src="https://cdn.coverr.co/videos/coverr-neon-lights-in-the-night-6807/1080p.mp4" type="video/mp4" />
+        </video>
+        <div className="video-overlay">
+          <h2>Join SneakerVerse Today</h2>
+          <p>Create your account and unlock exclusive access to premium sneaker designs.</p>
+          <span>
+            <strong>SneakerVerse</strong> — Where style meets innovation.
+          </span>
+        </div>
+      </div>
+
+      {/* Right Side - Signup Form */}
+      <div className="signup-right">
         {message && (
-          <div
-            className={`message ${message.toLowerCase().includes("successful") ? "success" : "error"
-              }`}
-          >
+          <div className={`signup-message ${message.toLowerCase().includes("successful") ? "success" : "error"}`}>
             {message}
           </div>
         )}
 
-        <div className="signup-form-box">
-          <div className="form-container">
-            <h1>Sign Up</h1>
-            <form onSubmit={handleRegister}>
-              <div className="input-box">
-                <input
-                  type="text"
-                  name="name"
-                  placeholder="Full Name"
-                  value={registerData.name}
-                  onChange={handleRegisterInputChange}
-                  disabled={isLoading}
-                  required
-                />
-                <i className="bx bxs-user"></i>
-              </div>
+        <form className="signup-form" onSubmit={handleRegister}>
+          <h2>Create your account</h2>
 
-              <div className="input-box">
-                <input
-                  type="email"
-                  name="email"
-                  placeholder="Email"
-                  value={registerData.email}
-                  onChange={handleRegisterInputChange}
-                  disabled={isLoading}
-                  required
-                />
-                <i className="bx bxs-envelope"></i>
-              </div>
+          <label htmlFor="name">Full Name*</label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            placeholder="Enter your full name"
+            value={registerData.name}
+            onChange={handleRegisterInputChange}
+            disabled={isLoading}
+            required
+          />
 
-              <div className="input-box">
-                <input
-                  type="password"
-                  name="password"
-                  placeholder="Password (min 8 characters)"
-                  value={registerData.password}
-                  onChange={handleRegisterInputChange}
-                  disabled={isLoading}
-                  required
-                />
-                <i className="bx bxs-lock-alt"></i>
-              </div>
+          <label htmlFor="email">Email address*</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="Enter your email"
+            value={registerData.email}
+            onChange={handleRegisterInputChange}
+            disabled={isLoading}
+            required
+          />
 
-              <div className="input-box">
-                <input
-                  type="password"
-                  name="confirmPassword"
-                  placeholder="Confirm Password"
-                  value={registerData.confirmPassword}
-                  onChange={handleRegisterInputChange}
-                  disabled={isLoading}
-                  required
-                />
-                <i className="bx bxs-lock-alt"></i>
-              </div>
+          <label htmlFor="password">Password*</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Minimum 8 characters"
+            value={registerData.password}
+            onChange={handleRegisterInputChange}
+            disabled={isLoading}
+            required
+          />
 
-              <button type="submit" className="signup-btn" disabled={isLoading}>
-                {isLoading ? "Registering..." : "Sign Up"}
-              </button>
-            </form>
+          <label htmlFor="confirmPassword">Confirm Password*</label>
+          <input
+            type="password"
+            id="confirmPassword"
+            name="confirmPassword"
+            placeholder="Re-enter your password"
+            value={registerData.confirmPassword}
+            onChange={handleRegisterInputChange}
+            disabled={isLoading}
+            required
+          />
 
-            <div className="auth-links">
-              <p>
-                Already have an account?{" "}
-                <button onClick={goToLogin} className="link-btn" type="button">
-                  Login
-                </button>
-              </p>
-              <button onClick={handleSkipToHome} className="skip-btn" type="button">
-                Skip to Home
-              </button>
-            </div>
-
-            <p className="social-text">our social platforms</p>
-            <div className="social-icons">
-              <a href="https://www.instagram.com/_samuel4422/" aria-label="LinkedIn">
-                <i className="bx bxl-instagram"></i>
-              </a>
-              <a href="https://wa.me/27817118312" aria-label="Whatsapp">
-                <i className="bx bxl-whatsapp"></i>
-              </a>
-              <a href="https://github.com/samuelmbaya" aria-label="GitHub">
-                <i className="bx bxl-github"></i>
-              </a>
-              <a href="https://www.linkedin.com/in/samuel-mbaya-8316b0344/" aria-label="LinkedIn">
-                <i className="bx bxl-linkedin"></i>
-              </a>
-            </div>
+          <div className="signup-actions">
+            <button
+              type="button"
+              onClick={handleSkipToHome}
+              className="skip-home-btn"
+            >
+              Skip to Home
+            </button>
+            <button
+              type="submit"
+              className="signup-submit-btn"
+              disabled={isLoading}
+            >
+              {isLoading ? "Creating Account..." : "Sign Up"}
+            </button>
           </div>
-        </div>
+
+          <p className="footer-text">
+            Already have an account?{" "}
+            <button type="button" onClick={goToLogin} className="link-button">
+              Log In
+            </button>
+          </p>
+
+          <small>
+            By signing up, you agree to our{" "}
+            <a href="/terms">Terms of Service</a> and{" "}
+            <a href="/privacy">Privacy Policy</a>.
+          </small>
+
+          <p className="social-text">our social platforms</p>
+          <div className="social-icons">
+            <a href="https://www.instagram.com/_samuel4422/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+              <i className="bx bxl-instagram"></i>
+            </a>
+            <a href="https://wa.me/27817118312" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
+              <i className="bx bxl-whatsapp"></i>
+            </a>
+            <a href="https://github.com/samuelmbaya" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+              <i className="bx bxl-github"></i>
+            </a>
+            <a href="https://www.linkedin.com/in/samuel-mbaya-8316b0344/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+              <i className="bx bxl-linkedin"></i>
+            </a>
+          </div>
+        </form>
       </div>
     </div>
   );
