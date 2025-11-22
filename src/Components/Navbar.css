@@ -29,6 +29,7 @@
   z-index: 1000;
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
   overflow: visible !important;
+  height: 70px; /* Fixed height for consistent padding */
 }
 
 .logo {
@@ -81,12 +82,22 @@
   100% { transform: scale(1); }
 }
 
+/* Offset for body/content to start below navbar */
+body {
+  padding-top: 70px; /* Matches navbar height */
+}
+
 /* Responsive: Stack links on mobile */
 @media (max-width: 768px) {
   .navbar {
     padding: 1rem;
     flex-direction: column;
     gap: 10px;
+    height: 90px; /* Adjust for column layout */
+  }
+
+  body {
+    padding-top: 90px; /* Adjust for mobile navbar height */
   }
 
   .nav-links {
