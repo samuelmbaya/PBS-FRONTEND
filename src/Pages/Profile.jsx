@@ -8,7 +8,6 @@ const UserContext = createContext();
 export const UserProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [theme, setTheme] = useState('dark'); // default theme
 
   useEffect(() => {
     const checkAuthStatus = () => {
@@ -20,43 +19,38 @@ export const UserProvider = ({ children }) => {
           const parsedUser = JSON.parse(storedUser);
           setCurrentUser(parsedUser);
           setIsAuthenticated(true);
-
-          // Load user's preferred theme from localStorage
-          const userTheme = localStorage.getItem(`darkMode_${parsedUser.email}`);
-          if (userTheme !== null) {
-            setTheme(JSON.parse(userTheme) ? 'dark' : 'light');
-          } else if (parsedUser.theme) {
-            setTheme(parsedUser.theme);
-          }
         } else {
           setCurrentUser(null);
           setIsAuthenticated(false);
         }
       } catch (error) {
         console.error('Error parsing stored user data:', error);
-        // Clear invalid data and reset states
         localStorage.removeItem('user');
         localStorage.removeItem('isLoggedIn');
         localStorage.removeItem('wishlist');
         setCurrentUser(null);
         setIsAuthenticated(false);
-        setTheme('dark');
       }
     };
 
     checkAuthStatus();
   }, []);
 
+  const updateUser = (updatedData) => {
+    const newUserData = { ...currentUser, ...updatedData };
+    setCurrentUser(newUserData);
+    localStorage.setItem('user', JSON.stringify(newUserData));
+  };
+
   const logout = () => {
     localStorage.removeItem('user');
     localStorage.removeItem('isLoggedIn');
     setCurrentUser(null);
     setIsAuthenticated(false);
-    setTheme('dark');
   };
 
   return (
-    <UserContext.Provider value={{ currentUser, isAuthenticated, logout, theme }}>
+    <UserContext.Provider value={{ currentUser, isAuthenticated, logout, updateUser }}>
       {children}
     </UserContext.Provider>
   );
@@ -71,15 +65,76 @@ export const useUser = () => {
 
 // Profile Component
 const Profile = () => {
-  const { currentUser, logout, theme } = useUser();
+  const { currentUser, logout, updateUser } = useUser();
+  const [isEditing, setIsEditing] = useState(false);
+  const [message, setMessage] = useState('');
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    address: '',
+    city: '',
+    postalCode: ''
+  });
+
+  useEffect(() => {
+    if (currentUser) {
+      setFormData({
+        name: currentUser.name || '',
+        email: currentUser.email || '',
+        phone: currentUser.phone || '',
+        address: currentUser.address || '',
+        city: currentUser.city || '',
+        postalCode: currentUser.postalCode || ''
+      });
+    }
+  }, [currentUser]);
 
   const handleLogout = () => {
     logout();
-    window.location.href = '/login'; // consider react-router navigate for SPA
+    window.location.href = '/login';
   };
 
   const handleBackToProducts = () => {
-    window.location.href = '/ProductPage'; // consider react-router navigate for SPA
+    window.location.href = '/ProductPage';
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSaveChanges = (e) => {
+    e.preventDefault();
+    
+    // Validate required fields
+    if (!formData.name.trim() || !formData.email.trim()) {
+      setMessage('Name and email are required');
+      setTimeout(() => setMessage(''), 3000);
+      return;
+    }
+
+    // Update user data
+    updateUser(formData);
+    setIsEditing(false);
+    setMessage('Profile updated successfully!');
+    setTimeout(() => setMessage(''), 3000);
+  };
+
+  const handleCancelEdit = () => {
+    // Reset form data to current user data
+    if (currentUser) {
+      setFormData({
+        name: currentUser.name || '',
+        email: currentUser.email || '',
+        phone: currentUser.phone || '',
+        address: currentUser.address || '',
+        city: currentUser.city || '',
+        postalCode: currentUser.postalCode || ''
+      });
+    }
+    setIsEditing(false);
+    setMessage('');
   };
 
   const getDisplayName = () => {
@@ -89,38 +144,191 @@ const Profile = () => {
     return 'User';
   };
 
-  return (
-    <div className={`profile-container ${theme}-theme`}>
-      {/* Header */}
-      <div className="profile-header">
-        <button className="back-to-products-btn" onClick={handleBackToProducts}>
-          Back to Products
-        </button>
-        <span className="profile-title">PROFILE</span>
+  if (!currentUser) {
+    return (
+      <div className="profile-fullscreen">
+        <div className="profile-wrapper">
+          <div className="profile-header">
+            <div className="profile-logo">POWERED BY SAMUEL</div>
+          </div>
+          <div className="login-prompt">
+            <h2>Not Logged In</h2>
+            <p>Please log in to view your profile</p>
+            <button className="login-button" onClick={() => window.location.href = '/login'}>
+              Log In
+            </button>
+          </div>
+        </div>
       </div>
+    );
+  }
 
-      {/* Main Content */}
-      <div className="profile-content">
-        <div className="greeting">HI, {getDisplayName().toUpperCase()}</div>
-
-        <div className="user-info-display">
-          <p>
-            <strong>Name:</strong> {currentUser?.name || 'Not provided'}
-          </p>
-          <p>
-            <strong>Email:</strong> {currentUser?.email || 'Not provided'}
-          </p>
+  return (
+    <div className="profile-fullscreen">
+      <div className="profile-wrapper">
+        {/* Header */}
+        <div className="profile-header">
+          <div className="profile-logo">POWERED BY SAMUEL</div>
         </div>
 
-        <button className="logout-button" onClick={handleLogout}>
-          LOG OUT
-        </button>
+        {/* Breadcrumb */}
+        <div className="profile-breadcrumb">
+          <span className="breadcrumb-item" onClick={handleBackToProducts} style={{ cursor: 'pointer' }}>
+            Products
+          </span>
+          <span className="breadcrumb-separator">›</span>
+          <span className="breadcrumb-item active">Profile</span>
+        </div>
+
+        {/* Message */}
+        {message && (
+          <div className={`profile-message ${message.includes('success') ? 'success' : 'error'}`}>
+            {message}
+          </div>
+        )}
+
+        {/* Profile Container */}
+        <div className="profile-container">
+          {/* Profile Section */}
+          <div className="profile-section">
+            <h2 className="section-title">Account Details</h2>
+
+            <div className="greeting">Hi, {getDisplayName()}</div>
+
+            <form className="profile-form" onSubmit={handleSaveChanges}>
+              <div className="form-section">
+                <label htmlFor="name" className="form-label">Full Name*</label>
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  disabled={!isEditing}
+                  required
+                />
+              </div>
+
+              <div className="form-section">
+                <label htmlFor="email" className="form-label">Email Address*</label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  disabled={!isEditing}
+                  required
+                />
+              </div>
+
+              <div className="form-section">
+                <label htmlFor="phone" className="form-label">Phone Number</label>
+                <input
+                  type="tel"
+                  id="phone"
+                  name="phone"
+                  placeholder="Enter phone number"
+                  value={formData.phone}
+                  onChange={handleInputChange}
+                  disabled={!isEditing}
+                />
+              </div>
+
+              <div className="form-section">
+                <label htmlFor="address" className="form-label">Street Address</label>
+                <input
+                  type="text"
+                  id="address"
+                  name="address"
+                  placeholder="Enter street address"
+                  value={formData.address}
+                  onChange={handleInputChange}
+                  disabled={!isEditing}
+                />
+              </div>
+
+              <div className="form-row">
+                <div className="form-section">
+                  <label htmlFor="city" className="form-label">City</label>
+                  <input
+                    type="text"
+                    id="city"
+                    name="city"
+                    placeholder="Enter city"
+                    value={formData.city}
+                    onChange={handleInputChange}
+                    disabled={!isEditing}
+                  />
+                </div>
+
+                <div className="form-section">
+                  <label htmlFor="postalCode" className="form-label">Postal Code</label>
+                  <input
+                    type="text"
+                    id="postalCode"
+                    name="postalCode"
+                    placeholder="Enter postal code"
+                    value={formData.postalCode}
+                    onChange={handleInputChange}
+                    disabled={!isEditing}
+                  />
+                </div>
+              </div>
+
+              {isEditing ? (
+                <div className="button-group">
+                  <button type="submit" className="save-changes-btn">
+                    Save Changes
+                  </button>
+                  <button type="button" onClick={handleCancelEdit} className="cancel-btn">
+                    Cancel
+                  </button>
+                </div>
+              ) : (
+                <button type="button" onClick={() => setIsEditing(true)} className="edit-profile-btn">
+                  Edit Profile
+                </button>
+              )}
+            </form>
+          </div>
+
+          {/* Account Actions Sidebar */}
+          <div className="account-actions">
+            <h3>Account Actions</h3>
+
+            <div className="action-card">
+              <div className="action-icon">👤</div>
+              <div className="action-content">
+                <h4>Member Since</h4>
+                <p>{currentUser.loginTime ? new Date(currentUser.loginTime).toLocaleDateString() : 'N/A'}</p>
+              </div>
+            </div>
+
+            <div className="action-card">
+              <div className="action-icon">📧</div>
+              <div className="action-content">
+                <h4>Email Verified</h4>
+                <p>{currentUser.emailVerified ? 'Yes' : 'Not yet'}</p>
+              </div>
+            </div>
+
+            <div className="action-buttons">
+              <button onClick={handleBackToProducts} className="secondary-btn">
+                Continue Shopping
+              </button>
+              <button onClick={handleLogout} className="logout-btn">
+                Log Out
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
 };
 
-// Wrap Profile with UserProvider in App
+// Wrap Profile with UserProvider
 const App = () => (
   <UserProvider>
     <Profile />
