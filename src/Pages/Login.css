@@ -30,9 +30,20 @@ html, body {
 .login-left {
   flex: 1;
   position: relative;
-  background: url('https://i.pinimg.com/736x/74/b4/79/74b479247e0bbc85f8ee6ae39691f90b.jpg') center/cover no-repeat;
   background-color: #f8f9fa;
   overflow: hidden;
+}
+
+.login-left::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url('https://i.pinimg.com/736x/74/b4/79/74b479247e0bbc85f8ee6ae39691f90b.jpg') center/cover no-repeat;
+  filter: blur(3px);
+  z-index: 0;
 }
 
 .login-image-overlay {
@@ -41,6 +52,7 @@ html, body {
   left: 0;
   right: 0;
   bottom: 0;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.6));
   z-index: 1;
 }
 
