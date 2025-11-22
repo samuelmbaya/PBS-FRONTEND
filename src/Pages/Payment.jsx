@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import emailjs from '@emailjs/browser';
 import "./Payment.css";
 
 const Payment = () => {
@@ -32,6 +33,11 @@ const Payment = () => {
   const [currentUser, setCurrentUser] = useState(null);
 
   const apiUrl = "http://44.198.25.29:3000";
+
+  // Initialize EmailJS (add your public key here)
+  useEffect(() => {
+    emailjs.init('aEC3095geTrpzu0k1'); // Replace with your EmailJS public key
+  }, []);
 
   // Load current user and cart from localStorage
   useEffect(() => {
@@ -126,6 +132,58 @@ const Payment = () => {
     }
   };
 
+  // Send order receipt email using EmailJS
+  const sendOrderReceipt = async (orderData) => {
+    try {
+      const deliveryData = JSON.parse(localStorage.getItem("deliveryData") || "{}");
+      
+      // Format order items for email
+      const orderItemsText = orderData.items
+        .map((item) => `${item.name} (x${item.quantity}) - R ${(item.price * item.quantity).toFixed(2)}`)
+        .join('\n');
+
+      // Format delivery address
+      const deliveryAddress = deliveryData.address 
+        ? `${deliveryData.address}\n${deliveryData.city || ''}, ${deliveryData.postalCode || ''}\n${deliveryData.country || ''}`
+        : 'No delivery address provided';
+
+      const templateParams = {
+        to_email: currentUser.email,
+        user_name: currentUser.name || currentUser.email.split('@')[0],
+        order_id: orderData.orderId,
+        order_date: new Date().toLocaleDateString('en-ZA', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        }),
+        payment_method: paymentMethod === 'credit-card' 
+          ? 'Credit Card' 
+          : paymentMethod === 'paypal' 
+          ? 'PayPal' 
+          : 'Google Pay',
+        order_items: orderItemsText,
+        subtotal: subtotal.toFixed(2),
+        discount: discount.toFixed(2),
+        shipping: shipping === 0 ? 'Free' : shipping.toFixed(2),
+        total: totalPrice.toFixed(2),
+        delivery_address: deliveryAddress,
+      };
+
+      const response = await emailjs.send(
+        'service_meuwp9x',      // Replace with your EmailJS service ID
+        'template_ihc5ihs',     // Replace with your EmailJS template ID
+        templateParams
+      );
+
+      console.log('Order receipt email sent successfully:', response);
+      return response;
+    } catch (error) {
+      console.error('Failed to send order receipt email:', error);
+      // Don't throw error - we don't want email failure to stop the order
+      return null;
+    }
+  };
+
   // Handle order placement with backend integration
   const handlePlaceOrder = async () => {
     if (cart.length === 0) {
@@ -214,6 +272,12 @@ const Payment = () => {
           deliveryData: result.data.deliveryData,
         };
 
+        // Send order receipt email
+        await sendOrderReceipt({
+          orderId: savedOrder.id,
+          items: savedOrder.items,
+        });
+
         let userOrders = JSON.parse(
           localStorage.getItem(`orders_${currentUser.email}`) || "[]"
         );
@@ -228,7 +292,7 @@ const Payment = () => {
         setCart([]);
 
         setLoading(false);
-        alert("Payment successful! Order placed.");
+        alert("Payment successful! Order placed. Check your email for the receipt.");
         navigate("/Orders");
       }
     } catch (error) {
