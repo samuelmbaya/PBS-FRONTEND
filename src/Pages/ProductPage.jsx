@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import "./ProductPage.css";
 import { useNavigate } from "react-router-dom";
+import Navbar from "../Components/Navbar";
 import Footer from "../Components/Footer";
 
 // Custom hook for debouncing a value
@@ -24,14 +25,11 @@ const ProductPage = () => {
   const [error, setError] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState("all");
 
   const navigate = useNavigate();
 
-  // ✅ Use Vite environment variable
-  const API_BASE_URL =
-    import.meta.env.VITE_API_URL || "http://44.198.25.29:3000";
-
-  // Debounced query to avoid filtering on every keystroke
+  const API_BASE_URL = import.meta.env.VITE_API_URL || "http://44.198.25.29:3000";
   const debouncedQuery = useDebounce(query, 300);
 
   // Check authentication and load user data
@@ -47,7 +45,7 @@ const ProductPage = () => {
           setIsAuthenticated(true);
           loadUserSpecificData(parsedUser.email);
         } else {
-          navigate("/login"); // Redirect if not authenticated
+          navigate("/login");
         }
       } catch (err) {
         console.error("Error checking authentication:", err);
@@ -83,13 +81,11 @@ const ProductPage = () => {
         }
 
         const text = await res.text();
-
-        // Try parsing JSON safely
         let data;
         try {
           data = JSON.parse(text);
         } catch (err) {
-          throw new Error("Invalid JSON returned from server. Are you sure the backend is returning JSON?");
+          throw new Error("Invalid JSON returned from server");
         }
 
         setProducts(data.data || []);
@@ -152,124 +148,131 @@ const ProductPage = () => {
   );
 
   const isInWishlist = (productId) => wishlist.some((item) => item._id === productId);
-
   const getCartItemCount = () => cart.reduce((total, item) => total + (item.quantity || 1), 0);
 
-  const handleLogout = () => {
-    localStorage.removeItem("user");
-    localStorage.removeItem("isLoggedIn");
-    navigate("/login");
-  };
+  const filteredProducts = products.filter((p) => {
+    const matchesQuery = p.name?.toLowerCase().includes(debouncedQuery.toLowerCase());
+    const matchesCategory = selectedCategory === "all" || p.category === selectedCategory;
+    return matchesQuery && matchesCategory;
+  });
 
-  const filteredProducts = products.filter((p) =>
-    p.name?.toLowerCase().includes(debouncedQuery.toLowerCase())
-  );
+  const categories = ["all", ...new Set(products.map(p => p.category).filter(Boolean))];
 
   return (
-    <div className="homepage">
-      <header className="navbar">
-        <h1
-          className="logo"
-          onClick={() => navigate("/Home")}
-          role="button"
-          tabIndex={0}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") navigate("/Home");
-          }}
-          aria-label="Navigate to Home"
-        >
-          PWS Products
-        </h1>
-        <div className="searchbar">
+    <div className="product-page-container">
+      <Navbar />
+
+      {/* Hero Section */}
+      <section className="products-hero">
+        <div className="products-hero-content">
+          <h1 className="products-hero-title">Energy Solutions</h1>
+          <p className="products-hero-subtitle">
+            Explore our range of premium solar panels, inverters, and battery systems
+          </p>
+        </div>
+      </section>
+
+      {/* Search & Filter Bar */}
+      <div className="filter-section">
+        <div className="search-container">
           <input
             type="text"
             placeholder="Search products..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            aria-label="Search products"
+            className="search-input-modern"
           />
         </div>
-        <nav className="nav-buttons">
-          <button onClick={() => navigate("/Home")}>Home</button>
-          <button onClick={() => navigate("/Wishlist")}>Wishlist ({wishlist.length})</button>
-          <button onClick={() => navigate("/Cart")}>Cart ({getCartItemCount()})</button>
-          <button onClick={() => navigate("/profile")}>Profile</button>
-          <button onClick={() => navigate("/orders")}>Orders</button>
-          {currentUser && (
-            <div className="user-info" aria-live="polite">
-              <span>Signed in as: {currentUser.name || currentUser.email}!</span>
-              <button onClick={handleLogout} className="logout-btn">
-                Logout
-              </button>
-            </div>
-          )}
-        </nav>
-      </header>
 
-      <main className="products-container">
-        {loading && <p>Loading products...</p>}
-        {error && (
-          <div className="error">
-            <p>Error: {error}</p>
-            <p>Please check if the server at {API_BASE_URL} is running.</p>
+        <div className="category-filters">
+          {categories.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => setSelectedCategory(cat)}
+              className={`category-btn ${selectedCategory === cat ? "active" : ""}`}
+            >
+              {cat === "all" ? "All Products" : cat}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Products Grid */}
+      <main className="products-grid-modern">
+        {loading && (
+          <div className="loading-state">
+            <div className="loading-spinner"></div>
+            <p>Loading products...</p>
           </div>
         )}
+        
+        {error && (
+          <div className="error-state">
+            <p>⚠️ {error}</p>
+            <p>Please check if the server is running.</p>
+          </div>
+        )}
+        
         {!loading && !error && (
           filteredProducts.length > 0 ? (
             filteredProducts.map((product) => {
               const cartItem = cart.find((item) => item._id === product._id);
-              const imageSrc = product.imageUrl || product.imageURL || "https://via.placeholder.com/150";
+              const imageSrc = product.imageUrl || product.imageURL || "https://via.placeholder.com/300";
               const inWishlist = isInWishlist(product._id);
 
               return (
-                <div className="product-card" key={product._id}>
-                  <img
-                    src={imageSrc}
-                    alt={product.name || "Unnamed Product"}
-                    className="product-img"
-                  />
-                  <h3>{product.name || "Unnamed Product"}</h3>
-                  <p className="price">
-                    R {typeof product.price === "number" ? product.price.toLocaleString() : "0.00"}
-                  </p>
-                  <div className="actions">
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        addToCart(product);
-                      }}
-                      className="add-to-cart-btn"
-                      aria-label={`Add ${product.name} to cart`}
-                    >
-                      Add to Cart
-                    </button>
+                <div className="modern-product-card" key={product._id}>
+                  <div className="product-image-container">
+                    <img
+                      src={imageSrc}
+                      alt={product.name || "Product"}
+                      className="modern-product-img"
+                    />
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
                         toggleWishlist(product);
                       }}
-                      className={`wishlist-btn ${inWishlist ? "in-wishlist" : ""}`}
-                      aria-pressed={inWishlist}
-                      aria-label={inWishlist ? `Remove ${product.name} from wishlist` : `Add ${product.name} to wishlist`}
+                      className={`wishlist-icon ${inWishlist ? "active" : ""}`}
+                      aria-label="Add to wishlist"
                     >
-                      {inWishlist ? "♥ Remove" : "♡ Wishlist"}
+                      {inWishlist ? "♥" : "♡"}
                     </button>
                   </div>
-                  {cartItem && (
-                    <div className="in-cart-indicator" aria-live="polite" role="status">
-                      In Cart (Qty: {cartItem.quantity || 1})
-                    </div>
-                  )}
+
+                  <div className="product-info-modern">
+                    <h3 className="product-name-modern">{product.name || "Unnamed Product"}</h3>
+                    <p className="product-price-modern">
+                      R {typeof product.price === "number" ? product.price.toLocaleString() : "0.00"}
+                    </p>
+                    
+                    {cartItem ? (
+                      <div className="in-cart-badge">
+                        ✓ In Cart (Qty: {cartItem.quantity || 1})
+                      </div>
+                    ) : (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          addToCart(product);
+                        }}
+                        className="add-cart-btn-modern"
+                      >
+                        Add to Cart
+                      </button>
+                    )}
+                  </div>
                 </div>
               );
             })
           ) : (
-            <p>No products found.</p>
+            <div className="no-products">
+              <p>No products found matching your criteria.</p>
+            </div>
           )
         )}
       </main>
 
-      {/* Footer Component */}
       <Footer />
     </div>
   );
