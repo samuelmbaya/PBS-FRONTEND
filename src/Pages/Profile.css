@@ -32,14 +32,17 @@ body {
   min-height: 100vh;
 }
 
-/* Header */
+/* Header - Glass Effect */
 .profile-header {
   padding: 20px 40px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  /* Glass effect: semi-transparent bg with blur */
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px); /* Safari support */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.8);
 }
 .profile-logo {
   font-size: 18px;
@@ -278,6 +281,20 @@ body {
   color: #fff;
 }
 
+/* Non-editing button group for edit and logout alignment */
+.non-editing-buttons {
+  display: flex;
+  gap: 16px;
+  margin-top: 40px;
+  padding-top: 32px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  align-items: center;
+}
+.non-editing-buttons .edit-profile-btn,
+.non-editing-buttons .logout-btn {
+  flex: 1;
+}
+
 /* Account Actions Sidebar (Right Side) */
 .account-actions {
   background: rgba(255, 255, 255, 0.02);
@@ -347,18 +364,40 @@ body {
   margin: 0;
 }
 
-/* Action Buttons */
+/* Action Buttons - Now row layout for inline alignment */
 .action-buttons {
   display: flex;
-  flex-direction: column;
+  flex-direction: row; /* Changed to row for inline */
   gap: 12px;
   margin-top: auto;
   padding-top: 32px;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
+  align-items: center;
+}
+.secondary-btn {
+  flex: 1;
+  width: auto; /* Allow flexible width */
+  padding: 16px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.secondary-btn:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: #fff;
 }
 .logout-btn {
-  width: 100%;
-  padding: 16px;
+  flex: 1;
+  width: auto; /* Allow flexible width */
+  padding: 16px 24px;
   font-size: 14px;
   font-weight: 600;
   background: #e63946;
@@ -442,8 +481,10 @@ body {
   .greeting {
     font-size: 24px;
   }
-  .button-group {
-    flex-direction: column;
+  .button-group,
+  .non-editing-buttons,
+  .action-buttons {
+    flex-direction: column; /* Stack on mobile */
   }
   .profile-container {
     padding: 0 20px;
