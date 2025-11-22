@@ -51,6 +51,7 @@ body {
   max-width: 900px;
   padding: 40px 20px;
   animation: fadeInUp 1s ease-out;
+  color: #fff;
 }
 
 @keyframes fadeInUp {
