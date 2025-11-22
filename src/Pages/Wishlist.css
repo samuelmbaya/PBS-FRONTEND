@@ -25,7 +25,8 @@ body {
 /* Hero Section */
 .wishlist-hero {
   height: 40vh;
-  background: url("https://images.unsplash.com/photo-1509391366360-2e959784a276?w=1600") center/cover;
+  background:linear-gradient(#ffffff2b, #ffffff3d),
+   url("https://www.gfepowerproducts.com/cdn/shop/files/GFE_Power_Products_2025.png?v=1737362226&width=3842") center/cover;
   display: flex;
   align-items: center;
   justify-content: center;
