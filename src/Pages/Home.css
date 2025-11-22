@@ -252,23 +252,30 @@ body {
   color: #000;
 }
 
-/* Story Section */
-.story-section {
+/* Story and Contact Section */
+.story-contact-section {
   padding: 80px 40px;
   background: #000;
-  text-align: center;
+  display: flex;
+  gap: 3rem;
+  justify-content: space-between;
+  align-items: flex-start;
 }
 
-.story-content {
-  max-width: 800px;
-  margin: 0 auto;
+.story-left {
+  flex: 1;
+  max-width: 600px;
+}
+
+.contact-right {
+  flex: 1;
+  max-width: 400px;
 }
 
 .storySection,
 .aboutSection,
 .movementSection {
   margin-bottom: 2rem;
-  text-align: left;
 }
 
 .storySection h3,
@@ -289,17 +296,6 @@ body {
   color: #ccc;
 }
 
-/* Contact Section */
-.contact-section {
-  padding: 80px 40px;
-  background: #000;
-}
-
-.contact-container {
-  max-width: 600px;
-  margin: 0 auto;
-}
-
 /* Form styling */
 .contactForm {
   display: flex;
@@ -311,7 +307,6 @@ body {
   font-size: 1.2rem;
   color: #fff;
   margin-bottom: 1rem;
-  text-align: center;
 }
 
 .formRow {
@@ -370,6 +365,18 @@ body {
 }
 
 /* Responsive Design */
+@media screen and (max-width: 900px) {
+  .story-contact-section {
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .story-left,
+  .contact-right {
+    max-width: 100%;
+  }
+}
+
 @media screen and (max-width: 768px) {
   .hero-title {
     font-size: 48px;
@@ -402,19 +409,12 @@ body {
     font-size: 13px;
   }
 
-  .story-section,
-  .contact-section {
+  .story-contact-section {
     padding: 40px 20px;
   }
 
   .formRow {
     flex-direction: column;
-  }
-
-  .storySection,
-  .aboutSection,
-  .movementSection {
-    text-align: center;
   }
 }
 

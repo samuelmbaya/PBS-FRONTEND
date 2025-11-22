@@ -61,9 +61,9 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Story Sections */}
-      <section className="story-section">
-        <div className="story-content">
+      {/* Story and Contact Sections */}
+      <section className="story-contact-section">
+        <div className="story-left">
           <div className="storySection">
             <h3>Our Story</h3>
             <p>
@@ -93,11 +93,8 @@ const Home = () => {
             </p>
           </div>
         </div>
-      </section>
 
-      {/* Contact Form */}
-      <section className="contact-section">
-        <div className="contact-container">
+        <div className="contact-right">
           <form className="contactForm">
             <h3>Contact Us</h3>
 
