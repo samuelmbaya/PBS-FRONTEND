@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './Delivery.css';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../Components/Navbar';
@@ -6,7 +6,7 @@ import Footer from '../Components/Footer';
 
 const Delivery = ({ onDeliveryData }) => {
   const navigate = useNavigate();
-  const apiUrl = "http://44.198.25.29:3000";
+  const dropdownRef = useRef(null);
 
   // Country data with flags and dial codes
   const countries = [
@@ -60,6 +60,23 @@ const Delivery = ({ onDeliveryData }) => {
 
   const selectedCountry = countries.find(c => c.code === deliveryData.country) || countries[0];
 
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowCountryDropdown(false);
+      }
+    };
+
+    if (showCountryDropdown) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showCountryDropdown]);
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     const updatedData = { ...deliveryData, [name]: value };
@@ -81,12 +98,6 @@ const Delivery = ({ onDeliveryData }) => {
 
   const handlePhoneChange = (e) => {
     let value = e.target.value;
-    
-    // Ensure it starts with the dial code
-    if (!value.startsWith(selectedCountry.dialCode)) {
-      value = selectedCountry.dialCode + ' ' + value.replace(/[+\d\s]/g, '');
-    }
-    
     const updatedData = { ...deliveryData, phoneNumber: value };
     setDeliveryData(updatedData);
     if (onDeliveryData) onDeliveryData(updatedData);
@@ -103,7 +114,6 @@ const Delivery = ({ onDeliveryData }) => {
       return;
     }
 
-    // Validate phone number
     const phoneDigits = deliveryData.phoneNumber.replace(/\D/g, '');
     if (phoneDigits.length < 10) {
       alert('Please enter a valid phone number');
@@ -114,13 +124,11 @@ const Delivery = ({ onDeliveryData }) => {
 
     try {
       const storedUser = localStorage.getItem("user");
-      let userId = "guest_user";
       let userEmail = "guest@example.com";
 
       if (storedUser) {
         try {
           const parsedUser = JSON.parse(storedUser);
-          userId = parsedUser.id || parsedUser._id || parsedUser.email;
           userEmail = parsedUser.email || "guest@example.com";
         } catch {
           console.warn("Could not parse stored user data");
@@ -182,11 +190,14 @@ const Delivery = ({ onDeliveryData }) => {
             {/* Country Selector with Flags */}
             <div className="form-group">
               <label className="form-label">Country / Region</label>
-              <div className="country-selector">
+              <div className="country-selector" ref={dropdownRef}>
                 <button
                   type="button"
                   className="country-select-btn"
-                  onClick={() => setShowCountryDropdown(!showCountryDropdown)}
+                  onClick={() => {
+                    console.log('Dropdown clicked, current state:', showCountryDropdown);
+                    setShowCountryDropdown(!showCountryDropdown);
+                  }}
                 >
                   <span className="country-flag">{selectedCountry.flag}</span>
                   <span className="country-name">{selectedCountry.name}</span>
@@ -201,7 +212,10 @@ const Delivery = ({ onDeliveryData }) => {
                           key={country.code}
                           type="button"
                           className={`country-option ${country.code === deliveryData.country ? 'selected' : ''}`}
-                          onClick={() => handleCountrySelect(country)}
+                          onClick={() => {
+                            console.log('Country selected:', country.name);
+                            handleCountrySelect(country);
+                          }}
                         >
                           <span className="country-flag">{country.flag}</span>
                           <span className="country-name">{country.name}</span>
