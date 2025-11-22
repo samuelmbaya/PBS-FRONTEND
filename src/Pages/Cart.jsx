@@ -6,6 +6,7 @@ import Footer from "../Components/Footer";
 
 const Cart = () => {
   const [cart, setCart] = useState([]);
+  const [wishlist, setWishlist] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
   const navigate = useNavigate();
 
@@ -24,6 +25,12 @@ const Cart = () => {
           localStorage.getItem(`cart_${parsedUser.email}`) || "[]"
         );
         setCart(userCart);
+
+        // Load user wishlist from localStorage
+        const userWishlist = JSON.parse(
+          localStorage.getItem(`wishlist_${parsedUser.email}`) || "[]"
+        );
+        setWishlist(userWishlist);
       } else {
         // Prevent multiple alerts with sessionStorage flag
         if (!sessionStorage.getItem("cartAlertShown")) {
@@ -45,6 +52,13 @@ const Cart = () => {
       localStorage.setItem(`cart_${currentUser.email}`, JSON.stringify(cart));
     }
   }, [cart, currentUser]);
+
+  // Save wishlist updates to localStorage
+  useEffect(() => {
+    if (currentUser?.email) {
+      localStorage.setItem(`wishlist_${currentUser.email}`, JSON.stringify(wishlist));
+    }
+  }, [wishlist, currentUser]);
 
   // Functions for cart operations
   const increaseQuantity = (productId) => {
@@ -92,7 +106,7 @@ const Cart = () => {
 
   return (
     <div className="cart-page-container">
-      <Navbar />
+      <Navbar cartCount={getItemCount()} wishlistCount={wishlist.length} />
 
       {/* Hero Section */}
       <section className="cart-hero">

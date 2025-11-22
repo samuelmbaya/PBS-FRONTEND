@@ -160,7 +160,7 @@ const ProductPage = () => {
 
   return (
     <div className="product-page-container">
-      <Navbar />
+      <Navbar cartCount={getCartItemCount()} wishlistCount={wishlist.length} />
 
       {/* Hero Section */}
       <section className="products-hero">
