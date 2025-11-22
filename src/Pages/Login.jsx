@@ -1,18 +1,14 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { useFaceIO } from "../Components/FaceIOContext"; // Adjust path to your FaceIOContext (e.g., '../../contexts/FaceIOContext')
 import "./Login.css";
 import ReCaptcha from "../Components/reCaptcha";
 
 const Login = () => {
   const navigate = useNavigate();
-  const { faceio, loading: fioLoading, error: fioError, handleError, setError: setFioError } = useFaceIO();
   const apiUrl = import.meta.env.VITE_API_URL || "http://44.198.25.29:3000";
 
   const [isLoading, setIsLoading] = useState(false);
-  const [fioIsLoading, setFioIsLoading] = useState(false);
   const [message, setMessage] = useState("");
-  const [fioMessage, setFioMessage] = useState("");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
   const [showUserGreeting, setShowUserGreeting] = useState(false);
@@ -124,66 +120,6 @@ const Login = () => {
     }
   };
 
-  // FaceIO Authentication Handler (passwordless option)
-  const handleFaceLogin = async () => {
-    if (fioLoading || fioIsLoading || !faceio) {
-      setFioMessage("FaceIO not ready. Please wait.");
-      return;
-    }
-
-    setFioIsLoading(true);
-    setFioMessage("Authenticating with face...");
-    setFioError(null);
-
-    try {
-      const userData = await faceio.authenticate({
-        locale: "auto",
-      });
-      setFioMessage(`Face authenticated! Logging in as ${userData.payload.email}...`);
-      
-      // Use payload.email and facialId to log in via backend
-      // Implement /login-face on backend to verify facialId against enrolled users and return user data
-      const response = await fetch(`${apiUrl}/login-face`, { // New endpoint: POST /login-face
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: userData.payload.email,
-          facialId: userData.facialId,
-        }),
-      });
-
-      if (!response.ok) {
-        let errMessage = "Face login failed";
-        try {
-          const errorData = await response.json();
-          errMessage = errorData.error || errorData.message || errMessage;
-        } catch {}
-        throw new Error(errMessage);
-      }
-
-      const data = await response.json();
-      const userDataToStore = {
-        id: data.user.id,
-        name: data.user.name,
-        email: data.user.email,
-        loginTime: new Date().toISOString(),
-      };
-
-      saveUserToLocalStorage(userDataToStore);
-      setTimeout(() => navigate("/Home"), 1500);
-    } catch (errCode) {
-      if (typeof errCode === 'string' && errCode.startsWith('fioErrCode')) {
-        handleError(errCode);
-        setFioMessage("Face authentication failed. Try password login.");
-      } else {
-        console.error("Face login error:", errCode);
-        setFioMessage(errCode.message || "Failed to connect to server");
-      }
-    } finally {
-      setFioIsLoading(false);
-    }
-  };
-
   const handleSkipToHome = () => {
     if (isAuthenticated && currentUser) {
       navigate("/ProtectedRoutez");
@@ -195,14 +131,6 @@ const Login = () => {
   const goToSignup = () => {
     navigate("/signup");
   };
-
-  // Show FaceIO-specific errors/messages
-  useEffect(() => {
-    if (fioError) {
-      setFioMessage(fioError);
-      setFioError(null);
-    }
-  }, [fioError, setFioError]);
 
   return (
     <div className="login-container">
@@ -225,11 +153,6 @@ const Login = () => {
             {message}
           </div>
         )}
-        {fioMessage && (
-          <div className={`login-message ${fioMessage.includes("success") || fioMessage.includes("Welcome") ? "success" : "error"}`}>
-            {fioMessage}
-          </div>
-        )}
 
         {isAuthenticated && currentUser && showUserGreeting && (
           <div className="greeting-message">
@@ -248,7 +171,7 @@ const Login = () => {
             placeholder="Enter your email"
             value={loginData.username}
             onChange={handleLoginInputChange}
-            disabled={isLoading || fioIsLoading}
+            disabled={isLoading}
             required
           />
 
@@ -260,7 +183,7 @@ const Login = () => {
             placeholder="Enter your password"
             value={loginData.password}
             onChange={handleLoginInputChange}
-            disabled={isLoading || fioIsLoading}
+            disabled={isLoading}
             required
           />
 
@@ -274,23 +197,10 @@ const Login = () => {
           <button
             type="submit"
             className="login-button"
-            disabled={!submitEnabled || isLoading || fioLoading}
+            disabled={!submitEnabled || isLoading}
           >
-            {isLoading ? "Logging in..." : "Log in with Password"}
+            {isLoading ? "Logging in..." : "Log in"}
           </button>
-
-          {/* FaceIO Login Option */}
-          <div className="face-login-option">
-            <button
-              type="button"
-              onClick={handleFaceLogin}
-              disabled={fioIsLoading || fioLoading}
-              className="face-login-btn"
-            >
-              {fioIsLoading ? "Authenticating..." : "Or Log in with Face"}
-            </button>
-            {fioLoading && <p className="fio-loading">Loading FaceIO...</p>}
-          </div>
 
           <p className="footer-text">
             Don't have an account?{" "}
