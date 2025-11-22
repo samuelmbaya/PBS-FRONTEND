@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Wishlist.css";
+import Navbar from "../Components/Navbar";
+import Footer from "../Components/Footer";
 
 const Wishlist = () => {
   const [wishlist, setWishlist] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
-  const [darkMode, setDarkMode] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -17,19 +18,13 @@ const Wishlist = () => {
         const parsedUser = JSON.parse(storedUser);
         setCurrentUser(parsedUser);
 
-        // ✅ Load user's wishlist safely
+        // Load user's wishlist safely
         const userWishlist = JSON.parse(
           localStorage.getItem(`wishlist_${parsedUser.email}`) || "[]"
         );
         setWishlist(userWishlist);
-
-        // ✅ Load theme preference, default true (dark)
-        const userDarkMode = localStorage.getItem(`darkMode_${parsedUser.email}`);
-        if (userDarkMode !== null) {
-          setDarkMode(JSON.parse(userDarkMode));
-        }
       } else {
-        // ✅ Prevent multiple alerts with sessionStorage flag
+        // Prevent multiple alerts with sessionStorage flag
         if (!sessionStorage.getItem("wishlistAlertShown")) {
           alert("Please log in to view your wishlist.");
           sessionStorage.setItem("wishlistAlertShown", "true");
@@ -43,7 +38,7 @@ const Wishlist = () => {
     }
   }, [navigate]);
 
-  // ✅ Persist wishlist changes to localStorage
+  // Persist wishlist changes to localStorage
   useEffect(() => {
     if (currentUser?.email) {
       localStorage.setItem(
@@ -64,45 +59,76 @@ const Wishlist = () => {
   };
 
   return (
-    <div className={`wishlist-page ${darkMode ? "dark" : "light"}`}>
-      <div className="wishlist-header">
-        <h1>Your Wishlist</h1>
-        <button
-          onClick={handleContinueShopping}
-          className="continue-shopping-btn"
-        >
-          Continue Shopping
-        </button>
-      </div>
+    <div className="wishlist-page-container">
+      <Navbar />
 
-      {wishlist.length === 0 ? (
-        <p>Your wishlist is empty.</p>
-      ) : (
-        <div className="wishlist-items">
-          {wishlist.map((item) => (
-            <div className="wishlist-item" key={item._id}>
-              <img
-                src={item.imageUrl || "https://via.placeholder.com/100"}
-                alt={item.name}
-                className="wishlist-item-img"
-              />
+      {/* Hero Section */}
+      <section className="wishlist-hero">
+        <div className="wishlist-hero-content">
+          <h1 className="wishlist-hero-title">Your Wishlist</h1>
+          <p className="wishlist-hero-subtitle">
+            {wishlist.length} {wishlist.length === 1 ? 'item' : 'items'} saved for later
+          </p>
+        </div>
+      </section>
 
-              <div className="wishlist-item-info">
-                <h3>{item.name}</h3>
-                <p>R {item.price ? item.price.toLocaleString() : "0.00"}</p>
-              </div>
+      {/* Main Content */}
+      <div className="wishlist-content">
+        {wishlist.length === 0 ? (
+          <div className="empty-wishlist">
+            <div className="empty-icon">♡</div>
+            <h2>Your wishlist is empty</h2>
+            <p>Start adding products you love to your wishlist</p>
+            <button onClick={handleContinueShopping} className="shop-now-btn">
+              Explore Products
+            </button>
+          </div>
+        ) : (
+          <>
+            <div className="wishlist-grid">
+              {wishlist.map((item) => (
+                <div className="wishlist-card" key={item._id}>
+                  <div className="wishlist-image-container">
+                    <img
+                      src={item.imageUrl || item.imageURL || "https://via.placeholder.com/300"}
+                      alt={item.name}
+                      className="wishlist-img"
+                    />
+                    <button
+                      onClick={() => removeFromWishlist(item._id)}
+                      className="remove-icon"
+                      aria-label={`Remove ${item.name} from wishlist`}
+                    >
+                      ✕
+                    </button>
+                  </div>
 
-              <button
-                onClick={() => removeFromWishlist(item._id)}
-                className="remove-btn"
-                aria-label={`Remove ${item.name} from wishlist`}
-              >
-                Remove
+                  <div className="wishlist-card-info">
+                    <h3 className="wishlist-product-name">{item.name}</h3>
+                    <p className="wishlist-product-price">
+                      R {item.price ? item.price.toLocaleString() : "0.00"}
+                    </p>
+                    <button
+                      onClick={handleContinueShopping}
+                      className="view-product-btn"
+                    >
+                      View Product
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="wishlist-actions">
+              <button onClick={handleContinueShopping} className="continue-btn">
+                Continue Shopping
               </button>
             </div>
-          ))}
-        </div>
-      )}
+          </>
+        )}
+      </div>
+
+      <Footer />
     </div>
   );
 };
