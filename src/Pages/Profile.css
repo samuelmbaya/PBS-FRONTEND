@@ -55,8 +55,8 @@ body {
 /* Hero Section (Inspired by delivery-hero) */
 .profile-hero {
   height: 30vh;
-  background: linear-gradient(rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.9)),
-    url("https://images.unsplash.com/photo-1552664730-d307ca884978?w=1600") center/cover;
+  background: linear-gradient(#ffffff2b, #ffffff3d),
+    url("https://www.santanderopenacademy.com/en/blog/what-is-sustainability/_jcr_content/root/container/responsivegrid/image_416961853.coreimg.jpeg/1649173753985/what-is-sustainability-1.jpeg") center/cover;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -240,8 +240,7 @@ body {
   padding-top: 32px;
   border-top: 1px solid rgba(0, 0, 0, 0.1);
 }
-.save-changes-btn,
-.edit-profile-btn {
+.save-changes-btn {
   flex: 1;
   padding: 16px 32px;
   font-size: 14px;
@@ -255,9 +254,29 @@ body {
   text-transform: uppercase;
   letter-spacing: 1px;
 }
-.save-changes-btn:hover,
-.edit-profile-btn:hover {
+.save-changes-btn:hover {
   background: #000;
+  color: #fff;
+  transform: translateY(-2px);
+}
+.edit-profile-btn,
+.logout-btn {
+  flex: 1;
+  padding: 16px 32px;
+  font-size: 14px;
+  font-weight: 600;
+  background: #000;
+  border: none;
+  border-radius: 8px;
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.edit-profile-btn:hover,
+.logout-btn:hover {
+  background: #333;
   color: #fff;
   transform: translateY(-2px);
 }
@@ -396,72 +415,6 @@ body {
   background: rgba(0, 0, 0, 0.05);
   border-color: rgba(0, 0, 0, 0.3);
   color: #000;
-}
-.logout-btn {
-  flex: 1;
-  width: auto; /* Allow flexible width */
-  padding: 16px 24px;
-  font-size: 14px;
-  font-weight: 600;
-  background: #e63946;
-  border: none;
-  border-radius: 8px;
-  color: #ffffff;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-.logout-btn:hover {
-  background: #000;
-  color: #fff;
-  transform: translateY(-2px);
-}
-
-/* Login Prompt (Updated glassy style) */
-.login-prompt {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: calc(100vh - 80px);
-  gap: 20px;
-  padding: 40px 20px;
-  background: rgba(0, 0, 0, 0.02);
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  border-radius: 12px;
-  max-width: 400px;
-  margin: 40px auto;
-}
-.login-prompt h2 {
-  font-size: 32px;
-  font-weight: 300;
-  color: #000;
-  margin: 0;
-  letter-spacing: -0.5px;
-}
-.login-prompt p {
-  font-size: 16px;
-  color: rgba(0, 0, 0, 0.6);
-  margin: 0;
-}
-.login-button {
-  padding: 16px 40px;
-  font-size: 14px;
-  font-weight: 600;
-  background: #e63946;
-  border: none;
-  border-radius: 8px;
-  color: #ffffff;
-  cursor: pointer;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  transition: all 0.3s ease;
-}
-.login-button:hover {
-  background: #000;
-  color: #fff;
-  transform: translateY(-2px);
 }
 
 /* Responsive Design */

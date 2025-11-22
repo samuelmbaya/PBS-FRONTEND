@@ -76,16 +76,19 @@ const Profile = () => {
   });
 
   useEffect(() => {
-    if (currentUser) {
-      setFormData({
-        name: currentUser.name || '',
-        email: currentUser.email || '',
-        phone: currentUser.phone || '',
-        address: currentUser.address || '',
-        city: currentUser.city || '',
-        postalCode: currentUser.postalCode || ''
-      });
+    if (!currentUser) {
+      window.location.href = '/login';
+      return;
     }
+
+    setFormData({
+      name: currentUser.name || '',
+      email: currentUser.email || '',
+      phone: currentUser.phone || '',
+      address: currentUser.address || '',
+      city: currentUser.city || '',
+      postalCode: currentUser.postalCode || ''
+    });
   }, [currentUser]);
 
   const handleLogout = () => {
@@ -152,25 +155,6 @@ const Profile = () => {
     if (currentUser.email) return currentUser.email.split('@')[0];
     return 'User';
   };
-
-  if (!currentUser) {
-    return (
-      <div className="profile-fullscreen">
-        <div className="profile-wrapper">
-          <div className="profile-header">
-            <div className="profile-logo">POWERED BY SAMUEL</div>
-          </div>
-          <div className="login-prompt">
-            <h2>Not Logged In</h2>
-            <p>Please log in to view your profile</p>
-            <button className="login-button" onClick={() => window.location.href = '/login'}>
-              Log In
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="profile-fullscreen">
@@ -298,28 +282,28 @@ const Profile = () => {
           <div className="account-actions">
             <h3>Quick Actions</h3>
             <div className="action-card" onClick={handleOrders}>
-              <div className="action-icon">📦</div>
+              <div className="action-icon">O</div>
               <div className="action-content">
                 <h4>Your Orders</h4>
                 <p>Track, return, or buy things again</p>
               </div>
             </div>
             <div className="action-card" onClick={handleCart}>
-              <div className="action-icon">🛒</div>
+              <div className="action-icon">C</div>
               <div className="action-content">
                 <h4>Cart</h4>
                 <p>Review items in your cart</p>
               </div>
             </div>
             <div className="action-card" onClick={handleWishlist}>
-              <div className="action-icon">❤️</div>
+              <div className="action-icon">W</div>
               <div className="action-content">
                 <h4>Wishlist</h4>
                 <p>View saved items</p>
               </div>
             </div>
             <div className="action-card" onClick={handleBackToProducts}>
-              <div className="action-icon">🛍️</div>
+              <div className="action-icon">P</div>
               <div className="action-content">
                 <h4>Products</h4>
                 <p>Continue shopping</p>
