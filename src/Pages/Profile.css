@@ -325,6 +325,10 @@ body {
   display: flex;
   flex-direction: column;
   gap: 24px;
+  position: sticky;
+  top: 0;
+  height: fit-content;
+  align-self: start;
 }
 @media (max-width: 1024px) {
   .account-actions {
