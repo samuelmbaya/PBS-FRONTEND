@@ -148,7 +148,7 @@ const templateParams = {
                   name="firstName"
                   value={formData.firstName}
                   onChange={handleInputChange}
-                  placeholder="Jane" 
+                  placeholder="Name" 
                   required
                 />
               </div>
@@ -159,7 +159,7 @@ const templateParams = {
                   name="lastName"
                   value={formData.lastName}
                   onChange={handleInputChange}
-                  placeholder="Smitherton" 
+                  placeholder="Surname" 
                   required
                 />
               </div>
@@ -172,7 +172,7 @@ const templateParams = {
                 name="email"
                 value={formData.email}
                 onChange={handleInputChange}
-                placeholder="email@janesfakedomain.net" 
+                placeholder="Your Email" 
                 required
               />
             </div>
