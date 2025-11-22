@@ -109,6 +109,62 @@ const Orders = () => {
     }
   };
 
+  const getDeliverySteps = (status) => {
+    const steps = [
+      { label: 'Order Placed', completed: true },
+      { label: 'Processing', completed: status !== 'pending' },
+      { label: 'Shipped', completed: status === 'shipped' || status === 'delivered' },
+      { label: 'Delivered', completed: status === 'delivered' },
+    ];
+    return steps;
+  };
+
+  const renderDeliveryProgress = (status) => {
+    const steps = getDeliverySteps(status);
+    return (
+      <div className="delivery-progress">
+        {steps.map((step, index) => (
+          <div key={index} className={`step ${step.completed ? 'completed' : ''}`}>
+            <div className="step-circle"></div>
+            <span className="step-label">{step.label}</span>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  const renderMapOrTracking = (deliveryData) => {
+    if (!deliveryData || !deliveryData.streetAddress) return null;
+
+    const isPickup = deliveryData.pickup || false; // Assume pickup flag in deliveryData
+    const pickupAddress = isPickup ? deliveryData.pickupAddress || deliveryData.streetAddress : 'Warehouse, Johannesburg, South Africa';
+    const dropoffAddress = deliveryData.streetAddress;
+    const origin = encodeURIComponent(pickupAddress);
+    const destination = encodeURIComponent(dropoffAddress);
+
+    const mapUrl = isPickup 
+      ? `https://www.google.com/maps/embed/v1/place?key=YOUR_API_KEY&q=${origin}` // Replace with actual API key
+      : `https://www.google.com/maps/embed/v1/directions?key=YOUR_API_KEY&origin=${origin}&destination=${destination}&mode=driving`;
+
+    return (
+      <div className="order-tracking-map">
+        <iframe
+          width="100%"
+          height="300"
+          frameBorder="0"
+          style={{ border: 0 }}
+          src={mapUrl}
+          allowFullScreen=""
+          loading="lazy"
+          referrerPolicy="no-referrer-when-downgrade"
+        ></iframe>
+        <p className="map-caption">
+          {isPickup ? 'Pickup Point Location' : 'Estimated Delivery Route'}
+        </p>
+      </div>
+    );
+  };
+
   if (loading) {
     return (
       <div className="orders-page-container">
@@ -167,6 +223,7 @@ const Orders = () => {
                       </span>
                     </p>
                   </div>
+                  {renderDeliveryProgress(order.status)}
                 </div>
 
                 <div className="order-items">
@@ -201,6 +258,8 @@ const Orders = () => {
                     <p>No items found for this order</p>
                   )}
                 </div>
+
+                {renderMapOrTracking(order.deliveryData)}
 
                 <div className="order-footer">
                   <div className="order-footer-left">
