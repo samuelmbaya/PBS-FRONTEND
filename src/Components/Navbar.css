@@ -16,11 +16,11 @@
   align-items: center;
   justify-content: space-between;
   /* Glass effect: semi-transparent bg with blur */
-  background: rgba(255, 255, 255, 0.05);
+  background: rgb(255, 255, 255);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px); /* Safari support */
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  color: #fff;
+  color: #000000;
   padding: 1rem 2rem;
   position: fixed;
   top: 0;
@@ -35,7 +35,7 @@
   font-size: 18px;
   font-weight: bold;
   letter-spacing: 1px;
-  color: #fff;
+  color: #000000;
 }
 
 .nav-links {
