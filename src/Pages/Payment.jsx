@@ -28,6 +28,10 @@ const Payment = () => {
   // Loading state for processing payment
   const [loading, setLoading] = useState(false);
 
+  // Success state
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [transactionId, setTransactionId] = useState("");
+
   // Cart and user info
   const [cart, setCart] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
@@ -117,6 +121,14 @@ const Payment = () => {
     }));
   };
 
+  // Format expiry
+  const formatExpiry = (value) => {
+    return value
+      .replace(/\D/g, "")
+      .replace(/(\d{2})(\d{0,2})/, "$1/$2")
+      .slice(0, 5);
+  };
+
   // Email validation helper
   const isValidEmail = (email) =>
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -125,9 +137,7 @@ const Payment = () => {
   const applyPromoCode = () => {
     if (promoCode.toUpperCase() === "PBS2025") {
       setPromoApplied(true);
-      alert("Promo code applied! You saved 10%");
     } else {
-      alert("Invalid promo code");
       setPromoApplied(false);
     }
   };
@@ -143,9 +153,9 @@ const Payment = () => {
         .join('\n');
 
       // Format delivery address
-      const deliveryAddress = deliveryData.address 
-        ? `${deliveryData.address}\n${deliveryData.city || ''}, ${deliveryData.postalCode || ''}\n${deliveryData.country || ''}`
-        : 'No delivery address provided';
+      const deliveryAddress = deliveryData.streetAddress 
+        ? `${deliveryData.streetAddress}${deliveryData.apartment ? ', ' + deliveryData.apartment : ''}\n${deliveryData.city}, ${deliveryData.province} ${deliveryData.postalCode}\n${deliveryData.countryName}`
+        : 'Pickup location: ' + (deliveryData.pickupLocation || 'Not specified');
 
       const templateParams = {
         to_email: currentUser.email,
@@ -272,6 +282,9 @@ const Payment = () => {
           deliveryData: result.data.deliveryData,
         };
 
+        // Generate transaction ID
+        const transId = 'TXN' + Date.now();
+
         // Send order receipt email
         await sendOrderReceipt({
           orderId: savedOrder.id,
@@ -291,9 +304,14 @@ const Payment = () => {
         localStorage.setItem(`cart_${currentUser.email}`, JSON.stringify([]));
         setCart([]);
 
+        setTransactionId(transId);
+        setIsSuccess(true);
         setLoading(false);
-        alert("Payment successful! Order placed. Check your email for the receipt.");
-        navigate("/Orders");
+
+        // Navigate after 3 seconds
+        setTimeout(() => {
+          navigate("/Orders");
+        }, 3000);
       }
     } catch (error) {
       console.error("Error creating order:", error);
@@ -302,131 +320,152 @@ const Payment = () => {
     }
   };
 
+  // Handle back to cart
+  const handleBackToCart = () => {
+    navigate("/Cart");
+  };
+
+  // Handle back to home from success
+  const handleBackToHome = () => {
+    navigate("/");
+  };
+
+  if (isSuccess) {
+    return (
+      <div className="payment-success-screen">
+        <div className="success-header">
+          <button className="back-btn" onClick={handleBackToHome}>
+            ‹
+          </button>
+          <h1>Payment</h1>
+          <div className="header-dots">•••</div>
+        </div>
+        <div className="success-content">
+          <div className="success-icon">✓</div>
+          <h2>Payment Successful!</h2>
+          <p>Successfully paid R {totalPrice.toFixed(2)}</p>
+          <div className="transaction-details">
+            <div className="detail-row">
+              <span>Transaction ID</span>
+              <span>{transactionId}</span>
+            </div>
+            <div className="detail-row">
+              <span>Date</span>
+              <span>{new Date().toLocaleDateString('en-ZA')}</span>
+            </div>
+            <div className="detail-row">
+              <span>Type of Transaction</span>
+              <span>Credit Card</span>
+            </div>
+            <div className="detail-row">
+              <span>Tax</span>
+              <span>R 0.00</span>
+            </div>
+            <div className="detail-row">
+              <span>Status</span>
+              <span>Success</span>
+            </div>
+          </div>
+          <button className="back-home-btn" onClick={handleBackToHome}>
+            Back to Home
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="payment-fullscreen">
       <div className="payment-wrapper">
         {/* Header */}
         <div className="payment-header">
-          <div className="payment-logo">PBS ELECTRICAL</div>
+          <button className="back-btn" onClick={handleBackToCart}>
+            ‹
+          </button>
+          <div className="payment-logo">Payment</div>
+          <div className="header-dots">•••</div>
         </div>
 
-        {/* <div className="payment-breadcrumb">
-          <span className="breadcrumb-item">Cart</span>
-          <span className="breadcrumb-separator">›</span>
-          <span className="breadcrumb-item active">Payment</span>
-        </div> */}
-
         <div className="payment-container">
-          {/* Payment Section (Left) */}
+          {/* Payment Section */}
           <div className="payment-section">
             {/* Payment Method Selection */}
             <div className="form-section">
               <h3 className="section-title">Payment Method</h3>
-              <div className="payment-methods">
-                <label htmlFor="credit-card">
-                  <input
-                    id="credit-card"
-                    type="radio"
-                    value="credit-card"
-                    checked={paymentMethod === "credit-card"}
-                    onChange={() => setPaymentMethod("credit-card")}
-                  />
-                  💳 Credit Card
-                </label>
-                <label htmlFor="paypal">
-                  <input
-                    id="paypal"
-                    type="radio"
-                    value="paypal"
-                    checked={paymentMethod === "paypal"}
-                    onChange={() => setPaymentMethod("paypal")}
-                  />
-                  PayPal
-                </label>
-                <label htmlFor="google-pay">
-                  <input
-                    id="google-pay"
-                    type="radio"
-                    value="google-pay"
-                    checked={paymentMethod === "google-pay"}
-                    onChange={() => setPaymentMethod("google-pay")}
-                  />
-                  Google Pay
-                </label>
+              <div className="payment-methods-grid">
+                <button
+                  className={`method-btn ${paymentMethod === "credit-card" ? "selected" : ""}`}
+                  onClick={() => setPaymentMethod("credit-card")}
+                >
+                  <span className="method-icon">+ Add Card</span>
+                </button>
+                <button
+                  className={`method-btn ${paymentMethod === "paypal" ? "selected" : ""}`}
+                  onClick={() => setPaymentMethod("paypal")}
+                >
+                  <span className="method-icon">PayPal</span>
+                </button>
+                <button
+                  className={`method-btn ${paymentMethod === "google-pay" ? "selected" : ""}`}
+                  onClick={() => setPaymentMethod("google-pay")}
+                >
+                  <span className="method-icon">Google Pay</span>
+                </button>
               </div>
 
               {/* Credit Card Form */}
               {paymentMethod === "credit-card" && (
                 <div className="card-form">
                   <div className="card-preview">
+                    <div className="card-type">VISA</div>
                     <div className="card-number">
-                      {cardData.number || "#### #### #### ####"}
+                      {cardData.number.replace(/\s/g, '') || "•••• •••• •••• ••••"}
                     </div>
-                    <div className="card-details">
-                      <span>{cardData.name || "CARDHOLDER NAME"}</span>
+                    <div className="card-name">{cardData.name || "Cardholder Name"}</div>
+                    <div className="card-expiry-cvc">
                       <span>{cardData.expiry || "MM/YY"}</span>
+                      <span>{cardData.cvc || "CVV"}</span>
                     </div>
                   </div>
 
-                  <label htmlFor="card-number" className="sr-only">
-                    Card Number
-                  </label>
                   <input
-                    id="card-number"
                     type="text"
                     name="number"
                     placeholder="Card Number"
                     value={cardData.number}
                     onChange={handleCardChange}
                     maxLength={19}
-                    autoComplete="cc-number"
+                    className="form-input"
                   />
 
-                  <label htmlFor="card-name" className="sr-only">
-                    Cardholder Name
-                  </label>
                   <input
-                    id="card-name"
                     type="text"
                     name="name"
                     placeholder="Cardholder Name"
                     value={cardData.name}
                     onChange={handleCardChange}
-                    autoComplete="cc-name"
+                    className="form-input"
                   />
 
                   <div className="card-row">
-                    <div>
-                      <label htmlFor="card-expiry" className="sr-only">
-                        Expiry Date
-                      </label>
-                      <input
-                        id="card-expiry"
-                        type="text"
-                        name="expiry"
-                        placeholder="Expiry (MM/YY)"
-                        value={cardData.expiry}
-                        onChange={handleCardChange}
-                        maxLength={5}
-                        autoComplete="cc-exp"
-                      />
-                    </div>
-
-                    <div>
-                      <label htmlFor="card-cvc" className="sr-only">
-                        CVC
-                      </label>
-                      <input
-                        id="card-cvc"
-                        type="text"
-                        name="cvc"
-                        placeholder="CVC"
-                        value={cardData.cvc}
-                        onChange={handleCardChange}
-                        maxLength={4}
-                        autoComplete="cc-csc"
-                      />
-                    </div>
+                    <input
+                      type="text"
+                      name="expiry"
+                      placeholder="MM/YY"
+                      value={cardData.expiry}
+                      onChange={(e) => setCardData(prev => ({ ...prev, expiry: formatExpiry(e.target.value) }))}
+                      maxLength={5}
+                      className="form-input half"
+                    />
+                    <input
+                      type="text"
+                      name="cvc"
+                      placeholder="CVV"
+                      value={cardData.cvc}
+                      onChange={handleCardChange}
+                      maxLength={4}
+                      className="form-input half"
+                    />
                   </div>
                 </div>
               )}
@@ -434,16 +473,12 @@ const Payment = () => {
               {/* PayPal Form */}
               {paymentMethod === "paypal" && (
                 <div className="paypal-form">
-                  <label htmlFor="paypal-email" className="sr-only">
-                    PayPal Email
-                  </label>
                   <input
-                    id="paypal-email"
                     type="email"
                     placeholder="PayPal Email"
                     value={paypalEmail}
                     onChange={(e) => setPaypalEmail(e.target.value)}
-                    autoComplete="email"
+                    className="form-input"
                   />
                 </div>
               )}
@@ -451,39 +486,19 @@ const Payment = () => {
               {/* Google Pay Form */}
               {paymentMethod === "google-pay" && (
                 <div className="google-pay-form">
-                  <label htmlFor="googlepay-email" className="sr-only">
-                    Google Pay Email
-                  </label>
                   <input
-                    id="googlepay-email"
                     type="email"
                     placeholder="Google Pay Email"
                     value={googlePayEmail}
                     onChange={(e) => setGooglePayEmail(e.target.value)}
-                    autoComplete="email"
+                    className="form-input"
                   />
                 </div>
               )}
             </div>
-
-            {/* Action Buttons */}
-            <button
-              className="place-order-btn"
-              onClick={handlePlaceOrder}
-              disabled={loading}
-            >
-              {loading ? "Processing" : "Complete Order"}
-            </button>
-
-            <button
-              className="back-to-cart-btn"
-              onClick={() => navigate("/Cart")}
-            >
-              ‹ Return to cart
-            </button>
           </div>
 
-          {/* Order Summary (Right) */}
+          {/* Order Summary */}
           <div className="order-summary">
             <h3>Order Summary</h3>
             {cart.length === 0 ? (
@@ -539,6 +554,7 @@ const Payment = () => {
                       placeholder="Discount code or gift card"
                       value={promoCode}
                       onChange={(e) => setPromoCode(e.target.value)}
+                      className="form-input"
                     />
                     <button className="apply-btn" onClick={applyPromoCode}>
                       Apply
@@ -575,6 +591,17 @@ const Payment = () => {
               </>
             )}
           </div>
+        </div>
+
+        {/* Action Button */}
+        <div className="payment-actions">
+          <button
+            className="place-order-btn"
+            onClick={handlePlaceOrder}
+            disabled={loading || cart.length === 0}
+          >
+            {loading ? "Processing..." : `Confirm Payment R ${totalPrice.toFixed(2)}`}
+          </button>
         </div>
       </div>
     </div>
