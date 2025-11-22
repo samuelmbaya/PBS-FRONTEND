@@ -134,17 +134,9 @@ const Login = () => {
 
   return (
     <div className="login-container">
-      {/* Left Side - Video Background */}
+      {/* Left Side - Background Image */}
       <div className="login-left">
-        <video
-          className="login-video"
-          autoPlay
-          loop
-          muted
-          playsInline
-        >
-          <source src="https://cdn.coverr.co/videos/coverr-abstract-dark-digital-wave-7279/1080p.mp4" type="video/mp4" />
-        </video>
+        <div className="login-image-overlay"></div>
         <div className="video-overlay">
           <h2>Welcome back to SneakerVerse</h2>
           <p>Access your account and explore premium designs.</p>
