@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 @import url('https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css');
 
+/* Reset and Base */
 * {
   margin: 0;
   padding: 0;
@@ -22,13 +23,14 @@ html, body {
   position: fixed;
   top: 0;
   left: 0;
+  background: #000;
 }
 
 /* Left Side - Video Section */
 .login-left {
   flex: 1;
   position: relative;
-  background-color: #111;
+  background-color: #000;
   overflow: hidden;
 }
 
@@ -36,7 +38,7 @@ html, body {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  filter: brightness(0.7);
+  filter: brightness(0.6);
 }
 
 .video-overlay {
@@ -46,32 +48,46 @@ html, body {
   color: #fff;
   z-index: 2;
   max-width: 500px;
+  animation: fadeInUp 1s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .video-overlay h2 {
   font-size: 1.8rem;
   margin-bottom: 10px;
-  font-weight: 600;
+  font-weight: 300;
   letter-spacing: -0.5px;
 }
 
 .video-overlay p {
   font-size: 1rem;
   margin-bottom: 10px;
-  opacity: 0.9;
+  opacity: 0.8;
   line-height: 1.5;
+  font-weight: 300;
 }
 
 .video-overlay span {
   font-size: 0.9rem;
-  opacity: 0.7;
+  opacity: 0.6;
   display: block;
   margin-top: 8px;
+  font-weight: 300;
 }
 
 .video-overlay strong {
-  font-weight: 600;
-  color: #c6d4b4;
+  font-weight: 500;
+  color: #fff;
 }
 
 /* Right Side - Form Section */
@@ -80,7 +96,7 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #0c0c0c;
+  background: #000;
   color: #ffffff;
   padding: 20px;
   position: relative;
@@ -100,8 +116,8 @@ html, body {
 .login-form h2 {
   font-size: 1.4rem;
   margin-bottom: 8px;
-  font-weight: 600;
-  letter-spacing: -0.3px;
+  font-weight: 300;
+  letter-spacing: -0.5px;
 }
 
 /* Form Labels */
@@ -109,32 +125,35 @@ label {
   font-size: 0.8rem;
   margin-top: 6px;
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.9);
+  color: rgba(255, 255, 255, 0.8);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
 }
 
 /* Form Inputs */
 input {
   padding: 10px 14px;
-  background-color: #1e1e1e;
-  border: 1px solid #333;
-  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
   color: #fff;
   outline: none;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
   font-size: 0.9rem;
 }
 
 input::placeholder {
-  color: rgba(255, 255, 255, 0.4);
+  color: rgba(255, 255, 255, 0.3);
 }
 
 input:focus {
-  border-color: #89c9b8;
-  background-color: #252525;
+  background: rgba(255, 255, 255, 0.05);
+  border-color: #e63946;
+  box-shadow: 0 0 0 3px rgba(230, 57, 70, 0.1);
 }
 
 input:disabled {
-  opacity: 0.6;
+  opacity: 0.5;
   cursor: not-allowed;
 }
 
@@ -149,26 +168,28 @@ input:disabled {
 
 /* Login Button */
 .login-button {
-  background-color: #c6d4b4;
-  color: #111;
+  background: #e63946;
+  color: #fff;
   border: none;
   padding: 11px;
-  border-radius: 6px;
+  border-radius: 8px;
   font-weight: 600;
   font-size: 0.9rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
   cursor: pointer;
   transition: all 0.3s ease;
   margin-top: 4px;
 }
 
 .login-button:hover:not(:disabled) {
-  background-color: #b4c1a2;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(198, 212, 180, 0.3);
+  background: #fff;
+  color: #000;
+  transform: translateY(-2px);
 }
 
 .login-button:disabled {
-  opacity: 0.6;
+  background: rgba(230, 57, 70, 0.5);
   cursor: not-allowed;
   transform: none;
 }
@@ -178,13 +199,13 @@ input:disabled {
   font-size: 0.8rem;
   margin-top: 8px;
   text-align: center;
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(255, 255, 255, 0.6);
 }
 
 .link-button {
   background: none;
   border: none;
-  color: #89c9b8;
+  color: #e63946;
   cursor: pointer;
   font-size: 0.8rem;
   font-weight: 600;
@@ -195,7 +216,7 @@ input:disabled {
 }
 
 .link-button:hover {
-  color: #9dd9c7;
+  color: #ff4d5a;
   text-decoration: underline;
 }
 
@@ -204,11 +225,13 @@ input:disabled {
   width: 100%;
   padding: 10px;
   background: transparent;
-  border: 1px solid #333;
-  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
   color: rgba(255, 255, 255, 0.7);
   font-size: 0.8rem;
   font-weight: 500;
+  letter-spacing: 1px;
+  text-transform: uppercase;
   cursor: pointer;
   transition: all 0.3s ease;
   margin-top: 4px;
@@ -216,14 +239,14 @@ input:disabled {
 
 .skip-button:hover {
   background: rgba(255, 255, 255, 0.05);
-  border-color: #555;
+  border-color: rgba(255, 255, 255, 0.3);
   color: #fff;
 }
 
 /* Small Text */
 small {
   font-size: 0.7rem;
-  color: #777;
+  color: rgba(255, 255, 255, 0.4);
   margin-top: 8px;
   text-align: center;
   display: block;
@@ -231,22 +254,23 @@ small {
 }
 
 small a {
-  color: #89c9b8;
+  color: rgba(255, 255, 255, 0.5);
   text-decoration: none;
   transition: color 0.2s;
 }
 
 small a:hover {
-  color: #9dd9c7;
+  color: rgba(255, 255, 255, 0.7);
   text-decoration: underline;
 }
 
 /* Social Section */
 .social-text {
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.4);
   font-size: 0.8rem;
   margin: 10px 0 8px;
   text-align: center;
+  font-weight: 300;
 }
 
 .social-icons {
@@ -262,8 +286,9 @@ small a:hover {
   justify-content: center;
   width: 38px;
   height: 38px;
-  border: 1px solid #333;
-  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
   font-size: 20px;
   color: rgba(255, 255, 255, 0.6);
   transition: all 0.3s ease;
@@ -271,9 +296,9 @@ small a:hover {
 }
 
 .social-icons a:hover {
-  border-color: #c6d4b4;
-  color: #c6d4b4;
-  background: rgba(198, 212, 180, 0.1);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: #e63946;
+  background: rgba(230, 57, 70, 0.1);
   transform: translateY(-2px);
 }
 
@@ -284,13 +309,13 @@ small a:hover {
   left: 50%;
   transform: translateX(-50%);
   padding: 12px 24px;
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 0.9rem;
   font-weight: 500;
   z-index: 1000;
   max-width: 90%;
   text-align: center;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
   animation: slideDown 0.3s ease-out;
 }
 
@@ -306,13 +331,15 @@ small a:hover {
 }
 
 .login-message.success {
-  background: #4CAF50;
-  color: white;
+  background: rgba(46, 204, 113, 0.2);
+  border: 1px solid rgba(46, 204, 113, 0.4);
+  color: #2ecc71;
 }
 
 .login-message.error {
-  background: #f44336;
-  color: white;
+  background: rgba(230, 57, 70, 0.2);
+  border: 1px solid rgba(230, 57, 70, 0.4);
+  color: #e63946;
 }
 
 .greeting-message {
@@ -321,14 +348,15 @@ small a:hover {
   left: 50%;
   transform: translateX(-50%);
   padding: 12px 24px;
-  background: #4CAF50;
-  color: white;
-  border-radius: 6px;
+  background: rgba(46, 204, 113, 0.2);
+  border: 1px solid rgba(46, 204, 113, 0.4);
+  color: #2ecc71;
+  border-radius: 8px;
   font-size: 0.9rem;
   z-index: 1000;
   max-width: 90%;
   text-align: center;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
   animation: slideDown 0.3s ease-out;
 }
 
@@ -448,29 +476,29 @@ small a:hover {
 
 @media screen and (max-width: 400px) {
   .video-overlay h2 {
-    font-size: 1.1rem;
+    font-size: 1rem;
   }
 
   .video-overlay p,
   .video-overlay span {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
   }
 
   .login-form h2 {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
   }
 
   input {
-    padding: 10px 12px;
+    padding: 8px 12px;
   }
 
   .social-icons {
-    gap: 10px;
+    gap: 8px;
   }
 
   .social-icons a {
-    width: 38px;
-    height: 38px;
+    width: 34px;
+    height: 34px;
     font-size: 18px;
   }
 }
