@@ -67,7 +67,7 @@ html, body {
   position: absolute;
   bottom: 40px;
   left: 40px;
-  color: #333;
+  color: #000000;
   z-index: 2;
   max-width: 500px;
   animation: fadeInUp 1s ease-out;
