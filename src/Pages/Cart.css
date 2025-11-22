@@ -25,7 +25,8 @@ body {
 /* Hero Section */
 .cart-hero {
   height: 40vh;
-  background:url("https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=1600") center/cover;
+  background:
+linear-gradient(#ffffff2b, #ffffff3d),  url("https://alterno.net/wp-content/uploads/2024/12/sustainable-energy-1.jpg") center/cover;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -324,7 +325,7 @@ body {
 .checkout-btn {
   width: 100%;
   padding: 16px;
-  background: #e63946;
+  background: #000;
   color: #fff;
   border: none;
   border-radius: 8px;
@@ -338,7 +339,7 @@ body {
 }
 
 .checkout-btn:hover {
-  background: #000;
+  background: #333;
   color: #fff;
   transform: translateY(-2px);
 }
