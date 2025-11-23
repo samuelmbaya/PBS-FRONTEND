@@ -38,7 +38,10 @@ export const UserProvider = ({ children }) => {
   }, []);
 
   const updateUser = (updatedData) => {
-    const newUserData = { ...currentUser, ...updatedData };
+    let newUserData = { ...currentUser, ...updatedData };
+    if (updatedData.firstName && updatedData.lastName) {
+      newUserData.name = `${updatedData.firstName} ${updatedData.lastName}`.trim();
+    }
     setCurrentUser(newUserData);
     localStorage.setItem('user', JSON.stringify(newUserData));
   };
@@ -262,7 +265,7 @@ const Profile = () => {
           <div className="profile-section">
             <h2 className="section-title">Account Details</h2>
             <div className="greeting">Hi, {getDisplayName()}</div>
-            <form className="profile-form" onSubmit={handleSaveChanges}>
+            <form className={`profile-form ${isEditing ? 'editing' : ''}`} onSubmit={handleSaveChanges}>
               <div className="form-row">
                 <div className="form-section">
                   <label htmlFor="firstName" className="form-label">First Name*</label>

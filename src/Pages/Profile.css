@@ -178,6 +178,12 @@ body {
   display: flex;
   flex-direction: column;
   gap: 24px;
+  transition: border-color 0.3s ease;
+}
+
+.profile-form.editing {
+  border-color: #e63946;
+  box-shadow: 0 0 0 3px rgba(230, 57, 70, 0.1);
 }
 
 /* Form Section */
@@ -207,7 +213,7 @@ body {
   outline: none;
 }
 .profile-form input::placeholder,
-.profile-form select::placeholder {
+.profile-form select option {
   color: rgba(0, 0, 0, 0.3);
 }
 .profile-form input:focus:not(:disabled),
@@ -215,6 +221,11 @@ body {
   border-color: #e63946;
   box-shadow: 0 0 0 3px rgba(230, 57, 70, 0.1);
   background: rgba(0, 0, 0, 0.05);
+}
+.profile-form.editing input:not(:disabled),
+.profile-form.editing select:not(:disabled) {
+  background: #fff;
+  border-color: #e63946;
 }
 .profile-form input:disabled,
 .profile-form select:disabled {
