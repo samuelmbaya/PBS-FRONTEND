@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../Components/Navbar";
 import Footer from "../Components/Footer";
@@ -14,38 +14,53 @@ const Home = () => {
   });
   const [status, setStatus] = useState('');
   const [loading, setLoading] = useState(false);
+  const [wishlistCount, setWishlistCount] = useState(0);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-const handleSubmit = (e) => {
-  e.preventDefault();
-  setLoading(true);
-  setStatus('');
+  useEffect(() => {
+    const loadWishlistCount = () => {
+      try {
+        const wishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
+        setWishlistCount(wishlist.length);
+      } catch (err) {
+        console.error('Error loading wishlist:', err);
+        setWishlistCount(0);
+      }
+    };
 
-  // Replace with your EmailJS credentials
-const templateParams = {
-  from_name: `${formData.firstName} ${formData.lastName}`,
-  from_email: formData.email,
-  message: formData.message,
-  time: new Date().toLocaleString('en-ZA', { timeZone: 'Africa/Johannesburg' }), // SA time
-};
+    loadWishlistCount();
+  }, []);
 
-  emailjs.send('service_xtqs246', 'template_7eg8e1i', templateParams, 'aEC3095geTrpzu0k1')
-    .then((response) => {
-      console.log('SUCCESS!', response.status, response.text);
-      setStatus('Message sent successfully!');
-      setFormData({ firstName: '', lastName: '', email: '', message: '' });
-    }, (error) => {
-      console.log('FAILED...', error);
-      setStatus('Failed to send message. Please try again.');
-    })
-    .finally(() => {
-      setLoading(false);
-    });
-};
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setStatus('');
+
+    // Replace with your EmailJS credentials
+    const templateParams = {
+      from_name: `${formData.firstName} ${formData.lastName}`,
+      from_email: formData.email,
+      message: formData.message,
+      time: new Date().toLocaleString('en-ZA', { timeZone: 'Africa/Johannesburg' }), // SA time
+    };
+
+    emailjs.send('service_xtqs246', 'template_7eg8e1i', templateParams, 'aEC3095geTrpzu0k1')
+      .then((response) => {
+        console.log('SUCCESS!', response.status, response.text);
+        setStatus('Message sent successfully!');
+        setFormData({ firstName: '', lastName: '', email: '', message: '' });
+      }, (error) => {
+        console.log('FAILED...', error);
+        setStatus('Failed to send message. Please try again.');
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
 
   return (
     <div className="home-container">
@@ -61,9 +76,18 @@ const templateParams = {
             energy solutions to homes and businesses in South Africa.
           </p>
 
-          <Link to="/ProductPage" className="hero-link">
-            <button className="shop-btn">SHOP NOW</button>
-          </Link>
+          <div className="hero-actions">
+            <Link to="/ProductPage" className="hero-link">
+              <button className="shop-btn">SHOP NOW</button>
+            </Link>
+            <Link to="/wishlist" className="wishlist-link">
+              <button className="wishlist-btn">
+                Wishlist
+                {wishlistCount > 0 && <span className="wishlist-badge">{wishlistCount}</span>}
+                {wishlistCount === 0 && <span className="wishlist-empty">(0)</span>}
+              </button>
+            </Link>
+          </div>
         </div>
         
         <div className="scroll-indicator">
