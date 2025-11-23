@@ -132,20 +132,55 @@ const Payment = () => {
     }
   };
 
+  // Helper to get full pickup location name
+  const getPickupLocationName = (value, countryName) => {
+    switch (value) {
+      case 'main-store':
+        return `Main Store - ${countryName}`;
+      case 'downtown-branch':
+        return `Downtown Branch - ${countryName}`;
+      case 'outlet-center':
+        return `Outlet Center - ${countryName}`;
+      default:
+        return value;
+    }
+  };
+
   // Send order receipt email using EmailJS
   const sendOrderReceipt = async (orderData) => {
     try {
       const deliveryData = JSON.parse(localStorage.getItem("deliveryData") || "{}");
       
+      // Format delivery information based on delivery method
+      let deliveryInfo = '';
+      if (deliveryData.deliveryMethod === 'delivery') {
+        const fullName = `${deliveryData.name || ''} ${deliveryData.lastName || ''}`.trim();
+        const addressLine1 = `${deliveryData.streetAddress || ''}${deliveryData.apartment ? ', ' + deliveryData.apartment : ''}`.trim();
+        const addressLine2 = `${deliveryData.city || ''}, ${deliveryData.province || ''} ${deliveryData.postalCode || ''}`.trim();
+        deliveryInfo = `
+${fullName || 'No name provided'}
+
+${addressLine1 || 'No street address provided'}
+
+${addressLine2 || 'No city/province/postal code provided'}
+
+${deliveryData.countryName || deliveryData.country || 'No country provided'}
+
+Phone: ${deliveryData.phoneNumber || 'No phone number provided'}
+`;
+      } else {
+        const pickupLoc = getPickupLocationName(deliveryData.pickupLocation, deliveryData.countryName || deliveryData.country || '');
+        deliveryInfo = `
+Pickup Location: ${pickupLoc || 'No pickup location provided'}
+
+Phone: ${deliveryData.phoneNumber || 'No phone number provided'}
+`;
+      }
+      
       // Format order items for email
       const orderItemsText = orderData.items
         .map((item) => `${item.name} (x${item.quantity}) - R ${(item.price * item.quantity).toFixed(2)}`)
         .join('\n');
-
-      // Format delivery address
-      const deliveryAddress = deliveryData.address 
-        ? `${deliveryData.address}\n${deliveryData.city || ''}, ${deliveryData.postalCode || ''}\n${deliveryData.country || ''}`
-        : 'No delivery address provided';
 
       const templateParams = {
         to_email: currentUser.email,
@@ -166,7 +201,7 @@ const Payment = () => {
         discount: discount.toFixed(2),
         shipping: shipping === 0 ? 'Free' : shipping.toFixed(2),
         total: totalPrice.toFixed(2),
-        delivery_address: deliveryAddress,
+        delivery_address: deliveryInfo,
       };
 
       const response = await emailjs.send(
