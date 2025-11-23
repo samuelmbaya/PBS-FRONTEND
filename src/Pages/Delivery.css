@@ -32,8 +32,7 @@ body {
   padding-left: 60px !important;
   cursor: pointer;
   appearance: none;
-  background-image: linear-gradient(#ffffff2b, #ffffff3d),
-  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23000' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23000' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 20px center;
 }
@@ -57,7 +56,7 @@ body {
 /* Hero Section */
 .delivery-hero {
   height: 40vh;
-  background: linear-gradient(rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.8)),
+  background: linear-gradient(#ffffff2b, #ffffff3d),
     url("https://images.unsplash.com/photo-1566576721346-d4a3b4eaeb55?w=1600") center/cover;
   display: flex;
   align-items: center;
