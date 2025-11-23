@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import Navbar from "../Components/Navbar";
 import Footer from "../Components/Footer";
 import emailjs from '@emailjs/browser';
 import "./Home.css";
 
 const Home = () => {
+  // Existing form state
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -14,57 +15,32 @@ const Home = () => {
   });
   const [status, setStatus] = useState('');
   const [loading, setLoading] = useState(false);
-  const [wishlistCount, setWishlistCount] = useState(0);
-  const [cartCount, setCartCount] = useState(0);
-  const [currentUser, setCurrentUser] = useState(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  const navigate = useNavigate();
+  // New state for cart and wishlist to manage updates
+  const [cartCount, setCartCount] = useState(0);
+  const [wishlistCount, setWishlistCount] = useState(0);
+
+  // Example functions to update cart and wishlist (these could be called from child components or events)
+  // In a real app, these would be part of a Context or Redux for global updates
+  const updateCart = (newCount) => {
+    setCartCount(newCount);
+  };
+
+  const updateWishlist = (newCount) => {
+    setWishlistCount(newCount);
+  };
+
+  // For demonstration: Simulate an update on mount (remove in production)
+  React.useEffect(() => {
+    // Simulate initial load with some counts
+    setCartCount(3);
+    setWishlistCount(2);
+  }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
-
-  useEffect(() => {
-    const checkAuthAndLoadUserData = () => {
-      try {
-        const storedUser = localStorage.getItem("user");
-        const storedIsLoggedIn = localStorage.getItem("isLoggedIn");
-
-        if (storedUser && storedIsLoggedIn === "true") {
-          const parsedUser = JSON.parse(storedUser);
-          setCurrentUser(parsedUser);
-          setIsAuthenticated(true);
-          loadUserSpecificData(parsedUser.email);
-        } else {
-          setWishlistCount(0);
-          setCartCount(0);
-        }
-      } catch (err) {
-        console.error("Error checking authentication:", err);
-        setWishlistCount(0);
-        setCartCount(0);
-      }
-    };
-
-    const loadUserSpecificData = (userEmail) => {
-      try {
-        const userWishlist = JSON.parse(localStorage.getItem(`wishlist_${userEmail}`) || "[]");
-        setWishlistCount(userWishlist.length);
-
-        const userCart = JSON.parse(localStorage.getItem(`cart_${userEmail}`) || "[]");
-        const totalCartItems = userCart.reduce((total, item) => total + (item.quantity || 1), 0);
-        setCartCount(totalCartItems);
-      } catch (err) {
-        console.error("Error loading user data:", err);
-        setWishlistCount(0);
-        setCartCount(0);
-      }
-    };
-
-    checkAuthAndLoadUserData();
-  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -93,27 +69,15 @@ const Home = () => {
       });
   };
 
-  const handleWishlistClick = () => {
-    if (!isAuthenticated) {
-      alert("Please log in to view your wishlist.");
-      navigate("/login");
-      return;
-    }
-    navigate("/wishlist");
-  };
-
-  const handleCartClick = () => {
-    if (!isAuthenticated) {
-      alert("Please log in to view your cart.");
-      navigate("/login");
-      return;
-    }
-    navigate("/cart");
-  };
-
   return (
     <div className="home-container">
-      <Navbar cartCount={cartCount} wishlistCount={wishlistCount} />
+      {/* Pass cartCount and wishlistCount to Navbar for dynamic updates */}
+      <Navbar 
+        cartCount={cartCount} 
+        wishlistCount={wishlistCount}
+        onCartUpdate={updateCart}
+        onWishlistUpdate={updateWishlist}
+      />
 
       {/* Hero Section */}
       <section className="hero">
@@ -125,33 +89,9 @@ const Home = () => {
             energy solutions to homes and businesses in South Africa.
           </p>
 
-          <div className="hero-actions">
-            <Link to="/ProductPage" className="hero-link">
-              <button className="shop-btn">SHOP NOW</button>
-            </Link>
-            <button 
-              onClick={handleWishlistClick}
-              className="wishlist-btn"
-            >
-              Wishlist
-              {isAuthenticated && (
-                <span className={`wishlist-indicator ${wishlistCount > 0 ? 'has-items' : 'empty'}`}>
-                  ({wishlistCount})
-                </span>
-              )}
-            </button>
-            <button 
-              onClick={handleCartClick}
-              className="cart-btn"
-            >
-              Cart
-              {isAuthenticated && (
-                <span className={`cart-indicator ${cartCount > 0 ? 'has-items' : 'empty'}`}>
-                  ({cartCount})
-                </span>
-              )}
-            </button>
-          </div>
+          <Link to="/ProductPage" className="hero-link">
+            <button className="shop-btn">SHOP NOW</button>
+          </Link>
         </div>
         
         <div className="scroll-indicator">
