@@ -15,6 +15,7 @@ const Home = () => {
   const [status, setStatus] = useState('');
   const [loading, setLoading] = useState(false);
   const [wishlistCount, setWishlistCount] = useState(0);
+  const [cartCount, setCartCount] = useState(0);
   const [currentUser, setCurrentUser] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
@@ -38,10 +39,12 @@ const Home = () => {
           loadUserSpecificData(parsedUser.email);
         } else {
           setWishlistCount(0);
+          setCartCount(0);
         }
       } catch (err) {
         console.error("Error checking authentication:", err);
         setWishlistCount(0);
+        setCartCount(0);
       }
     };
 
@@ -49,9 +52,14 @@ const Home = () => {
       try {
         const userWishlist = JSON.parse(localStorage.getItem(`wishlist_${userEmail}`) || "[]");
         setWishlistCount(userWishlist.length);
+
+        const userCart = JSON.parse(localStorage.getItem(`cart_${userEmail}`) || "[]");
+        const totalCartItems = userCart.reduce((total, item) => total + (item.quantity || 1), 0);
+        setCartCount(totalCartItems);
       } catch (err) {
         console.error("Error loading user data:", err);
         setWishlistCount(0);
+        setCartCount(0);
       }
     };
 
@@ -94,9 +102,18 @@ const Home = () => {
     navigate("/wishlist");
   };
 
+  const handleCartClick = () => {
+    if (!isAuthenticated) {
+      alert("Please log in to view your cart.");
+      navigate("/login");
+      return;
+    }
+    navigate("/cart");
+  };
+
   return (
     <div className="home-container">
-      <Navbar wishlistCount={wishlistCount} />
+      <Navbar cartCount={cartCount} wishlistCount={wishlistCount} />
 
       {/* Hero Section */}
       <section className="hero">
@@ -120,6 +137,17 @@ const Home = () => {
               {isAuthenticated && (
                 <span className={`wishlist-indicator ${wishlistCount > 0 ? 'has-items' : 'empty'}`}>
                   ({wishlistCount})
+                </span>
+              )}
+            </button>
+            <button 
+              onClick={handleCartClick}
+              className="cart-btn"
+            >
+              Cart
+              {isAuthenticated && (
+                <span className={`cart-indicator ${cartCount > 0 ? 'has-items' : 'empty'}`}>
+                  ({cartCount})
                 </span>
               )}
             </button>
