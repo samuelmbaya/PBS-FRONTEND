@@ -209,7 +209,7 @@ body {
   accent-color: #e63946;
 }
 
-/* Country Selector - FIXED */
+/* Country Selector */
 .country-selector {
   position: relative;
   z-index: 100;
@@ -263,7 +263,11 @@ body {
   flex-shrink: 0;
 }
 
-/* Country Dropdown - FIXED */
+.country-select-btn[aria-expanded="true"] .dropdown-arrow {
+  transform: rotate(180deg);
+}
+
+/* Country Dropdown */
 .country-dropdown {
   position: absolute;
   top: calc(100% + 8px);
@@ -316,7 +320,7 @@ body {
   background: rgba(230, 57, 70, 0.7);
 }
 
-/* Country Option - FIXED */
+/* Country Option */
 .country-option {
   width: 100%;
   padding: 14px 16px;
@@ -446,7 +450,7 @@ body {
 .continue-payment-btn {
   flex: 2;
   padding: 16px 32px;
-  background: #e63946;
+  background: #000;
   color: #fff;
   border: none;
   border-radius: 8px;
@@ -464,13 +468,13 @@ body {
 }
 
 .continue-payment-btn:hover:not(:disabled) {
-  background: #000;
+  background: #333;
   color: #fff;
   transform: translateY(-2px);
 }
 
 .continue-payment-btn:disabled {
-  background: rgba(230, 57, 70, 0.5);
+  background: rgba(0, 0, 0, 0.5);
   cursor: not-allowed;
   transform: none;
 }

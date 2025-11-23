@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import './Delivery.css';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../Components/Navbar';
@@ -6,6 +6,7 @@ import Footer from '../Components/Footer';
 
 const Delivery = ({ onDeliveryData }) => {
   const navigate = useNavigate();
+  const dropdownRef = useRef(null);
 
   const countries = [
     { code: 'ZA', name: 'South Africa', flag: '🇿🇦', dialCode: '+27' },
@@ -56,6 +57,7 @@ const Delivery = ({ onDeliveryData }) => {
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showCountryDropdown, setShowCountryDropdown] = useState(false);
 
   const selectedCountry = countries.find(c => c.code === deliveryData.country) || countries[0];
 
@@ -106,6 +108,35 @@ const Delivery = ({ onDeliveryData }) => {
       if (onDeliveryData) onDeliveryData(updatedData);
     }
   };
+
+  const handleCustomCountrySelect = (country) => {
+    const updatedData = { 
+      ...deliveryData, 
+      country: country.code,
+      countryName: country.name,
+      phoneNumber: '' // Reset phone number when country changes
+    };
+    setDeliveryData(updatedData);
+    if (onDeliveryData) onDeliveryData(updatedData);
+    setShowCountryDropdown(false);
+  };
+
+  const toggleCountryDropdown = () => {
+    setShowCountryDropdown(!showCountryDropdown);
+  };
+
+  const handleClickOutside = (event) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+      setShowCountryDropdown(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   const handlePhoneChange = (e) => {
     let value = e.target.value;
@@ -239,24 +270,38 @@ const Delivery = ({ onDeliveryData }) => {
           </h2>
 
           <div className="delivery-form">
-            {/* Country Selector - Native Select */}
+            {/* Country Selector - Custom Dropdown */}
             <div className="form-group">
               <label className="form-label">Country / Region</label>
-              <div className="country-select-wrapper">
-                <span className="selected-flag-icon">{selectedCountry.flag}</span>
-                <select
-                  name="country"
-                  value={deliveryData.country}
-                  onChange={handleCountryChange}
-                  className="form-input country-select-input"
-                  required
+              <div className="country-selector" ref={dropdownRef}>
+                <button
+                  type="button"
+                  className="country-select-btn form-input"
+                  onClick={toggleCountryDropdown}
                 >
-                  {countries.map((country) => (
-                    <option key={country.code} value={country.code}>
-                      {country.flag} {country.name} ({country.dialCode})
-                    </option>
-                  ))}
-                </select>
+                  <span className="country-flag">{selectedCountry.flag}</span>
+                  <span className="country-name">{selectedCountry.name}</span>
+                  <span className="dropdown-arrow">▼</span>
+                </button>
+                {showCountryDropdown && (
+                  <div className="country-dropdown">
+                    <div className="country-dropdown-scroll">
+                      {countries.map((country) => (
+                        <button
+                          key={country.code}
+                          type="button"
+                          className={`country-option ${deliveryData.country === country.code ? 'selected' : ''}`}
+                          onClick={() => handleCustomCountrySelect(country)}
+                        >
+                          <span className="country-flag">{country.flag}</span>
+                          <span className="country-name">{country.name}</span>
+                          <span className="country-dial-code">{country.dialCode}</span>
+                          {deliveryData.country === country.code && <span className="check-mark">✓</span>}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
