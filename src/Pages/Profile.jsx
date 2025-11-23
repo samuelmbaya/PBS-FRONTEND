@@ -265,6 +265,7 @@ const Profile = () => {
           <div className="profile-section">
             <h2 className="section-title">Account Details</h2>
             <div className="greeting">Hi, {getDisplayName()}</div>
+            {isEditing && <div className="editing-indicator">Editing mode - Make your changes below</div>}
             <form className={`profile-form ${isEditing ? 'editing' : ''}`} onSubmit={handleSaveChanges}>
               <div className="form-row">
                 <div className="form-section">
