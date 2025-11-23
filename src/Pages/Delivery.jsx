@@ -181,6 +181,21 @@ const Delivery = ({ onDeliveryData }) => {
         try {
           const parsedUser = JSON.parse(storedUser);
           userEmail = parsedUser.email || "guest@example.com";
+
+          // Update user profile with delivery data if fields are filled
+          const updatedUser = { ...parsedUser };
+          if (deliveryData.name.trim()) updatedUser.firstName = deliveryData.name;
+          if (deliveryData.lastName.trim()) updatedUser.lastName = deliveryData.lastName;
+          if (deliveryData.phoneNumber.trim()) updatedUser.phone = deliveryData.phoneNumber;
+          if (deliveryData.country) updatedUser.country = deliveryData.country;
+          if (deliveryData.deliveryMethod === 'delivery') {
+            if (deliveryData.streetAddress.trim()) updatedUser.streetAddress = deliveryData.streetAddress;
+            if (deliveryData.apartment.trim()) updatedUser.apartment = deliveryData.apartment;
+            if (deliveryData.postalCode.trim()) updatedUser.postalCode = deliveryData.postalCode;
+            if (deliveryData.city.trim()) updatedUser.city = deliveryData.city;
+            if (deliveryData.province.trim()) updatedUser.province = deliveryData.province;
+          }
+          localStorage.setItem('user', JSON.stringify(updatedUser));
         } catch {
           console.warn("Could not parse stored user data");
         }

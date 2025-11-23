@@ -64,20 +64,58 @@ export const useUser = () => {
   return context;
 };
 
+// Countries list
+const countries = [
+  { code: 'ZA', name: 'South Africa', flag: '🇿🇦', dialCode: '+27' },
+  { code: 'US', name: 'United States', flag: '🇺🇸', dialCode: '+1' },
+  { code: 'GB', name: 'United Kingdom', flag: '🇬🇧', dialCode: '+44' },
+  { code: 'NG', name: 'Nigeria', flag: '🇳🇬', dialCode: '+234' },
+  { code: 'KE', name: 'Kenya', flag: '🇰🇪', dialCode: '+254' },
+  { code: 'GH', name: 'Ghana', flag: '🇬🇭', dialCode: '+233' },
+  { code: 'EG', name: 'Egypt', flag: '🇪🇬', dialCode: '+20' },
+  { code: 'ET', name: 'Ethiopia', flag: '🇪🇹', dialCode: '+251' },
+  { code: 'TZ', name: 'Tanzania', flag: '🇹🇿', dialCode: '+255' },
+  { code: 'UG', name: 'Uganda', flag: '🇺🇬', dialCode: '+256' },
+  { code: 'MA', name: 'Morocco', flag: '🇲🇦', dialCode: '+212' },
+  { code: 'DZ', name: 'Algeria', flag: '🇩🇿', dialCode: '+213' },
+  { code: 'AU', name: 'Australia', flag: '🇦🇺', dialCode: '+61' },
+  { code: 'CA', name: 'Canada', flag: '🇨🇦', dialCode: '+1' },
+  { code: 'IN', name: 'India', flag: '🇮🇳', dialCode: '+91' },
+  { code: 'CN', name: 'China', flag: '🇨🇳', dialCode: '+86' },
+  { code: 'JP', name: 'Japan', flag: '🇯🇵', dialCode: '+81' },
+  { code: 'KR', name: 'South Korea', flag: '🇰🇷', dialCode: '+82' },
+  { code: 'BR', name: 'Brazil', flag: '🇧🇷', dialCode: '+55' },
+  { code: 'MX', name: 'Mexico', flag: '🇲🇽', dialCode: '+52' },
+  { code: 'AR', name: 'Argentina', flag: '🇦🇷', dialCode: '+54' },
+  { code: 'FR', name: 'France', flag: '🇫🇷', dialCode: '+33' },
+  { code: 'DE', name: 'Germany', flag: '🇩🇪', dialCode: '+49' },
+  { code: 'IT', name: 'Italy', flag: '🇮🇹', dialCode: '+39' },
+  { code: 'ES', name: 'Spain', flag: '🇪🇸', dialCode: '+34' },
+  { code: 'NL', name: 'Netherlands', flag: '🇳🇱', dialCode: '+31' },
+  { code: 'SE', name: 'Sweden', flag: '🇸🇪', dialCode: '+46' },
+  { code: 'NO', name: 'Norway', flag: '🇳🇴', dialCode: '+47' },
+  { code: 'AE', name: 'United Arab Emirates', flag: '🇦🇪', dialCode: '+971' },
+  { code: 'SA', name: 'Saudi Arabia', flag: '🇸🇦', dialCode: '+966' },
+];
+
 // Profile Component
 const Profile = () => {
   const { currentUser, loading, logout, updateUser } = useUser();
   const [isEditing, setIsEditing] = useState(false);
   const [message, setMessage] = useState('');
   const [formData, setFormData] = useState({
-    name: '',
+    firstName: '',
+    lastName: '',
     email: '',
     phone: '',
     age: '',
     gender: '',
-    address: '',
+    country: 'ZA',
+    streetAddress: '',
+    apartment: '',
+    postalCode: '',
     city: '',
-    postalCode: ''
+    province: ''
   });
 
   useEffect(() => {
@@ -88,15 +126,25 @@ const Profile = () => {
       return;
     }
 
+    // Backward compatibility for 'name'
+    const fullName = currentUser.name || '';
+    const nameParts = fullName.split(' ');
+    const firstName = currentUser.firstName || nameParts[0] || '';
+    const lastName = currentUser.lastName || nameParts.slice(1).join(' ') || '';
+
     setFormData({
-      name: currentUser.name || '',
+      firstName,
+      lastName,
       email: currentUser.email || '',
       phone: currentUser.phone || '',
       age: currentUser.age || '',
       gender: currentUser.gender || '',
-      address: currentUser.address || '',
+      country: currentUser.country || 'ZA',
+      streetAddress: currentUser.streetAddress || currentUser.address || '',
+      apartment: currentUser.apartment || '',
+      postalCode: currentUser.postalCode || '',
       city: currentUser.city || '',
-      postalCode: currentUser.postalCode || ''
+      province: currentUser.province || ''
     });
   }, [currentUser, loading]);
 
@@ -130,8 +178,8 @@ const Profile = () => {
     e.preventDefault();
    
     // Validate required fields
-    if (!formData.name.trim() || !formData.email.trim()) {
-      setMessage('Name and email are required');
+    if (!formData.firstName.trim() || !formData.lastName.trim() || !formData.email.trim()) {
+      setMessage('First name, last name, and email are required');
       setTimeout(() => setMessage(''), 3000);
       return;
     }
@@ -145,15 +193,24 @@ const Profile = () => {
   const handleCancelEdit = () => {
     // Reset form data to current user data
     if (currentUser) {
+      const fullName = currentUser.name || '';
+      const nameParts = fullName.split(' ');
+      const firstName = currentUser.firstName || nameParts[0] || '';
+      const lastName = currentUser.lastName || nameParts.slice(1).join(' ') || '';
+
       setFormData({
-        name: currentUser.name || '',
+        firstName,
+        lastName,
         email: currentUser.email || '',
         phone: currentUser.phone || '',
         age: currentUser.age || '',
         gender: currentUser.gender || '',
-        address: currentUser.address || '',
+        country: currentUser.country || 'ZA',
+        streetAddress: currentUser.streetAddress || currentUser.address || '',
+        apartment: currentUser.apartment || '',
+        postalCode: currentUser.postalCode || '',
         city: currentUser.city || '',
-        postalCode: currentUser.postalCode || ''
+        province: currentUser.province || ''
       });
     }
     setIsEditing(false);
@@ -162,9 +219,8 @@ const Profile = () => {
 
   const getDisplayName = () => {
     if (!currentUser) return 'User';
-    if (currentUser.name) return currentUser.name;
-    if (currentUser.email) return currentUser.email.split('@')[0];
-    return 'User';
+    const fullName = [currentUser.firstName, currentUser.lastName].filter(Boolean).join(' ') || currentUser.name || '';
+    return fullName || (currentUser.email ? currentUser.email.split('@')[0] : 'User');
   };
 
   if (loading) {
@@ -207,17 +263,31 @@ const Profile = () => {
             <h2 className="section-title">Account Details</h2>
             <div className="greeting">Hi, {getDisplayName()}</div>
             <form className="profile-form" onSubmit={handleSaveChanges}>
-              <div className="form-section">
-                <label htmlFor="name" className="form-label">Full Name*</label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleInputChange}
-                  disabled={!isEditing}
-                  required
-                />
+              <div className="form-row">
+                <div className="form-section">
+                  <label htmlFor="firstName" className="form-label">First Name*</label>
+                  <input
+                    type="text"
+                    id="firstName"
+                    name="firstName"
+                    value={formData.firstName}
+                    onChange={handleInputChange}
+                    disabled={!isEditing}
+                    required
+                  />
+                </div>
+                <div className="form-section">
+                  <label htmlFor="lastName" className="form-label">Last Name*</label>
+                  <input
+                    type="text"
+                    id="lastName"
+                    name="lastName"
+                    value={formData.lastName}
+                    onChange={handleInputChange}
+                    disabled={!isEditing}
+                    required
+                  />
+                </div>
               </div>
               <div className="form-section">
                 <label htmlFor="email" className="form-label">Email Address*</label>
@@ -273,18 +343,58 @@ const Profile = () => {
                 </select>
               </div>
               <div className="form-section">
-                <label htmlFor="address" className="form-label">Street Address</label>
+                <label htmlFor="country" className="form-label">Country / Region</label>
+                <select
+                  id="country"
+                  name="country"
+                  value={formData.country}
+                  onChange={handleInputChange}
+                  disabled={!isEditing}
+                >
+                  {countries.map((country) => (
+                    <option key={country.code} value={country.code}>
+                      {country.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="form-section">
+                <label htmlFor="streetAddress" className="form-label">Street Address</label>
                 <input
                   type="text"
-                  id="address"
-                  name="address"
+                  id="streetAddress"
+                  name="streetAddress"
                   placeholder="Enter street address"
-                  value={formData.address}
+                  value={formData.streetAddress}
                   onChange={handleInputChange}
                   disabled={!isEditing}
                 />
               </div>
-              <div className="form-row">
+              <div className="form-section">
+                <label htmlFor="apartment" className="form-label">Apartment, suite, etc. (optional)</label>
+                <input
+                  type="text"
+                  id="apartment"
+                  name="apartment"
+                  placeholder="Apartment 4B, Unit 2"
+                  value={formData.apartment}
+                  onChange={handleInputChange}
+                  disabled={!isEditing}
+                />
+              </div>
+              <div className="form-row three-cols">
+                <div className="form-section">
+                  <label htmlFor="postalCode" className="form-label">Postal Code</label>
+                  <input
+                    type="text"
+                    id="postalCode"
+                    name="postalCode"
+                    placeholder="Enter postal code"
+                    value={formData.postalCode}
+                    onChange={handleInputChange}
+                    disabled={!isEditing}
+                  />
+                </div>
                 <div className="form-section">
                   <label htmlFor="city" className="form-label">City</label>
                   <input
@@ -298,13 +408,13 @@ const Profile = () => {
                   />
                 </div>
                 <div className="form-section">
-                  <label htmlFor="postalCode" className="form-label">Postal Code</label>
+                  <label htmlFor="province" className="form-label">Province</label>
                   <input
                     type="text"
-                    id="postalCode"
-                    name="postalCode"
-                    placeholder="Enter postal code"
-                    value={formData.postalCode}
+                    id="province"
+                    name="province"
+                    placeholder="Enter province"
+                    value={formData.province}
                     onChange={handleInputChange}
                     disabled={!isEditing}
                   />

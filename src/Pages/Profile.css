@@ -230,8 +230,13 @@ body {
   grid-template-columns: 1fr 1fr;
   gap: 20px;
 }
+.form-row.three-cols {
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
 @media (max-width: 768px) {
-  .form-row {
+  .form-row,
+  .form-row.three-cols {
     grid-template-columns: 1fr;
   }
 }
