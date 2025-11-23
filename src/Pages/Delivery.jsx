@@ -341,7 +341,7 @@ const Delivery = ({ onDeliveryData }) => {
                     <input
                       type="text"
                       name="name"
-                      placeholder="John"
+                      placeholder="Firstname"
                       value={deliveryData.name}
                       onChange={handleInputChange}
                       className="form-input"
@@ -353,7 +353,7 @@ const Delivery = ({ onDeliveryData }) => {
                     <input
                       type="text"
                       name="lastName"
-                      placeholder="Doe"
+                      placeholder="Surname"
                       value={deliveryData.lastName}
                       onChange={handleInputChange}
                       className="form-input"
