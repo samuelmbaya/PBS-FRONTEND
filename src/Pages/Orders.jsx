@@ -131,7 +131,6 @@ const Orders = () => {
 
   return (
     <>
-      <Navbar />
       <div className="orders-page-container">
         <div className="orders-hero">
           <div className="orders-hero-content">
