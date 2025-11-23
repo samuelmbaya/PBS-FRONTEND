@@ -9,6 +9,8 @@ const Orders = () => {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [cartCount, setCartCount] = useState(0);
+  const [wishlistCount, setWishlistCount] = useState(0);
   const navigate = useNavigate();
 
   const apiUrl = "http://44.198.25.29:3000";
@@ -39,6 +41,23 @@ const Orders = () => {
 
     loadUserAndOrders();
   }, [navigate]);
+
+  useEffect(() => {
+    if (currentUser) {
+      // Load cart and wishlist counts from localStorage
+      try {
+        const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+        setCartCount(cart.length || 0);
+        
+        const wishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
+        setWishlistCount(wishlist.length || 0);
+      } catch (err) {
+        console.error("Error loading cart/wishlist from localStorage:", err);
+        setCartCount(0);
+        setWishlistCount(0);
+      }
+    }
+  }, [currentUser]);
 
   const fetchOrdersFromBackend = async (userId) => {
     try {
@@ -111,10 +130,23 @@ const Orders = () => {
     }
   };
 
+  const updateCart = (newCount) => {
+    setCartCount(newCount);
+  };
+
+  const updateWishlist = (newCount) => {
+    setWishlistCount(newCount);
+  };
+
   if (loading) {
     return (
       <>
-        <Navbar />
+        <Navbar 
+          cartCount={cartCount} 
+          wishlistCount={wishlistCount}
+          onCartUpdate={updateCart}
+          onWishlistUpdate={updateWishlist}
+        />
         <div className="orders-page-container">
           <div className="orders-hero">
             <div className="orders-hero-content">
@@ -133,7 +165,12 @@ const Orders = () => {
 
   return (
     <>
-      <Navbar />
+      <Navbar 
+        cartCount={cartCount} 
+        wishlistCount={wishlistCount}
+        onCartUpdate={updateCart}
+        onWishlistUpdate={updateWishlist}
+      />
       <div className="orders-page-container">
         <div className="orders-hero">
           <div className="orders-hero-content">
