@@ -29,9 +29,14 @@ const Orders = () => {
 
         const parsedUser = JSON.parse(storedUser);
         setCurrentUser(parsedUser);
+        const userId = parsedUser.id || parsedUser._id;
 
-        // Fetch orders from backend for this specific user
-        await fetchOrdersFromBackend(parsedUser.id || parsedUser._id);
+        // Fetch orders, cart, and wishlist from backend for this specific user
+        await Promise.all([
+          fetchOrdersFromBackend(userId),
+          fetchCartFromBackend(userId),
+          fetchWishlistFromBackend(userId)
+        ]);
       } catch (err) {
         console.error("Error loading user data:", err);
         setError("Error loading user data. Please login again.");
@@ -42,21 +47,42 @@ const Orders = () => {
     loadUserAndOrders();
   }, [navigate]);
 
+  // Storage event listener for real-time updates across tabs
   useEffect(() => {
-    if (currentUser) {
-      // Load cart and wishlist counts from localStorage
-      try {
-        const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-        setCartCount(cart.length || 0);
-        
-        const wishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
-        setWishlistCount(wishlist.length || 0);
-      } catch (err) {
-        console.error("Error loading cart/wishlist from localStorage:", err);
-        setCartCount(0);
-        setWishlistCount(0);
+    if (!currentUser) return;
+
+    const cartKey = `cart_${currentUser.email}`;
+    const wishlistKey = `wishlist_${currentUser.email}`;
+
+    const handleStorageChange = (e) => {
+      if (e.key === cartKey) {
+        const newCart = JSON.parse(e.newValue || '[]');
+        setCartCount(newCart.reduce((acc, item) => acc + (item.quantity || 1), 0));
+      } else if (e.key === wishlistKey) {
+        const newWishlist = JSON.parse(e.newValue || '[]');
+        setWishlistCount(newWishlist.length);
       }
-    }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, [currentUser]);
+
+  // Focus event listener for syncing with backend on tab focus
+  useEffect(() => {
+    if (!currentUser) return;
+
+    const userId = currentUser.id || currentUser._id;
+
+    const handleFocus = () => {
+      Promise.all([
+        fetchCartFromBackend(userId),
+        fetchWishlistFromBackend(userId)
+      ]);
+    };
+
+    window.addEventListener('focus', handleFocus);
+    return () => window.removeEventListener('focus', handleFocus);
   }, [currentUser]);
 
   const fetchOrdersFromBackend = async (userId) => {
@@ -115,6 +141,90 @@ const Orders = () => {
     }
   };
 
+  const fetchCartFromBackend = async (userId) => {
+    try {
+      const response = await fetch(`${apiUrl}/cart?userId=${userId}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        if (response.status === 404 || response.status >= 500) {
+          console.warn("Backend cart unavailable, falling back to localStorage");
+          loadCartFromLocalStorage();
+          return;
+        }
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+
+      if (result.data && Array.isArray(result.data)) {
+        const transformedCart = result.data.map((item) => ({
+          ...item,
+        }));
+        if (currentUser) {
+          localStorage.setItem(
+            `cart_${currentUser.email}`,
+            JSON.stringify(transformedCart)
+          );
+        }
+        setCartCount(transformedCart.reduce((acc, item) => acc + (item.quantity || 1), 0));
+      } else {
+        setCartCount(0);
+      }
+    } catch (error) {
+      console.error("Error fetching cart from backend:", error);
+      console.warn("Backend cart failed, falling back to localStorage");
+      loadCartFromLocalStorage();
+    }
+  };
+
+  const fetchWishlistFromBackend = async (userId) => {
+    try {
+      const response = await fetch(`${apiUrl}/wishlist?userId=${userId}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        if (response.status === 404 || response.status >= 500) {
+          console.warn("Backend wishlist unavailable, falling back to localStorage");
+          loadWishlistFromLocalStorage();
+          return;
+        }
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+
+      if (result.data && Array.isArray(result.data)) {
+        const transformedWishlist = result.data.map((item) => ({
+          ...item,
+        }));
+        if (currentUser) {
+          localStorage.setItem(
+            `wishlist_${currentUser.email}`,
+            JSON.stringify(transformedWishlist)
+          );
+        }
+        setWishlistCount(transformedWishlist.length);
+      } else {
+        setWishlistCount(0);
+      }
+    } catch (error) {
+      console.error("Error fetching wishlist from backend:", error);
+      console.warn("Backend wishlist failed, falling back to localStorage");
+      loadWishlistFromLocalStorage();
+    }
+  };
+
   const loadOrdersFromLocalStorage = () => {
     try {
       if (!currentUser) return;
@@ -127,6 +237,34 @@ const Orders = () => {
       console.error("Error loading orders from localStorage:", err);
       setOrders([]);
       setLoading(false);
+    }
+  };
+
+  const loadCartFromLocalStorage = () => {
+    try {
+      if (!currentUser) {
+        setCartCount(0);
+        return;
+      }
+      const userCart = JSON.parse(localStorage.getItem(`cart_${currentUser.email}`) || "[]");
+      setCartCount(userCart.reduce((acc, item) => acc + (item.quantity || 1), 0));
+    } catch (err) {
+      console.error("Error loading cart from localStorage:", err);
+      setCartCount(0);
+    }
+  };
+
+  const loadWishlistFromLocalStorage = () => {
+    try {
+      if (!currentUser) {
+        setWishlistCount(0);
+        return;
+      }
+      const userWishlist = JSON.parse(localStorage.getItem(`wishlist_${currentUser.email}`) || "[]");
+      setWishlistCount(userWishlist.length);
+    } catch (err) {
+      console.error("Error loading wishlist from localStorage:", err);
+      setWishlistCount(0);
     }
   };
 
@@ -275,5 +413,4 @@ const Orders = () => {
   );
 };
 
-// doen
 export default Orders;
