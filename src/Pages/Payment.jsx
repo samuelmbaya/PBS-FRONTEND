@@ -176,6 +176,17 @@ Pickup Location: ${pickupLoc || 'No pickup location provided'}
 Phone: ${deliveryData.phoneNumber || 'No phone number provided'}
 `;
       }
+
+      // Format payment information
+      let paymentInfo = '';
+      if (paymentMethod === 'credit-card') {
+        const last4 = cardData.number ? cardData.number.replace(/\s/g, '').slice(-4) : 'XXXX';
+        paymentInfo = `Cardholder: ${cardData.name || 'N/A'}\nCard ending in: **** **** **** ${last4}\nExpiry: ${cardData.expiry || 'N/A'}`;
+      } else if (paymentMethod === 'paypal') {
+        paymentInfo = `PayPal Email: ${paypalEmail || 'N/A'}`;
+      } else if (paymentMethod === 'google-pay') {
+        paymentInfo = `Google Pay Email: ${googlePayEmail || 'N/A'}`;
+      }
       
       // Format order items for email
       const orderItemsText = orderData.items
@@ -196,6 +207,7 @@ Phone: ${deliveryData.phoneNumber || 'No phone number provided'}
           : paymentMethod === 'paypal' 
           ? 'PayPal' 
           : 'Google Pay',
+        payment_info: paymentInfo,
         order_items: orderItemsText,
         subtotal: subtotal.toFixed(2),
         discount: discount.toFixed(2),
