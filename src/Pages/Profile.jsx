@@ -139,7 +139,7 @@ const Profile = () => {
         <div className="profile-hero">
           <div className="profile-hero-content">
             <h1 className="profile-hero-title">Your Profile</h1>
-            <p className="profile-hero-subtitle">Manage your account details and preferences</p>
+            <p className="profile-hero-subtitle">See More About You</p>
           </div>
         </div>
         {/* Profile Container */}
