@@ -73,6 +73,8 @@ const Profile = () => {
     name: '',
     email: '',
     phone: '',
+    age: '',
+    gender: '',
     address: '',
     city: '',
     postalCode: ''
@@ -90,6 +92,8 @@ const Profile = () => {
       name: currentUser.name || '',
       email: currentUser.email || '',
       phone: currentUser.phone || '',
+      age: currentUser.age || '',
+      gender: currentUser.gender || '',
       address: currentUser.address || '',
       city: currentUser.city || '',
       postalCode: currentUser.postalCode || ''
@@ -145,6 +149,8 @@ const Profile = () => {
         name: currentUser.name || '',
         email: currentUser.email || '',
         phone: currentUser.phone || '',
+        age: currentUser.age || '',
+        gender: currentUser.gender || '',
         address: currentUser.address || '',
         city: currentUser.city || '',
         postalCode: currentUser.postalCode || ''
@@ -236,6 +242,35 @@ const Profile = () => {
                   onChange={handleInputChange}
                   disabled={!isEditing}
                 />
+              </div>
+              <div className="form-section">
+                <label htmlFor="age" className="form-label">Age</label>
+                <input
+                  type="number"
+                  id="age"
+                  name="age"
+                  placeholder="Enter your age"
+                  value={formData.age}
+                  onChange={handleInputChange}
+                  disabled={!isEditing}
+                  min="13"
+                />
+              </div>
+              <div className="form-section">
+                <label htmlFor="gender" className="form-label">Gender</label>
+                <select
+                  id="gender"
+                  name="gender"
+                  value={formData.gender}
+                  onChange={handleInputChange}
+                  disabled={!isEditing}
+                >
+                  <option value="">Select gender</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                  <option value="other">Other</option>
+                  <option value="prefer-not-to-say">Prefer not to say</option>
+                </select>
               </div>
               <div className="form-section">
                 <label htmlFor="address" className="form-label">Street Address</label>
