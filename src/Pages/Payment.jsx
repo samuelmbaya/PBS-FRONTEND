@@ -158,30 +158,25 @@ const Payment = () => {
         const addressLine1 = `${deliveryData.streetAddress || ''}${deliveryData.apartment ? ', ' + deliveryData.apartment : ''}`.trim();
         const addressLine2 = `${deliveryData.city || ''}, ${deliveryData.province || ''} ${deliveryData.postalCode || ''}`.trim();
         deliveryInfo = `
-${fullName || 'No name provided'}
-
-${addressLine1 || 'No street address provided'}
-
-${addressLine2 || 'No city/province/postal code provided'}
-
-${deliveryData.countryName || deliveryData.country || 'No country provided'}
-
-Phone: ${deliveryData.phoneNumber || 'No phone number provided'}
-`;
+          ${fullName || 'No name provided'}<br /><br />
+          ${addressLine1 || 'No street address provided'}<br /><br />
+          ${addressLine2 || 'No city/province/postal code provided'}<br /><br />
+          ${deliveryData.countryName || deliveryData.country || 'No country provided'}<br /><br />
+          Phone: ${deliveryData.phoneNumber || 'No phone number provided'}
+        `.replace(/\n/g, '');  // Strip any remaining \n after <br />
       } else {
         const pickupLoc = getPickupLocationName(deliveryData.pickupLocation, deliveryData.countryName || deliveryData.country || '');
         deliveryInfo = `
-Pickup Location: ${pickupLoc || 'No pickup location provided'}
-
-Phone: ${deliveryData.phoneNumber || 'No phone number provided'}
-`;
+          Pickup Location: ${pickupLoc || 'No pickup location provided'}<br /><br />
+          Phone: ${deliveryData.phoneNumber || 'No phone number provided'}
+        `.replace(/\n/g, '');
       }
 
       // Format payment information
       let paymentInfo = '';
       if (paymentMethod === 'credit-card') {
         const last4 = cardData.number ? cardData.number.replace(/\s/g, '').slice(-4) : 'XXXX';
-        paymentInfo = `Cardholder: ${cardData.name || 'N/A'}\nCard ending in: **** **** **** ${last4}\nExpiry: ${cardData.expiry || 'N/A'}`;
+        paymentInfo = `Cardholder: ${cardData.name || 'N/A'}<br />Card ending in: **** **** **** ${last4}<br />Expiry: ${cardData.expiry || 'N/A'}`;
       } else if (paymentMethod === 'paypal') {
         paymentInfo = `PayPal Email: ${paypalEmail || 'N/A'}`;
       } else if (paymentMethod === 'google-pay') {
@@ -192,7 +187,7 @@ Phone: ${deliveryData.phoneNumber || 'No phone number provided'}
       const orderItemsText = orderData.items && orderData.items.length > 0
         ? orderData.items
             .map((item) => `${item.name || 'Unknown Item'} (x${item.quantity || 1}) - R ${((item.price || 0) * (item.quantity || 1)).toFixed(2)}`)
-            .join('\n')
+            .join('<br />')
         : 'No items in order';
 
       const discountStr = discount.toFixed(2);
