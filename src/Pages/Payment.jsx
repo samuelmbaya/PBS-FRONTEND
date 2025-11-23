@@ -189,14 +189,19 @@ Phone: ${deliveryData.phoneNumber || 'No phone number provided'}
       }
       
       // Format order items for email
-      const orderItemsText = orderData.items
-        .map((item) => `${item.name} (x${item.quantity}) - R ${(item.price * item.quantity).toFixed(2)}`)
-        .join('\n');
+      const orderItemsText = orderData.items && orderData.items.length > 0
+        ? orderData.items
+            .map((item) => `${item.name || 'Unknown Item'} (x${item.quantity || 1}) - R ${((item.price || 0) * (item.quantity || 1)).toFixed(2)}`)
+            .join('\n')
+        : 'No items in order';
+
+      const discountStr = discount.toFixed(2);
+      const hasDiscount = discount > 0;
 
       const templateParams = {
-        to_email: currentUser.email,
-        user_name: currentUser.name || currentUser.email.split('@')[0],
-        order_id: orderData.orderId,
+        to_email: currentUser?.email || '',
+        user_name: (currentUser?.name || currentUser?.email?.split('@')[0] || 'Customer') || 'Customer',
+        order_id: orderData.orderId || 'Unknown',
         order_date: new Date().toLocaleDateString('en-ZA', {
           year: 'numeric',
           month: 'long',
@@ -207,14 +212,17 @@ Phone: ${deliveryData.phoneNumber || 'No phone number provided'}
           : paymentMethod === 'paypal' 
           ? 'PayPal' 
           : 'Google Pay',
-        payment_info: paymentInfo,
+        payment_info: paymentInfo || 'No payment details available',
         order_items: orderItemsText,
         subtotal: subtotal.toFixed(2),
-        discount: discount.toFixed(2),
-        shipping: shipping === 0 ? 'Free' : shipping.toFixed(2),
+        discount: discountStr,
+        has_discount: hasDiscount,
+        shipping: shipping === 0 ? 'Free' : `${shipping.toFixed(2)}`,
         total: totalPrice.toFixed(2),
-        delivery_address: deliveryInfo,
+        delivery_address: deliveryInfo || 'No delivery information available',
       };
+
+      console.log('Sending email with params:', templateParams); // For debugging
 
       const response = await emailjs.send(
         'service_meuwp9x',      // Replace with your EmailJS service ID
