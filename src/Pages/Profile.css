@@ -92,47 +92,6 @@ body {
   opacity: 0.8; */
 }
 
-/* Messages */
-.profile-message {
-  padding: 12px 40px;
-  text-align: center;
-  font-size: 14px;
-  font-weight: 500;
-  animation: slideDown 0.3s ease-out;
-  background: rgba(0, 0, 0, 0.02);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-}
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-.profile-message.success {
-  color: #22c55e;
-  border-bottom-color: rgba(46, 204, 113, 0.3);
-}
-.profile-message.error {
-  color: #e63946;
-  border-bottom-color: rgba(230, 57, 70, 0.3);
-}
-
-/* Editing Indicator */
-.editing-indicator {
-  background: #e63946;
-  color: white;
-  padding: 12px 20px;
-  border-radius: 8px;
-  margin-bottom: 20px;
-  font-weight: 500;
-  text-align: center;
-  animation: slideDown 0.3s ease-out;
-}
-
 /* Profile Container Layout */
 .profile-container {
   display: grid;
@@ -190,13 +149,6 @@ body {
   display: flex;
   flex-direction: column;
   gap: 24px;
-  transition: all 0.3s ease;
-}
-
-.profile-form.editing {
-  border-color: #e63946 !important;
-  box-shadow: 0 0 0 3px rgba(230, 57, 70, 0.1) !important;
-  background: rgba(230, 57, 70, 0.02) !important;
 }
 
 /* Form Section */
@@ -212,8 +164,7 @@ body {
   letter-spacing: 0.5px;
   text-transform: uppercase;
 }
-.profile-form input,
-.profile-form select {
+.profile-form input {
   width: 100%;
   padding: 16px 20px;
   border-radius: 8px;
@@ -228,33 +179,16 @@ body {
 .profile-form input::placeholder {
   color: rgba(0, 0, 0, 0.3);
 }
-.profile-form select option {
-  color: #000;
-  background: #fff;
+.profile-form input:focus:not(:disabled) {
+  border-color: #e63946;
+  box-shadow: 0 0 0 3px rgba(230, 57, 70, 0.1);
+  background: rgba(0, 0, 0, 0.05);
 }
-.profile-form input:focus:not(:disabled),
-.profile-form select:focus:not(:disabled) {
-  border-color: #e63946 !important;
-  box-shadow: 0 0 0 3px rgba(230, 57, 70, 0.1) !important;
-  background: #fff !important;
-}
-.profile-form.editing input:not(:disabled),
-.profile-form.editing select:not(:disabled) {
-  background: #fff !important;
-  border-color: #ccc !important;
-  cursor: text !important;
-}
-.profile-form.editing input:not(:disabled):focus,
-.profile-form.editing select:not(:disabled):focus {
-  border-color: #e63946 !important;
-  box-shadow: 0 0 0 3px rgba(230, 57, 70, 0.1) !important;
-}
-.profile-form input:disabled,
-.profile-form select:disabled {
-  background: rgba(0, 0, 0, 0.02) !important;
-  color: rgba(0, 0, 0, 0.4) !important;
-  cursor: not-allowed !important;
-  border-color: rgba(0, 0, 0, 0.05) !important;
+.profile-form input:disabled {
+  background: rgba(0, 0, 0, 0.02);
+  color: rgba(0, 0, 0, 0.5);
+  cursor: not-allowed;
+  border-color: rgba(0, 0, 0, 0.05);
 }
 
 /* Form Row */
@@ -263,47 +197,14 @@ body {
   grid-template-columns: 1fr 1fr;
   gap: 20px;
 }
-.form-row.three-cols {
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-}
 @media (max-width: 768px) {
-  .form-row,
-  .form-row.three-cols {
+  .form-row {
     grid-template-columns: 1fr;
   }
 }
 
-/* Buttons (Updated with red accent #e63946) */
-.button-group {
-  display: flex;
-  gap: 16px;
-  margin-top: 40px;
-  padding-top: 32px;
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
-}
-.save-changes-btn {
-  flex: 1;
-  padding: 16px 32px;
-  font-size: 14px;
-  font-weight: 600;
-  background: #e63946;
-  border: none;
-  border-radius: 8px;
-  color: #ffffff;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-.save-changes-btn:hover {
-  background: #000;
-  color: #fff;
-  transform: translateY(-2px);
-}
-.edit-profile-btn,
+/* Logout Button */
 .logout-btn {
-  flex: 1;
   padding: 16px 32px;
   font-size: 14px;
   font-weight: 600;
@@ -316,47 +217,10 @@ body {
   text-transform: uppercase;
   letter-spacing: 1px;
 }
-.edit-profile-btn:hover,
 .logout-btn:hover {
   background: #333;
   color: #fff;
   transform: translateY(-2px);
-}
-.cancel-btn {
-  flex: 1;
-  padding: 16px 32px;
-  font-size: 14px;
-  font-weight: 600;
-  background: transparent;
-  border: 1px solid rgba(0, 0, 0, 0.2);
-  border-radius: 8px;
-  color: rgba(0, 0, 0, 0.7);
-  cursor: pointer;
-  transition: all 0.3s ease;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-.cancel-btn:hover {
-  background: rgba(0, 0, 0, 0.05);
-  border-color: rgba(0, 0, 0, 0.3);
-  color: #000;
-}
-
-/* Non-editing button group for edit and logout alignment - Inline row */
-.non-editing-buttons {
-  display: flex;
-  flex-direction: row; /* Ensure row for inline */
-  gap: 16px;
-  margin-top: 40px;
-  padding-top: 32px;
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
-  align-items: center;
-  justify-content: space-between; /* Space them evenly for inline feel */
-}
-.non-editing-buttons .edit-profile-btn,
-.non-editing-buttons .logout-btn {
-  flex: 1; /* Equal width */
-  max-width: 200px; /* Cap width for balance */
 }
 
 /* Account Actions Sidebar (Right Side) */
@@ -428,37 +292,6 @@ body {
   margin: 0;
 }
 
-/* Action Buttons - Now row layout for inline alignment */
-.action-buttons {
-  display: flex;
-  flex-direction: row; /* Changed to row for inline */
-  gap: 12px;
-  margin-top: auto;
-  padding-top: 32px;
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
-  align-items: center;
-}
-.secondary-btn {
-  flex: 1;
-  width: auto; /* Allow flexible width */
-  padding: 16px 24px;
-  font-size: 14px;
-  font-weight: 600;
-  background: transparent;
-  border: 1px solid rgba(0, 0, 0, 0.2);
-  border-radius: 8px;
-  color: rgba(0, 0, 0, 0.7);
-  cursor: pointer;
-  transition: all 0.3s ease;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-.secondary-btn:hover {
-  background: rgba(0, 0, 0, 0.05);
-  border-color: rgba(0, 0, 0, 0.3);
-  color: #000;
-}
-
 /* Responsive Design */
 @media (max-width: 768px) {
   .profile-header {
@@ -479,11 +312,6 @@ body {
   .greeting {
     font-size: 24px;
   }
-  .button-group,
-  .non-editing-buttons,
-  .action-buttons {
-    flex-direction: column; /* Stack on mobile */
-  }
   .profile-container {
     padding: 0 20px;
   }
@@ -498,8 +326,7 @@ body {
   .form-label {
     font-size: 12px;
   }
-  .profile-form input,
-  .profile-form select {
+  .profile-form input {
     padding: 14px 16px;
     font-size: 15px;
   }
