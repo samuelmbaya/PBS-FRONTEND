@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import Navbar from "../Components/Navbar";
+import Footer from "../Components/Footer";
 import "./Orders.css";
 
 const Orders = () => {
@@ -111,120 +113,128 @@ const Orders = () => {
 
   if (loading) {
     return (
-      <div className="orders-page-container">
-        <div className="orders-hero">
-          <div className="orders-hero-content">
-            <h1 className="orders-hero-title">Your Orders</h1>
-            <p className="orders-hero-subtitle">Loading your order history...</p>
+      <>
+        <Navbar />
+        <div className="orders-page-container">
+          <div className="orders-hero">
+            <div className="orders-hero-content">
+              <h1 className="orders-hero-title">Your Orders</h1>
+              <p className="orders-hero-subtitle">Loading your order history...</p>
+            </div>
+          </div>
+          <div className="orders-content">
+            <p style={{ textAlign: 'center', padding: '40px' }}>Loading orders...</p>
           </div>
         </div>
-        <div className="orders-content">
-          <p style={{ textAlign: 'center', padding: '40px' }}>Loading orders...</p>
-        </div>
-      </div>
+        <Footer />
+      </>
     );
   }
 
   return (
-    <div className="orders-page-container">
-      <div className="orders-hero">
-        <div className="orders-hero-content">
-          <h1 className="orders-hero-title">Your Orders</h1>
-          <p className="orders-hero-subtitle">Track and manage your recent purchases</p>
+    <>
+      <Navbar />
+      <div className="orders-page-container">
+        <div className="orders-hero">
+          <div className="orders-hero-content">
+            <h1 className="orders-hero-title">Your Orders</h1>
+            <p className="orders-hero-subtitle">Track and manage your recent purchases</p>
+          </div>
         </div>
-      </div>
 
-      <div className="orders-content">
-        {error && (
-          <div className="error-message">
-            {error}
-          </div>
-        )}
+        <div className="orders-content">
+          {error && (
+            <div className="error-message">
+              {error}
+            </div>
+          )}
 
-        {orders.length === 0 ? (
-          <div className="empty-orders">
-            <div className="empty-orders-icon">📦</div>
-            <h2>No orders yet</h2>
-            <p>Start shopping to see your order history here.</p>
-            <button
-              onClick={() => navigate("/ProductPage")}
-              className="shop-now-btn"
-            >
-              Start Shopping
-            </button>
-          </div>
-        ) : (
-          <div className="orders-items-section">
-            {orders.map((order) => (
-              <div className="order-card" key={order.id}>
-                <div className="order-header">
-                  <div className="order-info">
-                    <p><strong>Order ID:</strong> {order.id}</p>
-                    <p><strong>Date:</strong> {order.date}</p>
-                    <p><strong>Status:</strong>
-                      <span className={`status-${order.status}`}>
-                        {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
-                      </span>
-                    </p>
+          {orders.length === 0 ? (
+            <div className="empty-orders">
+              <div className="empty-orders-icon">📦</div>
+              <h2>No orders yet</h2>
+              <p>Start shopping to see your order history here.</p>
+              <button
+                onClick={() => navigate("/ProductPage")}
+                className="shop-now-btn"
+              >
+                Start Shopping
+              </button>
+            </div>
+          ) : (
+            <div className="orders-items-section">
+              {orders.map((order) => (
+                <div className="order-card" key={order.id}>
+                  <div className="order-header">
+                    <div className="order-info">
+                      <p><strong>Order ID:</strong> {order.id}</p>
+                      <p><strong>Date:</strong> {order.date}</p>
+                      <p><strong>Status:</strong>
+                        <span className={`status-${order.status}`}>
+                          {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                        </span>
+                      </p>
+                    </div>
                   </div>
-                </div>
 
-                <div className="order-items">
-                  {order.items && order.items.length > 0 ? (
-                    order.items.map((item, index) => (
-                      <div className="order-item" key={item._id || index}>
-                        <div className="order-item-image-container">
-                          <img
-                            src={
-                              item.imageUrl ||
-                              item.imageURL ||
-                              item.image ||
-                              item.img ||
-                              "https://via.placeholder.com/80"
-                            }
-                            alt={item.name || "Product"}
-                            className="order-item-img"
-                            onError={(e) => {
-                              e.target.src = "https://via.placeholder.com/80";
-                            }}
-                          />
+                  <div className="order-items">
+                    {order.items && order.items.length > 0 ? (
+                      order.items.map((item, index) => (
+                        <div className="order-item" key={item._id || index}>
+                          <div className="order-item-image-container">
+                            <img
+                              src={
+                                item.imageUrl ||
+                                item.imageURL ||
+                                item.image ||
+                                item.img ||
+                                "https://via.placeholder.com/80"
+                              }
+                              alt={item.name || "Product"}
+                              className="order-item-img"
+                              onError={(e) => {
+                                e.target.src = "https://via.placeholder.com/80";
+                              }}
+                            />
+                          </div>
+                          <div className="order-item-details">
+                            <h3 className="order-item-name">{item.name || "Unknown Product"}</h3>
+                            <p className="order-item-price">
+                              Qty: {item.quantity || 1} | R {((item.price || 0) * (item.quantity || 1)).toFixed(2)}
+                            </p>
+                          </div>
                         </div>
-                        <div className="order-item-details">
-                          <h3 className="order-item-name">{item.name || "Unknown Product"}</h3>
-                          <p className="order-item-price">
-                            Qty: {item.quantity || 1} | R {((item.price || 0) * (item.quantity || 1)).toFixed(2)}
-                          </p>
-                        </div>
-                      </div>
-                    ))
-                  ) : (
-                    <p>No items found for this order</p>
-                  )}
-                </div>
-
-                <div className="order-footer">
-                  <div className="order-footer-left">
-                    <p><strong>Payment:</strong> {order.paymentMethod}</p>
-                    {order.deliveryData && order.deliveryData.name && (
-                      <p><strong>Delivery to:</strong> {order.deliveryData.name} {order.deliveryData.lastName}</p>
+                      ))
+                    ) : (
+                      <p>No items found for this order</p>
                     )}
                   </div>
-                  <p className="order-total"><strong>Total:</strong> R {(order.total || 0).toFixed(2)}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
 
-        <button
-          onClick={() => navigate("/ProductPage")}
-          className="continue-shopping-btn"
-          style={{ marginTop: '40px' }}
-        >
-          Continue Shopping
-        </button>
+                  <div className="order-footer">
+                    <div className="order-footer-left">
+                      <p><strong>Payment:</strong> {order.paymentMethod}</p>
+                      {order.deliveryData && order.deliveryData.name && (
+                        <p><strong>Delivery to:</strong> {order.deliveryData.name} {order.deliveryData.lastName}</p>
+                      )}
+                    </div>
+                    <p className="order-total"><strong>Total:</strong> R {(order.total || 0).toFixed(2)}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          <button
+            onClick={() => navigate("/ProductPage")}
+            className="continue-shopping-btn"
+            style={{ marginTop: '40px' }}
+          >
+            Continue Shopping
+          </button>
+        </div>
       </div>
-    </div>
+      <Footer />
+    </>
   );
 };
 
