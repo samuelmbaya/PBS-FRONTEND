@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../Components/Navbar";
 import Footer from "../Components/Footer";
@@ -19,9 +19,9 @@ const Home = () => {
   // New state for cart and wishlist to manage updates
   const [cartCount, setCartCount] = useState(0);
   const [wishlistCount, setWishlistCount] = useState(0);
+  const [userEmail, setUserEmail] = useState('');
 
-  // Example functions to update cart and wishlist (these could be called from child components or events)
-  // In a real app, these would be part of a Context or Redux for global updates
+  // Functions to update cart and wishlist counts (for Navbar callbacks if needed)
   const updateCart = (newCount) => {
     setCartCount(newCount);
   };
@@ -30,12 +30,63 @@ const Home = () => {
     setWishlistCount(newCount);
   };
 
-  // For demonstration: Simulate an update on mount (remove in production)
-  React.useEffect(() => {
-    // Simulate initial load with some counts
-    setCartCount(3);
-    setWishlistCount(2);
+  // Load initial cart and wishlist counts based on user
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    const storedIsLoggedIn = localStorage.getItem("isLoggedIn");
+
+    if (storedUser && storedIsLoggedIn === "true") {
+      try {
+        const parsedUser = JSON.parse(storedUser);
+        const email = parsedUser.email;
+        setUserEmail(email);
+
+        const userCart = JSON.parse(localStorage.getItem(`cart_${email}`) || "[]");
+        setCartCount(userCart.reduce((total, item) => total + (item.quantity || 1), 0));
+
+        const userWishlist = JSON.parse(localStorage.getItem(`wishlist_${email}`) || "[]");
+        setWishlistCount(userWishlist.length);
+      } catch (err) {
+        console.error("Error loading cart/wishlist from localStorage:", err);
+        setCartCount(0);
+        setWishlistCount(0);
+      }
+    } else {
+      setCartCount(0);
+      setWishlistCount(0);
+    }
   }, []);
+
+  // Real-time sync via storage events across tabs
+  useEffect(() => {
+    if (!userEmail) return;
+
+    const cartKey = `cart_${userEmail}`;
+    const wishlistKey = `wishlist_${userEmail}`;
+
+    const handleStorageChange = (e) => {
+      if (e.key === cartKey) {
+        try {
+          const newCart = JSON.parse(e.newValue || '[]');
+          setCartCount(newCart.reduce((total, item) => total + (item.quantity || 1), 0));
+        } catch (err) {
+          console.error("Error parsing cart from storage event:", err);
+          setCartCount(0);
+        }
+      } else if (e.key === wishlistKey) {
+        try {
+          const newWishlist = JSON.parse(e.newValue || '[]');
+          setWishlistCount(newWishlist.length);
+        } catch (err) {
+          console.error("Error parsing wishlist from storage event:", err);
+          setWishlistCount(0);
+        }
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, [userEmail]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
