@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import Footer from "../Components/Footer";
 import './Profile.css';
 
 // Create User Context
@@ -222,6 +223,8 @@ const Profile = () => {
             </div>
           </div>
         </div>
+        {/* Footer */}
+        <Footer />
       </div>
     </div>
   );
