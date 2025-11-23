@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Navbar from "../Components/Navbar";
 import Footer from "../Components/Footer";
 import emailjs from '@emailjs/browser';
@@ -15,6 +15,10 @@ const Home = () => {
   const [status, setStatus] = useState('');
   const [loading, setLoading] = useState(false);
   const [wishlistCount, setWishlistCount] = useState(0);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  const navigate = useNavigate();
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -22,17 +26,36 @@ const Home = () => {
   };
 
   useEffect(() => {
-    const loadWishlistCount = () => {
+    const checkAuthAndLoadUserData = () => {
       try {
-        const wishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
-        setWishlistCount(wishlist.length);
+        const storedUser = localStorage.getItem("user");
+        const storedIsLoggedIn = localStorage.getItem("isLoggedIn");
+
+        if (storedUser && storedIsLoggedIn === "true") {
+          const parsedUser = JSON.parse(storedUser);
+          setCurrentUser(parsedUser);
+          setIsAuthenticated(true);
+          loadUserSpecificData(parsedUser.email);
+        } else {
+          setWishlistCount(0);
+        }
       } catch (err) {
-        console.error('Error loading wishlist:', err);
+        console.error("Error checking authentication:", err);
         setWishlistCount(0);
       }
     };
 
-    loadWishlistCount();
+    const loadUserSpecificData = (userEmail) => {
+      try {
+        const userWishlist = JSON.parse(localStorage.getItem(`wishlist_${userEmail}`) || "[]");
+        setWishlistCount(userWishlist.length);
+      } catch (err) {
+        console.error("Error loading user data:", err);
+        setWishlistCount(0);
+      }
+    };
+
+    checkAuthAndLoadUserData();
   }, []);
 
   const handleSubmit = (e) => {
@@ -62,9 +85,18 @@ const Home = () => {
       });
   };
 
+  const handleWishlistClick = () => {
+    if (!isAuthenticated) {
+      alert("Please log in to view your wishlist.");
+      navigate("/login");
+      return;
+    }
+    navigate("/wishlist");
+  };
+
   return (
     <div className="home-container">
-      <Navbar />
+      <Navbar wishlistCount={wishlistCount} />
 
       {/* Hero Section */}
       <section className="hero">
@@ -80,13 +112,17 @@ const Home = () => {
             <Link to="/ProductPage" className="hero-link">
               <button className="shop-btn">SHOP NOW</button>
             </Link>
-            <Link to="/wishlist" className="wishlist-link">
-              <button className="wishlist-btn">
-                Wishlist
-                {wishlistCount > 0 && <span className="wishlist-badge">{wishlistCount}</span>}
-                {wishlistCount === 0 && <span className="wishlist-empty">(0)</span>}
-              </button>
-            </Link>
+            <button 
+              onClick={handleWishlistClick}
+              className="wishlist-btn"
+            >
+              Wishlist
+              {isAuthenticated && (
+                <span className={`wishlist-indicator ${wishlistCount > 0 ? 'has-items' : 'empty'}`}>
+                  ({wishlistCount})
+                </span>
+              )}
+            </button>
           </div>
         </div>
         
