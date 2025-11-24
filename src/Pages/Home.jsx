@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import Navbar from "../Components/Navbar";
 import Footer from "../Components/Footer";
 import emailjs from '@emailjs/browser';
@@ -20,6 +20,18 @@ const Home = () => {
   const [cartCount, setCartCount] = useState(0);
   const [wishlistCount, setWishlistCount] = useState(0);
   const [userEmail, setUserEmail] = useState('');
+
+  const location = useLocation();
+
+  // Scroll to hash on location change
+  useEffect(() => {
+    if (location.hash) {
+      const element = document.querySelector(location.hash);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+  }, [location.hash]);
 
   // Functions to update cart and wishlist counts (for Navbar callbacks if needed)
   const updateCart = (newCount) => {
