@@ -185,7 +185,7 @@ const Home = () => {
       {/* Story and Contact Sections */}
       <section className="story-contact-section">
         <div className="story-left">
-          <div className="storySection">
+          <div className="storySection" id="our-story">
             <h3>Our Story</h3>
             <p>
               Powered By Samuel began with a simple idea: to create a space where energy 
