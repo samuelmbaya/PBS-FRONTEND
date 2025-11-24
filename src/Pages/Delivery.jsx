@@ -58,6 +58,7 @@ const Delivery = ({ onDeliveryData }) => {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showCountryDropdown, setShowCountryDropdown] = useState(false);
+  const [message, setMessage] = useState("");
 
   const selectedCountry = countries.find(c => c.code === deliveryData.country) || countries[0];
 
@@ -178,6 +179,7 @@ const Delivery = ({ onDeliveryData }) => {
   };
 
   const handleContinueToPayment = async () => {
+    setMessage("");
     let requiredFields = [];
     if (deliveryData.deliveryMethod === 'delivery') {
       requiredFields = ['name', 'lastName', 'streetAddress', 'city', 'province', 'phoneNumber'];
@@ -188,7 +190,7 @@ const Delivery = ({ onDeliveryData }) => {
     const missingFields = requiredFields.filter(field => !deliveryData[field]);
 
     if (missingFields.length > 0) {
-      alert(`Please fill in all required fields: ${missingFields.join(', ')}`);
+      setMessage(`Please fill in all required fields: ${missingFields.join(', ')}`);
       return;
     }
 
@@ -198,7 +200,7 @@ const Delivery = ({ onDeliveryData }) => {
     const actualPhoneDigits = phoneDigits.slice(dialCodeDigits.length);
     
     if (actualPhoneDigits.length < 9) {
-      alert('Please enter a valid phone number');
+      setMessage('Please enter a valid phone number');
       return;
     }
 
@@ -234,13 +236,14 @@ const Delivery = ({ onDeliveryData }) => {
 
       localStorage.setItem('deliveryData', JSON.stringify(deliveryData));
 
-      alert("Delivery information saved successfully! Proceeding to payment.");
+      setMessage("Delivery information saved successfully! Proceeding to payment.");
       if (onDeliveryData) onDeliveryData(deliveryData, true);
-      navigate('/payment');
+
+      setTimeout(() => navigate('/payment'), 1500);
       
     } catch (error) {
       console.error("Error saving delivery data:", error);
-      alert("Error processing delivery data. Please try again.");
+      setMessage("Error processing delivery data. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
@@ -252,6 +255,11 @@ const Delivery = ({ onDeliveryData }) => {
 
   return (
     <div className="delivery-page-container">
+      {message && (
+        <div className={`delivery-message ${message.includes("successfully") ? "success" : "error"}`}>
+          {message}
+        </div>
+      )}
       <Navbar />
 
       <section className="delivery-hero">
