@@ -133,7 +133,7 @@ const Home = () => {
   };
 
   return (
-    <div className="home-container">
+    <div className="home-container" id="Home">
       {/* Pass cartCount and wishlistCount to Navbar for dynamic updates */}
       <Navbar 
         cartCount={cartCount} 
