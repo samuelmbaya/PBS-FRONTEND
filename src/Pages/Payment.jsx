@@ -32,6 +32,9 @@ const Payment = () => {
   const [cart, setCart] = useState([]);
   const [currentUser, setCurrentUser] = useState(null);
 
+  // Message state
+  const [message, setMessage] = useState("");
+
   const apiUrl = "http://44.198.25.29:3000";
 
   // Initialize EmailJS (add your public key here)
@@ -123,12 +126,13 @@ const Payment = () => {
 
   // Apply promo code
   const applyPromoCode = () => {
+    setMessage("");
     if (promoCode.toUpperCase() === "PBS2025") {
       setPromoApplied(true);
-      alert("Promo code applied! You saved 10%");
+      setMessage("Promo code applied! You saved 10%");
     } else {
-      alert("Invalid promo code");
       setPromoApplied(false);
+      setMessage("Invalid promo code");
     }
   };
 
@@ -236,8 +240,9 @@ const Payment = () => {
 
   // Handle order placement with backend integration
   const handlePlaceOrder = async () => {
+    setMessage("");
     if (cart.length === 0) {
-      alert("Your cart is empty!");
+      setMessage("Your cart is empty!");
       return;
     }
 
@@ -246,25 +251,25 @@ const Payment = () => {
       const { number, name, expiry, cvc } = cardData;
 
       if (!number || !name || !expiry || !cvc) {
-        alert("Please fill all card details!");
+        setMessage("Please fill all card details!");
         return;
       }
     } else if (paymentMethod === "paypal") {
       if (!paypalEmail) {
-        alert("Enter PayPal email!");
+        setMessage("Enter PayPal email!");
         return;
       }
       if (!isValidEmail(paypalEmail)) {
-        alert("Enter a valid PayPal email!");
+        setMessage("Enter a valid PayPal email!");
         return;
       }
     } else if (paymentMethod === "google-pay") {
       if (!googlePayEmail) {
-        alert("Enter Google Pay email!");
+        setMessage("Enter Google Pay email!");
         return;
       }
       if (!isValidEmail(googlePayEmail)) {
-        alert("Enter a valid Google Pay email!");
+        setMessage("Enter a valid Google Pay email!");
         return;
       }
     }
@@ -341,14 +346,14 @@ const Payment = () => {
         localStorage.setItem(`cart_${currentUser.email}`, JSON.stringify([]));
         setCart([]);
 
+        setMessage("Payment successful! Order placed. Check your email for the receipt.");
         setLoading(false);
-        alert("Payment successful! Order placed. Check your email for the receipt.");
-        navigate("/Orders");
+        setTimeout(() => navigate("/Orders"), 1500);
       }
     } catch (error) {
       console.error("Error creating order:", error);
+      setMessage("Failed to place order. Please try again.");
       setLoading(false);
-      alert("Failed to place order. Please try again.");
     }
   };
 
@@ -524,6 +529,12 @@ const Payment = () => {
             >
               {loading ? "Processing" : "Complete Order"}
             </button>
+
+            {message && (
+              <div className={`payment-message ${message.includes("successful") ? "success" : "error"}`}>
+                {message}
+              </div>
+            )}
 
             <button
               className="back-to-cart-btn"
