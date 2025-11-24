@@ -381,7 +381,7 @@ const Payment = () => {
                     checked={paymentMethod === "credit-card"}
                     onChange={() => setPaymentMethod("credit-card")}
                   />
-                  💳 Credit Card
+                  Credit Card
                 </label>
                 <label htmlFor="paypal">
                   <input
@@ -452,7 +452,7 @@ const Payment = () => {
                       </label>
                       <input
                         id="card-expiry"
-                        type="text"
+                        type="date"
                         name="expiry"
                         placeholder="Expiry (MM/YY)"
                         value={cardData.expiry}

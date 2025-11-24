@@ -63,18 +63,6 @@ body {
   max-width: 100%;
   text-align: center;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  animation: slideDown 0.3s ease-out;
-}
-
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 
 .delivery-message.success {
@@ -105,18 +93,6 @@ body {
 .delivery-hero-content {
   max-width: 800px;
   padding: 40px 20px;
-  animation: fadeInUp 1s ease-out;
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 
 .delivery-hero-title {
@@ -191,7 +167,6 @@ body {
   font-size: 16px;
   font-family: "Arial", sans-serif;
   outline: none;
-  transition: all 0.3s ease;
 }
 
 .form-input::placeholder {
@@ -232,7 +207,6 @@ body {
   cursor: pointer;
   font-size: 16px;
   color: #000;
-  transition: color 0.2s ease;
 }
 
 .method-option:hover {
@@ -264,7 +238,6 @@ body {
   align-items: center;
   gap: 12px;
   cursor: pointer;
-  transition: all 0.3s ease;
   text-align: left;
 }
 
@@ -295,7 +268,6 @@ body {
 .dropdown-arrow {
   font-size: 12px;
   color: rgba(0, 0, 0, 0.5);
-  transition: transform 0.3s ease;
   flex-shrink: 0;
 }
 
@@ -314,20 +286,8 @@ body {
   border-radius: 8px;
   z-index: 1000;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-  animation: dropdownFadeIn 0.2s ease-out;
   max-height: 350px;
   overflow: hidden;
-}
-
-@keyframes dropdownFadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 
 .country-dropdown-scroll {
@@ -370,7 +330,6 @@ body {
   gap: 12px;
   cursor: pointer;
   border-radius: 6px;
-  transition: all 0.2s ease;
   text-align: left;
   margin-bottom: 2px;
 }
@@ -473,7 +432,6 @@ body {
   letter-spacing: 1px;
   text-transform: uppercase;
   cursor: pointer;
-  transition: all 0.3s ease;
   font-family: "Arial", sans-serif;
 }
 
@@ -495,7 +453,6 @@ body {
   letter-spacing: 1px;
   text-transform: uppercase;
   cursor: pointer;
-  transition: all 0.3s ease;
   font-family: "Arial", sans-serif;
   display: flex;
   align-items: center;
@@ -506,13 +463,11 @@ body {
 .continue-payment-btn:hover:not(:disabled) {
   background: #333;
   color: #fff;
-  transform: translateY(-2px);
 }
 
 .continue-payment-btn:disabled {
   background: rgba(0, 0, 0, 0.5);
   cursor: not-allowed;
-  transform: none;
 }
 
 /* Button Spinner */
@@ -522,13 +477,6 @@ body {
   border: 2px solid rgba(0, 0, 0, 0.3);
   border-top-color: #000;
   border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
 }
 
 /* Responsive Design */
