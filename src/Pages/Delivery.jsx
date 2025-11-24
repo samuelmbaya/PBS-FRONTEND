@@ -255,11 +255,6 @@ const Delivery = ({ onDeliveryData }) => {
 
   return (
     <div className="delivery-page-container">
-      {message && (
-        <div className={`delivery-message ${message.includes("successfully") ? "success" : "error"}`}>
-          {message}
-        </div>
-      )}
       <Navbar />
 
       <section className="delivery-hero">
@@ -499,6 +494,12 @@ const Delivery = ({ onDeliveryData }) => {
               )}
             </button>
           </div>
+
+          {message && (
+            <div className={`delivery-message ${message.includes("successfully") ? "success" : "error"}`}>
+              {message}
+            </div>
+          )}
         </div>
       </div>
 
