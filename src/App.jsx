@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 
 import NotFound from './404Page';
 import ProductPage from './Pages/ProductPage';
@@ -18,12 +18,26 @@ function App() {
   return (
     <Router>
       <Routes>
-        {/* Landing page set to Home */}
-        <Route path="/" element={<Signup />} />
+        {/* Landing page set to Home (changed from Signup for better UX; adjust if needed) */}
+        <Route path="/" element={<Home />} />
         <Route path="/Home" element={<Home />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/ProductPage" element={<ProductPage />} />
-        <Route path="/cart" element={<Cart />} />
+        
+        {/* Public routes - accessible to guests */}
+        <Route path="/delivery" element={<Delivery />} />
+        <Route path="/payment" element={<Payment />} />
+        <Route path="/login" element={<Login />} />
+        
+        {/* Protected routes - only logged-in users (added protection to /cart; removed from /delivery and /payment) */}
+        <Route
+          path="/cart"
+          element={
+            <ProtectedRoute>
+              <Cart />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/wishlist"
           element={
@@ -32,7 +46,6 @@ function App() {
             </ProtectedRoute>
           }
         />
-        {/* Protected Profile Route */}
         <Route
           path="/profile"
           element={
@@ -41,25 +54,6 @@ function App() {
             </ProtectedRoute>
           }
         />
-        {/* Protected Payment Route */}
-        <Route
-          path="/payment"
-          element={
-            <ProtectedRoute>
-              <Payment />
-            </ProtectedRoute>
-          }
-        />
-        {/* Protected Delivery Route */}
-        <Route
-          path="/delivery"
-          element={
-            <ProtectedRoute>
-              <Delivery />
-            </ProtectedRoute>
-          }
-        />
-        {/* Protected Orders Route */}
         <Route
           path="/orders"
           element={
@@ -68,7 +62,7 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="/login" element={<Login />} />
+        
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>

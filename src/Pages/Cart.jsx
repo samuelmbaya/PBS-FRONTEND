@@ -10,40 +10,39 @@ const Cart = () => {
   const [currentUser, setCurrentUser] = useState(null);
   const navigate = useNavigate();
 
-  // Load cart for the logged-in user
+  // Load cart for the logged-in user (updated: fallback check, no alert)
   useEffect(() => {
-    try {
-      const storedUser = localStorage.getItem("user");
-      const storedIsLoggedIn = localStorage.getItem("isLoggedIn");
+    const loadUserData = () => {
+      try {
+        const storedUser = localStorage.getItem("user");
+        const storedIsLoggedIn = localStorage.getItem("isLoggedIn");
 
-      if (storedUser && storedIsLoggedIn === "true") {
-        const parsedUser = JSON.parse(storedUser);
-        setCurrentUser(parsedUser);
+        if (storedUser && storedIsLoggedIn === "true") {
+          const parsedUser = JSON.parse(storedUser);
+          setCurrentUser(parsedUser);
 
-        // Load user cart from localStorage
-        const userCart = JSON.parse(
-          localStorage.getItem(`cart_${parsedUser.email}`) || "[]"
-        );
-        setCart(userCart);
+          // Load user cart from localStorage
+          const userCart = JSON.parse(
+            localStorage.getItem(`cart_${parsedUser.email}`) || "[]"
+          );
+          setCart(userCart);
 
-        // Load user wishlist from localStorage
-        const userWishlist = JSON.parse(
-          localStorage.getItem(`wishlist_${parsedUser.email}`) || "[]"
-        );
-        setWishlist(userWishlist);
-      } else {
-        // Prevent multiple alerts with sessionStorage flag
-        if (!sessionStorage.getItem("cartAlertShown")) {
-          alert("Please log in to view your cart.");
-          sessionStorage.setItem("cartAlertShown", "true");
+          // Load user wishlist from localStorage
+          const userWishlist = JSON.parse(
+            localStorage.getItem(`wishlist_${parsedUser.email}`) || "[]"
+          );
+          setWishlist(userWishlist);
+        } else {
+          // Fallback: Redirect to login (ProtectedRoute should handle this, but safe)
+          navigate("/login", { replace: true });
         }
-        navigate("/", { replace: true });
+      } catch (err) {
+        console.error("Error loading cart:", err);
+        navigate("/login", { replace: true });
       }
-    } catch (err) {
-      console.error("Error loading cart:", err);
-      alert("Error loading cart, please login again.");
-      navigate("/", { replace: true });
-    }
+    };
+
+    loadUserData();
   }, [navigate]);
 
   // Save cart updates to localStorage

@@ -21,17 +21,12 @@ const Wishlist = () => {
           setCurrentUser(parsedUser);
           loadUserSpecificData(parsedUser.email);
         } else {
-          // Prevent multiple alerts with sessionStorage flag
-          if (!sessionStorage.getItem("wishlistAlertShown")) {
-            alert("Please log in to view your wishlist.");
-            sessionStorage.setItem("wishlistAlertShown", "true");
-          }
-          navigate("/", { replace: true });
+          // Fallback: Redirect to login (ProtectedRoute should handle this, but safe)
+          navigate("/login", { replace: true });
         }
       } catch (err) {
         console.error("Error loading wishlist:", err);
-        alert("Error loading wishlist, please login again.");
-        navigate("/", { replace: true });
+        navigate("/login", { replace: true });
       }
     };
 
