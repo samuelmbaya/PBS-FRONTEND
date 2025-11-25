@@ -194,13 +194,22 @@ const Login = () => {
             />
           </div>
 
-          <button
-            type="submit"
-            className="login-button"
-            disabled={!submitEnabled || isLoading}
-          >
-            {isLoading ? "Logging in..." : "Log in"}
-          </button>
+          <div className="login-actions">
+            <button
+              type="button"
+              onClick={handleSkipToHome}
+              className="skip-button"
+            >
+              Skip
+            </button>
+            <button
+              type="submit"
+              className="login-button"
+              disabled={!submitEnabled || isLoading}
+            >
+              {isLoading ? "Logging in..." : "Log in"}
+            </button>
+          </div>
 
           <p className="footer-text">
             Don't have an account?{" "}
@@ -208,14 +217,6 @@ const Login = () => {
               Sign Up
             </button>
           </p>
-
-          <button
-            type="button"
-            onClick={handleSkipToHome}
-            className="skip-button"
-          >
-            Skip
-          </button>
 
           <small>
             By logging in, you agree to our{" "}
