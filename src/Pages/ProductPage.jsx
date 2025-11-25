@@ -32,7 +32,7 @@ const ProductPage = () => {
   const API_BASE_URL = import.meta.env.VITE_API_URL || "http://44.198.25.29:3000";
   const debouncedQuery = useDebounce(query, 300);
 
-  // Check authentication and load user data (updated: allow guests to browse without redirect)
+  // Check authentication and load user data
   useEffect(() => {
     const checkAuthAndLoadUserData = () => {
       try {
@@ -45,19 +45,11 @@ const ProductPage = () => {
           setIsAuthenticated(true);
           loadUserSpecificData(parsedUser.email);
         } else {
-          // For guests: No redirect, just set empty states
-          setCurrentUser(null);
-          setIsAuthenticated(false);
-          setCart([]);
-          setWishlist([]);
+          navigate("/login");
         }
       } catch (err) {
         console.error("Error checking authentication:", err);
-        // For errors, treat as guest (no redirect)
-        setCurrentUser(null);
-        setIsAuthenticated(false);
-        setCart([]);
-        setWishlist([]);
+        navigate("/login");
       }
     };
 
@@ -69,8 +61,6 @@ const ProductPage = () => {
         setWishlist(userWishlist);
       } catch (err) {
         console.error("Error loading user data:", err);
-        setCart([]);
-        setWishlist([]);
       }
     };
 
@@ -118,11 +108,11 @@ const ProductPage = () => {
     }
   }, [cart, wishlist, currentUser]);
 
-  // Toggle wishlist handler (updated: navigate to login for guests instead of alert)
+  // Toggle wishlist handler
   const toggleWishlist = useCallback(
     (product) => {
       if (!isAuthenticated) {
-        navigate("/login");
+        alert("Please login to manage your wishlist");
         return;
       }
       setWishlist((prev) => {
@@ -131,14 +121,14 @@ const ProductPage = () => {
         return [...prev, { ...product, addedAt: new Date().toISOString() }];
       });
     },
-    [isAuthenticated, navigate]
+    [isAuthenticated]
   );
 
-  // Add to cart handler (updated: navigate to login for guests instead of alert)
+  // Add to cart handler
   const addToCart = useCallback(
     (product) => {
       if (!isAuthenticated) {
-        navigate("/login");
+        alert("Please login to add items to cart");
         return;
       }
       setCart((prev) => {
@@ -154,7 +144,7 @@ const ProductPage = () => {
         return [...prev, { ...product, quantity: 1, addedAt: new Date().toISOString() }];
       });
     },
-    [isAuthenticated, navigate]
+    [isAuthenticated]
   );
 
   const isInWishlist = (productId) => wishlist.some((item) => item._id === productId);
@@ -243,8 +233,7 @@ const ProductPage = () => {
                         e.stopPropagation();
                         toggleWishlist(product);
                       }}
-                      disabled={!isAuthenticated}
-                      className={`wishlist-icon ${inWishlist ? "active" : ""} ${!isAuthenticated ? "disabled" : ""}`}
+                      className={`wishlist-icon ${inWishlist ? "active" : ""}`}
                       aria-label="Add to wishlist"
                     >
                       {inWishlist ? "♥" : "♡"}
@@ -267,10 +256,9 @@ const ProductPage = () => {
                           e.stopPropagation();
                           addToCart(product);
                         }}
-                        disabled={!isAuthenticated}
-                        className={`add-cart-btn-modern ${!isAuthenticated ? "disabled" : ""}`}
+                        className="add-cart-btn-modern"
                       >
-                        {isAuthenticated ? "Add to Cart" : "Log In to Add"}
+                        Add to Cart
                       </button>
                     )}
                   </div>

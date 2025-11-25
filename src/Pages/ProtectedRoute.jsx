@@ -6,9 +6,14 @@ const ProtectedRoute = ({ children }) => {
   const user = localStorage.getItem("user");
   const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
 
-  // If not logged in, redirect to login (better UX than root)
+  // If not logged in, redirect
   if (!user || !isLoggedIn) {
-    return <Navigate to="/login" replace />;
+    // optional: avoid alert spamming on every render
+    if (!sessionStorage.getItem("alertShown")) {
+      alert("Try Signing Up or Logging In");
+      sessionStorage.setItem("alertShown", "true");
+    }
+    return <Navigate to="/" replace />;
   }
 
   // Otherwise, show the protected children

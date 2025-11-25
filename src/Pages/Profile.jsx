@@ -1,5 +1,4 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import Footer from "../Components/Footer";
 import './Profile.css';
 
@@ -63,7 +62,6 @@ export const useUser = () => {
 // Profile Component
 const Profile = () => {
   const { currentUser, loading, logout } = useUser();
-  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -74,7 +72,7 @@ const Profile = () => {
     if (loading) return;
 
     if (!currentUser) {
-      navigate('/login', { replace: true });
+      window.location.href = '/login';
       return;
     }
 
@@ -89,27 +87,27 @@ const Profile = () => {
       lastName,
       email: currentUser.email || ''
     });
-  }, [currentUser, loading, navigate]);
+  }, [currentUser, loading]);
 
   const handleLogout = () => {
     logout();
-    navigate('/login', { replace: true });
+    window.location.href = '/login';
   };
 
   const handleBackToProducts = () => {
-    navigate('/ProductPage');
+    window.location.href = '/ProductPage';
   };
 
   const handleOrders = () => {
-    navigate('/orders');
+    window.location.href = '/orders';
   };
 
   const handleCart = () => {
-    navigate('/cart');
+    window.location.href = '/cart';
   };
 
   const handleWishlist = () => {
-    navigate('/wishlist');
+    window.location.href = '/wishlist';
   };
 
   const getDisplayName = () => {
@@ -232,4 +230,11 @@ const Profile = () => {
   );
 };
 
-export default Profile;
+// Wrap Profile with UserProvider
+const App = () => (
+  <UserProvider>
+    <Profile />
+  </UserProvider>
+);
+
+export default App;
