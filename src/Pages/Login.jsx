@@ -214,7 +214,7 @@ const Login = () => {
             onClick={handleSkipToHome}
             className="skip-button"
           >
-            Skip to Home
+            Skip
           </button>
 
           <small>

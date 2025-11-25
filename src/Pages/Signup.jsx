@@ -187,7 +187,7 @@ const Signup = () => {
               onClick={handleSkipToHome}
               className="skip-home-btn"
             >
-              Skip to Home
+              Skip
             </button>
             <button
               type="submit"
