@@ -20,31 +20,10 @@ function App() {
       <Routes>
         {/* Landing page set to Home */}
         <Route path="/" element={<Signup />} />
-        <Route
-          path="/Home"
-          element={
-            <ProtectedRoute>
-              <Home />
-            </ProtectedRoute>
-          }
-        />
+        <Route path="/Home" element={<Home />} />
         <Route path="/signup" element={<Signup />} />
-        <Route
-          path="/ProductPage"
-          element={
-            <ProtectedRoute>
-              <ProductPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/cart"
-          element={
-            <ProtectedRoute>
-              <Cart />
-            </ProtectedRoute>
-          }
-        />
+        <Route path="/ProductPage" element={<ProductPage />} />
+        <Route path="/cart" element={<Cart />} />
         <Route
           path="/wishlist"
           element={

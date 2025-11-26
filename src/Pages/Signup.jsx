@@ -98,7 +98,7 @@ const Signup = () => {
 
   const handleSkipToHome = () => {
     if (isAuthenticated && currentUser) {
-      navigate("/Home");
+      navigate("/ProtectedRoutez");
     } else {
       setMessage("You must be logged in to access this page.");
     }
