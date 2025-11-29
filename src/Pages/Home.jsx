@@ -21,6 +21,9 @@ const Home = () => {
   const [wishlistCount, setWishlistCount] = useState(0);
   const [userEmail, setUserEmail] = useState('');
 
+  // New state for parallax scrolling
+  const [scrollY, setScrollY] = useState(0);
+
   const location = useLocation();
 
   // Scroll to hash on location change
@@ -32,6 +35,23 @@ const Home = () => {
       }
     }
   }, [location.hash]);
+
+  // Parallax scroll listener (optimized with RAF)
+  useEffect(() => {
+    let ticking = false;
+    const updateScroll = () => {
+      setScrollY(window.scrollY);
+      ticking = false;
+    };
+    const handleScroll = () => {
+      if (!ticking) {
+        requestAnimationFrame(updateScroll);
+        ticking = true;
+      }
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   // Functions to update cart and wishlist counts (for Navbar callbacks if needed)
   const updateCart = (newCount) => {
@@ -132,6 +152,11 @@ const Home = () => {
       });
   };
 
+  // Parallax style helper
+  const parallaxStyle = {
+    transform: `translateY(${ -scrollY * 0.5 }px)`
+  };
+
   return (
     <div className="home-container" id="Home">
       {/* Pass cartCount and wishlistCount to Navbar for dynamic updates */}
@@ -144,6 +169,7 @@ const Home = () => {
 
       {/* Hero Section */}
       <section className="hero">
+        <div className="parallax-bg hero-bg" style={parallaxStyle}></div>
         <div className="hero-content">
           <h1 className="hero-title">Cut through the noise</h1>
           <h2 className="hero-subtitle">SOUTH AFRICAN ENERGY SUPPLIERS</h2>
@@ -164,7 +190,8 @@ const Home = () => {
       </section>
 
       {/* Product Showcase Sections */}
-      <section className="product-section dark solar-bg">
+      <section className="product-section solar-bg">
+        <div className="parallax-bg solar-parallax" style={parallaxStyle}></div>
         <div className="product-content">
           <h3 className="product-tagline">Power in perspective</h3>
           <h2 className="product-name">Solar Solutions</h2>
@@ -174,7 +201,8 @@ const Home = () => {
         </div>
       </section>
 
-      <section className="product-section light">
+      <section className="product-section inverter-bg">
+        <div className="parallax-bg inverter-parallax" style={parallaxStyle}></div>
         <div className="product-content">
           <h3 className="product-tagline">Energy redefined</h3>
           <h2 className="product-name">Inverter Systems</h2>
@@ -184,7 +212,8 @@ const Home = () => {
         </div>
       </section>
 
-      <section className="product-section dark">
+      <section className="product-section battery-bg">
+        <div className="parallax-bg battery-parallax" style={parallaxStyle}></div>
         <div className="product-content">
           <h3 className="product-tagline">Sustainable power</h3>
           <h2 className="product-name">Battery Storage</h2>
