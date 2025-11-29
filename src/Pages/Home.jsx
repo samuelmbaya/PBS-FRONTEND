@@ -142,8 +142,9 @@ const Home = () => {
         onWishlistUpdate={updateWishlist}
       />
 
-      {/* Hero Section */}
-      <section className="hero">
+      {/* Hero Section - Inspired by Nothing.tech: Minimalist, bold typography, subtle overlay */}
+      <section className="hero parallax-section">
+        <div className="hero-overlay"></div>
         <div className="hero-content">
           <h1 className="hero-title">Cut through the noise</h1>
           <h2 className="hero-subtitle">SOUTH AFRICAN ENERGY SUPPLIERS</h2>
@@ -163,8 +164,9 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Product Showcase Sections */}
-      <section className="product-section dark solar-bg">
+      {/* Product Showcase Sections - Parallax backgrounds, clean overlays like Nothing's product reveals */}
+      <section className="product-section solar-bg parallax-section">
+        <div className="product-overlay"></div>
         <div className="product-content">
           <h3 className="product-tagline">Power in perspective</h3>
           <h2 className="product-name">Solar Solutions</h2>
@@ -174,7 +176,8 @@ const Home = () => {
         </div>
       </section>
 
-      <section className="product-section light">
+      <section className="product-section inverter-bg parallax-section">
+        <div className="product-overlay"></div>
         <div className="product-content">
           <h3 className="product-tagline">Energy redefined</h3>
           <h2 className="product-name">Inverter Systems</h2>
@@ -184,7 +187,8 @@ const Home = () => {
         </div>
       </section>
 
-      <section className="product-section dark">
+      <section className="product-section battery-bg parallax-section">
+        <div className="product-overlay"></div>
         <div className="product-content">
           <h3 className="product-tagline">Sustainable power</h3>
           <h2 className="product-name">Battery Storage</h2>
@@ -194,8 +198,8 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Story and Contact Sections */}
-      <section className="story-contact-section">
+      {/* Story and Contact Sections - Two-column layout with ample whitespace, inspired by Nothing's about/community pages */}
+      <section className="story-contact-section" id="story">
         <div className="story-left">
           <div className="storySection" id="our-story">
             <h3>Our Story</h3>
