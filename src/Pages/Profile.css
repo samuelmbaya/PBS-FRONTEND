@@ -34,7 +34,7 @@ body {
 
 /* Header - Glass Effect */
 .profile-header {
-  padding: 20px 40px;
+  padding: clamp(16px, 4vw, 20px) clamp(20px, 5vw, 40px);
   /* Glass effect: semi-transparent bg with blur */
   background: rgba(0, 0, 0, 0.05);
   backdrop-filter: blur(20px);
@@ -45,7 +45,7 @@ body {
   justify-content: center;
 }
 .profile-logo {
-  font-size: 18px;
+  font-size: clamp(16px, 2.5vw, 18px);
   font-weight: 600;
   color: #000;
   letter-spacing: 2px;
@@ -54,7 +54,7 @@ body {
 
 /* Hero Section (Inspired by delivery-hero) */
 .profile-hero {
-  height: 30vh;
+  height: clamp(25vh, 30vh, 35vh);
   background: linear-gradient(#ffffff2b, #ffffff3d),
     url("https://www.santanderopenacademy.com/en/blog/what-is-sustainability/_jcr_content/root/container/responsivegrid/image_416961853.coreimg.jpeg/1649173753985/what-is-sustainability-1.jpeg") center/cover;
   display: flex;
@@ -62,11 +62,11 @@ body {
   justify-content: center;
   text-align: center;
   position: relative;
-  margin-bottom: 40px;
+  margin-bottom: clamp(30px, 5vw, 40px);
 }
 .profile-hero-content {
   max-width: 800px;
-  padding: 0 40px;
+  padding: 0 clamp(20px, 5vw, 40px);
   animation: fadeInUp 1s ease-out;
 }
 @keyframes fadeInUp {
@@ -80,63 +80,62 @@ body {
   }
 }
 .profile-hero-title {
-  font-size: 48px;
+  font-size: clamp(28px, 5vw, 48px);
   font-weight: 300;
   letter-spacing: -1px;
   margin-bottom: 8px;
   line-height: 1.1;
 }
 .profile-hero-subtitle {
-  font-size: 16px;
-  /* font-weight: 300;
-  opacity: 0.8; */
+  font-size: clamp(14px, 2.5vw, 16px);
 }
 
 /* Profile Container Layout */
 .profile-container {
   display: grid;
-  grid-template-columns: 1fr 400px;
-  gap: 0;
+  grid-template-columns: 1fr clamp(300px, 25vw, 400px);
+  gap: clamp(0px, 2vw, 0);
   flex: 1;
   max-width: 1400px;
   margin: 0 auto;
-  padding: 0 40px;
+  padding: 0 clamp(20px, 5vw, 40px);
 }
 @media (max-width: 1024px) {
   .profile-container {
     grid-template-columns: 1fr;
-    padding: 0 20px;
+    gap: 0;
+    padding: 0 clamp(10px, 3vw, 20px);
   }
 }
 
 /* Profile Section (Left Side) */
 .profile-section {
-  padding: 40px 0;
+  padding: clamp(24px, 6vh, 40px) 0;
   background: transparent;
 }
 @media (max-width: 1024px) {
   .profile-section {
-    padding: 32px 0;
+    padding: clamp(20px, 5vh, 32px) 0;
   }
 }
 
 /* Section Headers */
 .section-title {
-  font-size: 24px;
+  font-size: clamp(20px, 3vw, 24px);
   font-weight: 400;
   color: #000;
-  margin: 0 0 32px 0;
+  margin: 0 0 clamp(24px, 4vh, 32px) 0;
   letter-spacing: -0.5px;
-  padding-bottom: 16px;
+  padding-bottom: clamp(12px, 2vh, 16px);
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 /* Greeting */
 .greeting {
-  font-size: 28px;
+  font-size: clamp(22px, 4vw, 28px);
   font-weight: 300;
   color: #000;
-  margin-bottom: 40px;
+  margin-bottom: clamp(30px, 5vh, 40px);
   letter-spacing: -0.5px;
 }
 
@@ -145,20 +144,20 @@ body {
   background: rgba(0, 0, 0, 0.02);
   border: 1px solid rgba(0, 0, 0, 0.08);
   border-radius: 12px;
-  padding: 48px;
+  padding: clamp(32px, 6vh, 48px);
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: clamp(16px, 3vh, 24px);
 }
 
 /* Form Section */
 .form-section {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: clamp(6px, 1.5vh, 8px);
 }
 .form-label {
-  font-size: 14px;
+  font-size: clamp(12px, 2vw, 14px);
   font-weight: 500;
   color: rgba(0, 0, 0, 0.8);
   letter-spacing: 0.5px;
@@ -166,12 +165,12 @@ body {
 }
 .profile-form input {
   width: 100%;
-  padding: 16px 20px;
+  padding: clamp(12px, 2.5vh, 16px) clamp(16px, 3vw, 20px);
   border-radius: 8px;
   border: 1px solid rgba(0, 0, 0, 0.1);
   background: rgba(0, 0, 0, 0.03);
   color: #000;
-  font-size: 16px;
+  font-size: clamp(14px, 2.2vw, 16px);
   font-family: inherit;
   transition: all 0.3s ease;
   outline: none;
@@ -195,18 +194,19 @@ body {
 .form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 20px;
+  gap: clamp(12px, 3vw, 20px);
 }
 @media (max-width: 768px) {
   .form-row {
     grid-template-columns: 1fr;
+    gap: clamp(8px, 2vh, 12px);
   }
 }
 
 /* Logout Button */
 .logout-btn {
-  padding: 16px 32px;
-  font-size: 14px;
+  padding: clamp(12px, 2.5vh, 16px) clamp(24px, 4vw, 32px);
+  font-size: clamp(12px, 2vw, 14px);
   font-weight: 600;
   background: #000;
   border: none;
@@ -226,27 +226,27 @@ body {
 /* Account Actions Sidebar (Right Side) */
 .account-actions {
   background: rgba(0, 0, 0, 0.02);
-  padding: 48px 40px;
+  padding: clamp(32px, 6vh, 48px) clamp(20px, 4vw, 40px);
   border-left: 1px solid rgba(0, 0, 0, 0.08);
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: clamp(16px, 3vh, 24px);
 }
 @media (max-width: 1024px) {
   .account-actions {
     border-left: none;
     border-top: 1px solid rgba(0, 0, 0, 0.08);
-    padding: 40px 0;
+    padding: clamp(24px, 5vh, 40px) 0;
   }
 }
 .account-actions h3 {
-  font-size: 14px;
+  font-size: clamp(12px, 1.8vw, 14px);
   font-weight: 600;
   margin: 0;
   color: #000;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  padding-bottom: 16px;
+  padding-bottom: clamp(12px, 2vh, 16px);
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 }
 
@@ -254,8 +254,8 @@ body {
 .action-card {
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 20px;
+  gap: clamp(12px, 2.5vw, 16px);
+  padding: clamp(16px, 3vh, 20px);
   background: rgba(0, 0, 0, 0.03);
   border: 1px solid rgba(0, 0, 0, 0.08);
   border-radius: 8px;
@@ -268,9 +268,9 @@ body {
   transform: translateX(4px);
 }
 .action-icon {
-  font-size: 28px;
-  width: 50px;
-  height: 50px;
+  font-size: clamp(20px, 4vw, 28px);
+  width: clamp(40px, 7vw, 50px);
+  height: clamp(40px, 7vw, 50px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -279,63 +279,180 @@ body {
   flex-shrink: 0;
 }
 .action-content h4 {
-  font-size: 13px;
+  font-size: clamp(11px, 1.8vw, 13px);
   font-weight: 600;
   color: #000;
-  margin: 0 0 6px 0;
+  margin: 0 0 clamp(4px, 1vh, 6px) 0;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 .action-content p {
-  font-size: 14px;
+  font-size: clamp(12px, 2vw, 14px);
   color: rgba(0, 0, 0, 0.6);
   margin: 0;
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-  .profile-header {
-    padding: 16px 20px;
+/* Enhanced Responsive Design with additional breakpoints */
+/* Large desktops */
+@media screen and (min-width: 1400px) {
+  .profile-container {
+    max-width: 1600px;
+    padding: 0 60px;
   }
+
+  .profile-hero-content {
+    padding: 0 60px;
+  }
+
+  .account-actions {
+    padding: 48px 60px;
+  }
+}
+
+/* Tablets in landscape */
+@media screen and (max-width: 1024px) and (orientation: landscape) {
   .profile-hero {
     height: 25vh;
   }
-  .profile-hero-title {
-    font-size: 32px;
-  }
-  .profile-form {
-    padding: 32px 24px;
-  }
-  .account-actions {
-    padding: 32px 20px;
-  }
-  .greeting {
-    font-size: 24px;
-  }
+
   .profile-container {
-    padding: 0 20px;
+    grid-template-columns: 1fr clamp(250px, 30vw, 350px);
+    gap: 0;
   }
 }
-@media (max-width: 480px) {
+
+/* Standard tablets */
+@media (max-width: 768px) {
+  .profile-header {
+    padding: clamp(12px, 3vw, 16px) clamp(12px, 3vw, 20px);
+  }
+  .profile-hero {
+    height: clamp(20vh, 25vh, 30vh);
+  }
   .profile-hero-title {
-    font-size: 28px;
+    font-size: clamp(24px, 6vw, 32px);
   }
   .profile-form {
-    padding: 24px 16px;
+    padding: clamp(20px, 5vh, 32px) clamp(16px, 4vw, 24px);
+  }
+  .account-actions {
+    padding: clamp(20px, 5vh, 32px) clamp(12px, 3vw, 20px);
+  }
+  .greeting {
+    font-size: clamp(20px, 5vw, 24px);
+  }
+  .profile-container {
+    padding: 0 clamp(10px, 3vw, 20px);
+  }
+
+  .form-row {
+    gap: clamp(10px, 2.5vw, 12px);
+  }
+}
+
+/* Small mobiles */
+@media (max-width: 480px) {
+  .profile-hero-title {
+    font-size: clamp(20px, 7vw, 28px);
+  }
+  .profile-form {
+    padding: clamp(16px, 4vh, 24px) clamp(12px, 3vw, 16px);
+    gap: clamp(12px, 2.5vh, 16px);
   }
   .form-label {
-    font-size: 12px;
+    font-size: clamp(11px, 2.5vw, 12px);
   }
   .profile-form input {
-    padding: 14px 16px;
-    font-size: 15px;
+    padding: clamp(10px, 2vh, 14px) clamp(12px, 3vw, 16px);
+    font-size: clamp(13px, 2.5vw, 15px);
   }
   .action-card {
-    padding: 16px;
+    padding: clamp(12px, 2.5vh, 16px);
+    gap: clamp(10px, 2.5vw, 12px);
   }
   .action-icon {
-    font-size: 24px;
-    width: 44px;
-    height: 44px;
+    font-size: clamp(18px, 5vw, 24px);
+    width: clamp(36px, 8vw, 44px);
+    height: clamp(36px, 8vw, 44px);
+  }
+  .action-content h4 {
+    font-size: clamp(10px, 2.2vw, 11px);
+  }
+  .action-content p {
+    font-size: clamp(11px, 2.2vw, 12px);
+  }
+
+  .logout-btn {
+    padding: clamp(10px, 2vh, 12px) clamp(16px, 4vw, 24px);
+    font-size: clamp(11px, 2.2vw, 12px);
+  }
+}
+
+/* Very small screens, e.g., foldables */
+@media (max-width: 320px) {
+  .profile-header {
+    padding: 10px 12px;
+  }
+
+  .profile-logo {
+    font-size: 14px;
+  }
+
+  .profile-hero-content {
+    padding: 0 12px;
+  }
+
+  .profile-container {
+    padding: 0 8px;
+  }
+
+  .profile-form {
+    padding: 16px 12px;
+  }
+
+  .account-actions {
+    padding: 20px 12px;
+  }
+
+  .account-actions h3 {
+    font-size: 11px;
+  }
+
+  .action-card {
+    flex-direction: column;
+    text-align: center;
+    gap: 8px;
+    padding: 12px;
+  }
+
+  .action-icon {
+    width: auto;
+    height: auto;
+  }
+}
+
+/* Height-based adjustments for shorter viewports */
+@media (max-height: 600px) {
+  .profile-hero {
+    height: 20vh;
+  }
+
+  .profile-section {
+    padding: 20px 0;
+  }
+
+  .profile-form {
+    padding: 24px;
+    gap: 16px;
+  }
+
+  .account-actions {
+    padding: 24px 20px;
+    gap: 16px;
+  }
+
+  .greeting {
+    margin-bottom: 20px;
+    font-size: 20px;
   }
 }

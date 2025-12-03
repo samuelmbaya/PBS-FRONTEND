@@ -28,10 +28,11 @@ html, body {
 
 /* Left Side - Image Section */
 .login-left {
-  flex: 1;
+  flex: clamp(0.8, 1, 1.2);
   position: relative;
   background-color: #f8f9fa;
   overflow: hidden;
+  min-height: 100vh;
 }
 
 .login-left::before {
@@ -65,8 +66,9 @@ html, body {
 
 .video-overlay {
   position: absolute;
-  bottom: 40px;
-  left: 40px;
+  bottom: clamp(10px, 5vw, 40px);
+  left: clamp(10px, 4vw, 40px);
+  right: clamp(10px, 4vw, 40px);
   color: #000000;
   z-index: 2;
   max-width: 500px;
@@ -85,22 +87,22 @@ html, body {
 }
 
 .video-overlay h2 {
-  font-size: 1.8rem;
-  margin-bottom: 10px;
+  font-size: clamp(1rem, 3vw, 1.8rem);
+  margin-bottom: clamp(6px, 1.5vh, 10px);
   font-weight: 300;
   letter-spacing: -0.5px;
 }
 
 .video-overlay p {
-  font-size: 1rem;
-  margin-bottom: 10px;
+  font-size: clamp(0.75rem, 2vw, 1rem);
+  margin-bottom: clamp(6px, 1.5vh, 10px);
   opacity: 0.8;
   line-height: 1.5;
   font-weight: 300;
 }
 
 .video-overlay span {
-  font-size: 0.9rem;
+  font-size: clamp(0.7rem, 1.8vw, 0.9rem);
   opacity: 0.6;
   display: block;
   margin-top: 8px;
@@ -114,13 +116,13 @@ html, body {
 
 /* Right Side - Form Section */
 .login-right {
-  flex: 1;
+  flex: clamp(0.8, 1, 1.2);
   display: flex;
   align-items: center;
   justify-content: center;
   background: #fff;
   color: #333;
-  padding: 20px;
+  padding: clamp(10px, 3vw, 20px);
   position: relative;
   overflow-y: auto;
   max-height: 100vh;
@@ -128,16 +130,16 @@ html, body {
 
 .login-form {
   width: 100%;
-  max-width: 400px;
+  max-width: clamp(300px, 90vw, 400px);
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding: 20px 0;
+  gap: clamp(10px, 2vh, 12px);
+  padding: clamp(10px, 3vw, 20px) 0;
 }
 
 .login-form h2 {
-  font-size: 1.4rem;
-  margin-bottom: 8px;
+  font-size: clamp(1.1rem, 3vw, 1.4rem);
+  margin-bottom: clamp(4px, 1vh, 8px);
   font-weight: 300;
   letter-spacing: -0.5px;
   color: #333;
@@ -145,8 +147,8 @@ html, body {
 
 /* Form Labels */
 label {
-  font-size: 0.8rem;
-  margin-top: 6px;
+  font-size: clamp(0.7rem, 1.8vw, 0.8rem);
+  margin-top: clamp(4px, 1vh, 6px);
   font-weight: 500;
   color: #666;
   letter-spacing: 0.5px;
@@ -155,14 +157,14 @@ label {
 
 /* Form Inputs */
 input {
-  padding: 10px 14px;
+  padding: clamp(8px, 2vh, 10px) clamp(10px, 3vw, 14px);
   background: #fff;
   border: 1px solid #ddd;
   border-radius: 8px;
   color: #333;
   outline: none;
   transition: all 0.3s ease;
-  font-size: 0.9rem;
+  font-size: clamp(0.8rem, 2vw, 0.9rem);
 }
 
 input::placeholder {
@@ -185,17 +187,17 @@ input:disabled {
 .recaptcha-wrapper {
   display: flex;
   justify-content: center;
-  margin: 4px 0;
-  transform: scale(0.9);
+  margin: clamp(2px, 1vh, 4px) 0;
+  transform: scale(clamp(0.8, 0.9, 0.9));
   transform-origin: center;
 }
 
 /* Action Buttons - Flex container like signup */
 .login-actions {
   display: flex;
-  gap: 12px;
-  margin-top: 8px;
-  padding-top: 8px;
+  gap: clamp(8px, 2vw, 12px);
+  margin-top: clamp(6px, 1.5vh, 8px);
+  padding-top: clamp(6px, 1.5vh, 8px);
   border-top: 1px solid #eee;
 }
 
@@ -205,10 +207,10 @@ input:disabled {
   background: #000;
   color: #fff;
   border: none;
-  padding: 10px;
+  padding: clamp(8px, 2vh, 10px);
   border-radius: 8px;
   font-weight: 600;
-  font-size: 0.8rem;
+  font-size: clamp(0.7rem, 1.8vw, 0.8rem);
   letter-spacing: 1px;
   text-transform: uppercase;
   cursor: pointer;
@@ -230,12 +232,12 @@ input:disabled {
 /* Skip Button - Using transparent color scheme */
 .skip-button {
   flex: 1;
-  padding: 10px;
+  padding: clamp(8px, 2vh, 10px);
   background: transparent;
   color: #666;
   border: 1px solid #ddd;
   border-radius: 8px;
-  font-size: 0.8rem;
+  font-size: clamp(0.7rem, 1.8vw, 0.8rem);
   font-weight: 500;
   letter-spacing: 1px;
   text-transform: uppercase;
@@ -251,7 +253,7 @@ input:disabled {
 
 /* Footer Text */
 .footer-text {
-  font-size: 0.8rem;
+  font-size: clamp(0.7rem, 1.8vw, 0.8rem);
   margin-top: 8px;
   text-align: center;
   color: #666;
@@ -262,7 +264,7 @@ input:disabled {
   border: none;
   color: #007bff;
   cursor: pointer;
-  font-size: 0.8rem;
+  font-size: clamp(0.7rem, 1.8vw, 0.8rem);
   font-weight: 600;
   text-decoration: none;
   transition: color 0.2s;
@@ -277,9 +279,9 @@ input:disabled {
 
 /* Small Text */
 small {
-  font-size: 0.7rem;
+  font-size: clamp(0.65rem, 1.6vw, 0.7rem);
   color: #999;
-  margin-top: 8px;
+  margin-top: clamp(6px, 1.5vh, 8px);
   text-align: center;
   display: block;
   line-height: 1.4;
@@ -299,8 +301,8 @@ small a:hover {
 /* Social Section */
 .social-text {
   color: #999;
-  font-size: 0.8rem;
-  margin: 10px 0 8px;
+  font-size: clamp(0.7rem, 1.8vw, 0.8rem);
+  margin: clamp(6px, 2vh, 10px) 0 clamp(4px, 1.5vh, 8px);
   text-align: center;
   font-weight: 300;
 }
@@ -308,20 +310,20 @@ small a:hover {
 .social-icons {
   display: flex;
   justify-content: center;
-  gap: 10px;
-  margin-top: 6px;
+  gap: clamp(6px, 2vw, 10px);
+  margin-top: clamp(4px, 1.5vh, 6px);
 }
 
 .social-icons a {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 38px;
-  height: 38px;
+  width: clamp(32px, 8vw, 38px);
+  height: clamp(32px, 8vw, 38px);
   background: #f8f9fa;
   border: 1px solid #eee;
   border-radius: 8px;
-  font-size: 20px;
+  font-size: clamp(16px, 4vw, 20px);
   color: #666;
   transition: all 0.3s ease;
   text-decoration: none;
@@ -340,12 +342,12 @@ small a:hover {
   top: 20px;
   left: 50%;
   transform: translateX(-50%);
-  padding: 12px 24px;
+  padding: clamp(8px, 2vh, 12px) clamp(16px, 4vw, 24px);
   border-radius: 8px;
-  font-size: 0.9rem;
+  font-size: clamp(0.8rem, 2vw, 0.9rem);
   font-weight: 500;
   z-index: 1000;
-  max-width: 90%;
+  max-width: 95%;
   text-align: center;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   animation: slideDown 0.3s ease-out;
@@ -376,23 +378,55 @@ small a:hover {
 
 .greeting-message {
   position: fixed;
-  top: 70px;
+  top: clamp(60px, 8vh, 70px);
   left: 50%;
   transform: translateX(-50%);
-  padding: 12px 24px;
+  padding: clamp(8px, 2vh, 12px) clamp(16px, 4vw, 24px);
   background: rgba(40, 167, 69, 0.1);
   border: 1px solid rgba(40, 167, 69, 0.2);
   color: #28a745;
   border-radius: 8px;
-  font-size: 0.9rem;
+  font-size: clamp(0.8rem, 2vw, 0.9rem);
   z-index: 1000;
-  max-width: 90%;
+  max-width: 95%;
   text-align: center;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   animation: slideDown 0.3s ease-out;
 }
 
-/* Responsive Design */
+/* Enhanced Responsive Design with additional breakpoints */
+/* Large desktops */
+@media screen and (min-width: 1200px) {
+  .login-left,
+  .login-right {
+    flex: 1;
+  }
+
+  .video-overlay {
+    max-width: 600px;
+  }
+
+  .login-form {
+    max-width: 450px;
+  }
+}
+
+/* Tablets in landscape */
+@media screen and (max-width: 968px) and (orientation: landscape) {
+  .login-container {
+    flex-direction: row;
+  }
+
+  .login-left {
+    flex: 0.6;
+    min-height: 100vh;
+  }
+
+  .login-right {
+    flex: 1;
+  }
+}
+
 @media screen and (max-width: 968px) {
   .login-container {
     flex-direction: column;
@@ -400,231 +434,310 @@ small a:hover {
   }
 
   .login-left {
-    height: 30vh;
+    height: clamp(25vh, 30vh, 35vh);
     min-height: 200px;
     flex: none;
   }
 
   .video-overlay {
-    bottom: 15px;
-    left: 15px;
-    right: 15px;
+    bottom: clamp(8px, 3vw, 15px);
+    left: clamp(8px, 3vw, 15px);
+    right: clamp(8px, 3vw, 15px);
   }
 
   .video-overlay h2 {
-    font-size: 1.3rem;
+    font-size: clamp(1rem, 3.5vw, 1.3rem);
   }
 
   .video-overlay p {
-    font-size: 0.85rem;
+    font-size: clamp(0.7rem, 2.5vw, 0.85rem);
   }
 
   .login-right {
     flex: 1;
-    height: 70vh;
-    padding: 15px;
+    height: clamp(65vh, 70vh, 75vh);
+    padding: clamp(10px, 3vw, 15px);
   }
 
   .login-form {
-    gap: 10px;
-    padding: 10px 0;
+    gap: clamp(6px, 1.5vh, 10px);
+    padding: clamp(8px, 2vw, 10px) 0;
   }
 }
 
+/* Standard tablets and small mobiles */
 @media screen and (max-width: 600px) {
   .login-left {
-    height: 25vh;
+    height: clamp(20vh, 25vh, 30vh);
     min-height: 180px;
   }
 
   .video-overlay {
-    bottom: 10px;
-    left: 10px;
-    right: 10px;
+    bottom: clamp(6px, 2vw, 10px);
+    left: clamp(6px, 2vw, 10px);
+    right: clamp(6px, 2vw, 10px);
   }
 
   .video-overlay h2 {
-    font-size: 1.1rem;
-    margin-bottom: 6px;
+    font-size: clamp(0.9rem, 4vw, 1.1rem);
+    margin-bottom: clamp(4px, 1vh, 6px);
   }
 
   .video-overlay p {
-    font-size: 0.75rem;
-    margin-bottom: 6px;
+    font-size: clamp(0.65rem, 3vw, 0.75rem);
+    margin-bottom: clamp(4px, 1vh, 6px);
   }
 
   .video-overlay span {
-    font-size: 0.7rem;
+    font-size: clamp(0.6rem, 2.5vw, 0.7rem);
   }
 
   .login-right {
-    height: 75vh;
-    padding: 15px 12px;
+    height: clamp(70vh, 75vh, 80vh);
+    padding: clamp(10px, 3vw, 15px) clamp(8px, 2vw, 12px);
   }
 
   .login-form {
     max-width: 100%;
-    gap: 8px;
-    padding: 10px 0;
+    gap: clamp(5px, 1.2vh, 8px);
+    padding: clamp(8px, 2vw, 10px) 0;
   }
 
   .login-form h2 {
-    font-size: 1.2rem;
-    margin-bottom: 6px;
+    font-size: clamp(1rem, 4vw, 1.2rem);
+    margin-bottom: clamp(4px, 1vh, 6px);
   }
 
   label {
-    font-size: 0.75rem;
-    margin-top: 4px;
+    font-size: clamp(0.65rem, 2.5vw, 0.75rem);
+    margin-top: clamp(2px, 0.8vh, 4px);
   }
 
   input {
-    padding: 9px 12px;
-    font-size: 0.85rem;
+    padding: clamp(7px, 1.8vh, 9px) clamp(8px, 2.5vw, 12px);
+    font-size: clamp(0.75rem, 2.5vw, 0.85rem);
   }
 
   .login-actions {
-    gap: 10px;
-    margin-top: 6px;
-    padding-top: 6px;
+    gap: clamp(6px, 2vw, 10px);
+    margin-top: clamp(4px, 1vh, 6px);
+    padding-top: clamp(4px, 1vh, 6px);
   }
 
   .login-button,
   .skip-button {
-    padding: 9px;
-    font-size: 0.75rem;
+    padding: clamp(7px, 1.8vh, 9px);
+    font-size: clamp(0.65rem, 2.5vw, 0.75rem);
   }
 
   .recaptcha-wrapper {
-    transform: scale(0.85);
+    transform: scale(clamp(0.75, 0.85, 0.85));
   }
 
   .social-icons a {
-    width: 36px;
-    height: 36px;
-    font-size: 18px;
+    width: clamp(30px, 8vw, 36px);
+    height: clamp(30px, 8vw, 36px);
+    font-size: clamp(16px, 4vw, 18px);
   }
 
   .login-message,
   .greeting-message {
     max-width: 95%;
-    font-size: 0.8rem;
-    padding: 8px 16px;
+    font-size: clamp(0.7rem, 2.5vw, 0.8rem);
+    padding: clamp(6px, 1.5vh, 8px) clamp(12px, 3vw, 16px);
   }
 }
 
+/* Extra small screens */
 @media screen and (max-width: 400px) {
   .video-overlay h2 {
-    font-size: 1rem;
+    font-size: clamp(0.85rem, 5vw, 1rem);
   }
 
   .video-overlay p,
   .video-overlay span {
-    font-size: 0.7rem;
+    font-size: clamp(0.6rem, 3.5vw, 0.7rem);
   }
 
   .login-form h2 {
-    font-size: 1.1rem;
+    font-size: clamp(0.95rem, 5vw, 1.1rem);
   }
 
   input {
-    padding: 8px 12px;
+    padding: clamp(6px, 1.5vh, 8px) clamp(8px, 3vw, 12px);
   }
 
   .login-actions {
-    gap: 8px;
+    gap: clamp(5px, 2.5vw, 8px);
   }
 
   .login-button,
   .skip-button {
-    padding: 8px;
-    font-size: 0.75rem;
+    padding: clamp(6px, 1.5vh, 8px);
+    font-size: clamp(0.6rem, 3vw, 0.75rem);
   }
 
   .social-icons {
-    gap: 8px;
+    gap: clamp(5px, 2.5vw, 8px);
   }
 
   .social-icons a {
-    width: 34px;
-    height: 34px;
-    font-size: 18px;
+    width: clamp(28px, 9vw, 34px);
+    height: clamp(28px, 9vw, 34px);
+    font-size: clamp(15px, 4.5vw, 18px);
+  }
+
+  small {
+    font-size: clamp(0.6rem, 3vw, 0.65rem);
   }
 }
 
-/* Height-based media queries */
+/* Very small screens, e.g., foldables */
+@media screen and (max-width: 320px) {
+  .login-right {
+    padding: clamp(5px, 2vw, 10px) clamp(5px, 1.5vw, 8px);
+  }
+
+  .login-form {
+    padding: clamp(5px, 1.5vw, 8px) 0;
+    gap: clamp(4px, 1vh, 5px);
+  }
+
+  .login-actions {
+    flex-direction: column;
+    gap: clamp(4px, 1vh, 6px);
+  }
+
+  .login-button,
+  .skip-button {
+    flex: none;
+  }
+
+  .recaptcha-wrapper {
+    transform: scale(0.7);
+  }
+}
+
+/* Height-based media queries for shorter viewports */
 @media screen and (max-height: 700px) {
+  .login-container {
+    overflow-y: auto;
+  }
+
   .login-left {
-    height: 25vh;
+    height: clamp(20vh, 25vh, 30vh);
     min-height: 150px;
   }
 
   .video-overlay h2 {
-    font-size: 1.2rem;
+    font-size: clamp(0.9rem, 3vw, 1.2rem);
   }
 
   .video-overlay p {
-    font-size: 0.8rem;
+    font-size: clamp(0.65rem, 2vw, 0.8rem);
   }
 
   .login-right {
-    height: 75vh;
-    padding: 15px;
+    height: auto;
+    min-height: 70vh;
+    padding: clamp(8px, 2vw, 15px);
   }
 
   .login-form {
-    gap: 8px;
-    padding: 10px 0;
+    gap: clamp(5px, 1.2vh, 8px);
+    padding: clamp(5px, 1.5vw, 10px) 0;
   }
 
   .login-form h2 {
-    font-size: 1.2rem;
-    margin-bottom: 4px;
+    font-size: clamp(1rem, 3vw, 1.2rem);
+    margin-bottom: clamp(2px, 0.8vh, 4px);
   }
 
   label {
-    margin-top: 4px;
-    font-size: 0.75rem;
+    margin-top: clamp(1px, 0.5vh, 4px);
+    font-size: clamp(0.65rem, 2vw, 0.75rem);
   }
 
   input {
-    padding: 8px 12px;
+    padding: clamp(6px, 1.5vh, 8px) clamp(8px, 2.5vw, 12px);
   }
 
   .login-actions {
-    margin-top: 6px;
-    padding-top: 6px;
-    gap: 10px;
+    margin-top: clamp(4px, 1vh, 6px);
+    padding-top: clamp(4px, 1vh, 6px);
+    gap: clamp(6px, 2vw, 10px);
   }
 
   .login-button,
   .skip-button {
-    padding: 8px;
-    font-size: 0.75rem;
+    padding: clamp(6px, 1.5vh, 8px);
+    font-size: clamp(0.65rem, 2vw, 0.75rem);
   }
 
   .recaptcha-wrapper {
-    transform: scale(0.8);
-    margin: 2px 0;
+    transform: scale(clamp(0.7, 0.8, 0.8));
+    margin: clamp(1px, 0.5vh, 2px) 0;
   }
 
   .social-text {
-    margin: 8px 0 6px;
-    font-size: 0.75rem;
+    margin: clamp(6px, 1.5vh, 8px) 0 clamp(3px, 1vh, 6px);
+    font-size: clamp(0.65rem, 2vw, 0.75rem);
   }
 
   .social-icons {
-    gap: 8px;
+    gap: clamp(6px, 2vw, 8px);
   }
 
   .social-icons a {
-    width: 34px;
-    height: 34px;
-    font-size: 18px;
+    width: clamp(30px, 7vw, 34px);
+    height: clamp(30px, 7vw, 34px);
+    font-size: clamp(15px, 3.5vw, 18px);
   }
 
   small {
-    margin-top: 6px;
-    font-size: 0.65rem;
+    margin-top: clamp(4px, 1vh, 6px);
+    font-size: clamp(0.6rem, 2.5vw, 0.65rem);
+  }
+
+  .footer-text {
+    margin-top: clamp(4px, 1vh, 6px);
+  }
+
+  .login-message,
+  .greeting-message {
+    top: clamp(10px, 3vh, 20px);
+    padding: clamp(6px, 1.5vh, 8px) clamp(12px, 3vw, 16px);
+    font-size: clamp(0.7rem, 2.5vw, 0.8rem);
+  }
+}
+
+/* Extra short viewports */
+@media screen and (max-height: 600px) {
+  .login-left {
+    height: 20vh;
+    min-height: 120px;
+  }
+
+  .login-right {
+    padding: 10px 8px;
+  }
+
+  .login-form {
+    gap: 6px;
+  }
+
+  .video-overlay {
+    bottom: 5px;
+    left: 5px;
+    right: 5px;
+  }
+
+  .video-overlay h2 {
+    font-size: 0.9rem;
+  }
+
+  .video-overlay p {
+    font-size: 0.7rem;
+    display: none;
   }
 }

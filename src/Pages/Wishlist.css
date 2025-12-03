@@ -24,20 +24,20 @@ body {
 
 /* Hero Section */
 .wishlist-hero {
-  height: 40vh;
-  background:linear-gradient(#ffffff2b, #ffffff3d),
+  height: clamp(35vh, 40vh, 50vh); /* Flexible height across devices */
+  background: linear-gradient(#ffffff2b, #ffffff3d),
    url("https://www.acciona.com/content/dam/accionacom/media/x0npqkw0/acciona-energia-eolica.jpg") center/cover;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
   position: relative;
-  margin-bottom: 60px;
+  margin-bottom: clamp(40px, 60px, 80px); /* Responsive margin */
 }
 
 .wishlist-hero-content {
   max-width: 800px;
-  padding: 40px 20px;
+  padding: clamp(20px, 40px, 60px) 20px; /* Flexible padding */
   animation: fadeInUp 1s ease-out;
 }
 
@@ -53,7 +53,7 @@ body {
 }
 
 .wishlist-hero-title {
-  font-size: 64px;
+  font-size: clamp(32px, 5vw, 64px); /* Fluid font size */
   font-weight: 300;
   letter-spacing: -2px;
   margin-bottom: 16px;
@@ -61,57 +61,56 @@ body {
 }
 
 .wishlist-hero-subtitle {
-  font-size: 18px;
-  /* font-weight: 300;
-  opacity: 0.8; */
+  font-size: clamp(14px, 2.5vw, 18px); /* Fluid subtitle */
 }
 
 /* Main Content */
 .wishlist-content {
   max-width: 1400px;
   margin: 0 auto;
-  padding: 0 40px 80px;
+  padding: 0 clamp(20px, 5vw, 40px) clamp(60px, 8vw, 80px); /* Flexible padding */
 }
 
 /* Empty State */
 .empty-wishlist {
   text-align: center;
-  padding: 80px 20px;
+  padding: clamp(60px, 12vh, 80px) 20px;
   max-width: 500px;
   margin: 0 auto;
 }
 
 .empty-icon {
-  font-size: 80px;
+  font-size: clamp(60px, 12vw, 80px); /* Responsive icon size */
   color: rgba(0, 0, 0, 0.2);
   margin-bottom: 24px;
 }
 
 .empty-wishlist h2 {
-  font-size: 28px;
+  font-size: clamp(24px, 4vw, 28px); /* Fluid heading */
   font-weight: 400;
   margin-bottom: 12px;
   letter-spacing: -0.5px;
 }
 
 .empty-wishlist p {
-  font-size: 16px;
+  font-size: clamp(14px, 2.5vw, 16px); /* Fluid text */
   opacity: 0.6;
   margin-bottom: 32px;
 }
 
 .shop-now-btn {
-  padding: 16px 48px;
+  padding: clamp(12px, 2.5vh, 16px) clamp(32px, 6vw, 48px); /* Flexible button */
   background: #e63946;
   color: #fff;
   border: none;
   border-radius: 8px;
-  font-size: 14px;
+  font-size: clamp(12px, 2vw, 14px);
   font-weight: 600;
   letter-spacing: 1px;
   text-transform: uppercase;
   cursor: pointer;
   transition: all 0.3s ease;
+  white-space: nowrap; /* Prevent text wrap on small screens */
 }
 
 .shop-now-btn:hover {
@@ -123,9 +122,9 @@ body {
 /* Wishlist Grid */
 .wishlist-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 40px;
-  margin-bottom: 60px;
+  grid-template-columns: repeat(auto-fill, minmax(clamp(250px, 20vw, 300px), 1fr)); /* More fluid minmax */
+  gap: clamp(20px, 4vw, 40px);
+  margin-bottom: clamp(40px, 6vw, 60px);
 }
 
 .wishlist-card {
@@ -146,7 +145,7 @@ body {
 .wishlist-image-container {
   position: relative;
   width: 100%;
-  height: 300px;
+  height: clamp(200px, 25vw, 300px); /* Fluid image height */
   background: rgba(0, 0, 0, 0.03);
   overflow: hidden;
 }
@@ -155,7 +154,7 @@ body {
   width: 100%;
   height: 100%;
   object-fit: contain;
-  padding: 20px;
+  padding: clamp(10px, 3vw, 20px); /* Responsive padding for image */
   transition: transform 0.4s ease;
 }
 
@@ -167,8 +166,8 @@ body {
   position: absolute;
   top: 20px;
   right: 20px;
-  width: 44px;
-  height: 44px;
+  width: clamp(36px, 6vw, 44px); /* Responsive icon size */
+  height: clamp(36px, 6vw, 44px);
   background: rgba(255, 255, 255, 0.6);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(0, 0, 0, 0.2);
@@ -176,7 +175,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 20px;
+  font-size: clamp(16px, 3vw, 20px); /* Fluid font in icon */
   color: #000;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -192,11 +191,11 @@ body {
 
 /* Card Info */
 .wishlist-card-info {
-  padding: 24px;
+  padding: clamp(16px, 3vw, 24px); /* Flexible padding */
 }
 
 .wishlist-product-name {
-  font-size: 18px;
+  font-size: clamp(16px, 2.5vw, 18px); /* Fluid product name */
   font-weight: 400;
   margin-bottom: 12px;
   line-height: 1.4;
@@ -208,7 +207,7 @@ body {
 }
 
 .wishlist-product-price {
-  font-size: 24px;
+  font-size: clamp(20px, 3vw, 24px); /* Fluid price */
   font-weight: 600;
   color: #e63946;
   margin-bottom: 20px;
@@ -216,12 +215,12 @@ body {
 
 .view-product-btn {
   width: 100%;
-  padding: 14px;
+  padding: clamp(10px, 2vh, 14px); /* Flexible button padding */
   background: transparent;
   color: #000;
   border: 1px solid rgba(0, 0, 0, 0.2);
   border-radius: 8px;
-  font-size: 14px;
+  font-size: clamp(12px, 2vw, 14px);
   font-weight: 600;
   letter-spacing: 1px;
   text-transform: uppercase;
@@ -240,17 +239,18 @@ body {
 }
 
 .continue-btn {
-  padding: 16px 48px;
+  padding: clamp(12px, 2.5vh, 16px) clamp(32px, 6vw, 48px); /* Flexible button */
   background: #000;
   color: #fff;
   border: none;
   border-radius: 8px;
-  font-size: 14px;
+  font-size: clamp(12px, 2vw, 14px);
   font-weight: 600;
   letter-spacing: 1px;
   text-transform: uppercase;
   cursor: pointer;
   transition: all 0.3s ease;
+  white-space: nowrap;
 }
 
 .continue-btn:hover {
@@ -259,29 +259,50 @@ body {
   transform: translateY(-2px);
 }
 
-/* Responsive Design */
-@media screen and (max-width: 1024px) {
+/* Enhanced Responsive Design with additional breakpoints */
+/* Large desktops and above */
+@media screen and (min-width: 1400px) {
+  .wishlist-content {
+    padding: 0 60px 100px; /* Extra padding for very wide screens */
+  }
+
+  .wishlist-grid {
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); /* Wider cards on large screens */
+    gap: 50px;
+  }
+}
+
+/* Tablets in landscape */
+@media screen and (max-width: 1024px) and (orientation: landscape) {
+  .wishlist-hero {
+    height: 30vh;
+  }
+
   .wishlist-grid {
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 30px;
   }
+}
 
+/* Standard tablets */
+@media screen and (max-width: 1024px) {
   .wishlist-hero-title {
-    font-size: 48px;
+    font-size: clamp(28px, 4vw, 48px);
   }
 }
 
+/* Mobile tablets */
 @media screen and (max-width: 768px) {
   .wishlist-hero {
-    height: 35vh;
+    height: clamp(30vh, 35vh, 40vh);
   }
 
   .wishlist-hero-title {
-    font-size: 40px;
+    font-size: clamp(28px, 5vw, 40px);
   }
 
   .wishlist-hero-subtitle {
-    font-size: 16px;
+    font-size: clamp(14px, 3vw, 16px);
   }
 
   .wishlist-content {
@@ -294,24 +315,84 @@ body {
   }
 
   .wishlist-image-container {
-    height:  250px;
+    height: clamp(180px, 25vw, 250px);
+  }
+
+  .wishlist-card-info {
+    padding: 16px;
   }
 }
 
+/* Small mobiles and portrait */
 @media screen and (max-width: 480px) {
+  .wishlist-hero {
+    height: 30vh;
+    padding: 0 10px;
+  }
+
+  .wishlist-hero-content {
+    padding: 20px 10px;
+  }
+
   .wishlist-hero-title {
-    font-size: 32px;
+    font-size: clamp(24px, 6vw, 32px);
+    margin-bottom: 8px;
   }
 
   .wishlist-grid {
     grid-template-columns: 1fr;
+    gap: 16px;
   }
 
   .empty-icon {
-    font-size: 60px;
+    font-size: clamp(48px, 15vw, 60px);
   }
 
   .empty-wishlist h2 {
-    font-size: 24px;
+    font-size: clamp(20px, 5vw, 24px);
+  }
+
+  .empty-wishlist p {
+    font-size: clamp(14px, 3.5vw, 16px);
+    margin-bottom: 24px;
+  }
+
+  .shop-now-btn,
+  .continue-btn {
+    padding: 12px 32px;
+    font-size: 12px;
+  }
+
+  .wishlist-product-name {
+    min-height: auto;
+    -webkit-line-clamp: 3; /* Allow more lines on small screens */
+  }
+
+  .wishlist-product-price {
+    font-size: clamp(18px, 4vw, 20px);
+  }
+
+  .view-product-btn {
+    padding: 12px;
+    font-size: 12px;
+  }
+}
+
+/* Very small screens, e.g., foldables or ultra-narrow */
+@media screen and (max-width: 320px) {
+  .wishlist-content {
+    padding: 0 10px 40px;
+  }
+
+  .empty-wishlist {
+    padding: 40px 10px;
+  }
+
+  .wishlist-card-info {
+    padding: 12px;
+  }
+
+  .wishlist-product-name {
+    font-size: 14px;
   }
 }

@@ -27,7 +27,7 @@ body {
 .hero {
   background: url("https://assets.weforum.org/article/image/large_Bgij__dbgp9c4Dz0fgoDeW--h0QsWyEnV8sZvNx83kE.jpg")
   no-repeat center center/cover;
-  height: 100vh;
+  height: clamp(80vh, 100vh, 100vh);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -49,7 +49,7 @@ body {
   position: relative;
   z-index: 1;
   max-width: 900px;
-  padding: 40px 20px;
+  padding: clamp(20px, 5vh, 40px) 20px;
   animation: fadeInUp 1s ease-out;
   color: #fff;
 }
@@ -66,25 +66,25 @@ body {
 }
 
 .hero-title {
-  font-size: 72px;
+  font-size: clamp(36px, 8vw, 72px);
   font-weight: 300;
-  margin-bottom: 10px;
+  margin-bottom: clamp(6px, 2vh, 10px);
   letter-spacing: -2px;
   line-height: 1.1;
 }
 
 .hero-subtitle {
-  font-size: 24px;
+  font-size: clamp(16px, 3vw, 24px);
   font-weight: 600;
-  margin-bottom: 30px;
+  margin-bottom: clamp(20px, 4vh, 30px);
   letter-spacing: 2px;
   color: #e63946;
 }
 
 .hero-description {
-  font-size: 18px;
+  font-size: clamp(16px, 2.5vw, 18px);
   line-height: 1.8;
-  margin-bottom: 40px;
+  margin-bottom: clamp(30px, 5vh, 40px);
   font-weight: 300;
   max-width: 700px;
   margin-left: auto;
@@ -98,15 +98,15 @@ body {
 /* Scroll Indicator */
 .scroll-indicator {
   position: absolute;
-  bottom: 40px;
+  bottom: clamp(20px, 5vh, 40px);
   left: 50%;
   transform: translateX(-50%);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: clamp(6px, 1.5vh, 10px);
   color: #ffffff;
-  font-size: 12px;
+  font-size: clamp(10px, 1.5vw, 12px);
   letter-spacing: 2px;
   text-transform: uppercase;
   z-index: 2;
@@ -124,7 +124,7 @@ body {
 
 .scroll-line {
   width: 1px;
-  height: 40px;
+  height: clamp(30px, 5vh, 40px);
   background: #000;
   opacity: 0.5;
 }
@@ -133,15 +133,16 @@ body {
 .shop-btn {
   background: #e63946;
   color: #fff;
-  padding: 16px 48px;
+  padding: clamp(12px, 2.5vh, 16px) clamp(32px, 6vw, 48px);
   border: none;
-  font-size: 14px;
+  font-size: clamp(12px, 2vw, 14px);
   font-weight: 600;
   cursor: pointer;
   border-radius: 30px;
   transition: all 0.3s ease;
   letter-spacing: 1px;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .shop-btn:hover {
@@ -154,15 +155,16 @@ body {
 .shop-btn-alt {
   background: transparent;
   color: #ffffff;
-  padding: 14px 40px;
-  border: 2px solid #ffffff;
-  font-size: 14px;
+  padding: clamp(10px, 2vh, 14px) clamp(24px, 5vw, 40px);
+  border: clamp(1px, 0.2vw, 2px) solid #ffffff;
+  font-size: clamp(12px, 2vw, 14px);
   font-weight: 600;
   cursor: pointer;
   border-radius: 30px;
   transition: all 0.3s ease;
   letter-spacing: 1px;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .shop-btn-alt:hover {
@@ -172,11 +174,11 @@ body {
 
 /* Product Showcase Sections */
 .product-section {
-  min-height: 100vh;
+  min-height: clamp(70vh, 100vh, 100vh);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 40px;
+  padding: 0 clamp(20px, 5vw, 40px);
   position: relative;
   background-size: cover;
   background-position: center;
@@ -223,19 +225,19 @@ body {
 }
 
 .product-tagline {
-  font-size: 16px;
+  font-size: clamp(14px, 2vw, 16px);
   font-weight: 400;
   letter-spacing: 3px;
   text-transform: uppercase;
-  margin-bottom: 20px;
+  margin-bottom: clamp(16px, 3vh, 20px);
   opacity: 0.7;
 }
 
 .product-name {
-  font-size: 64px;
+  font-size: clamp(32px, 6vw, 64px);
   font-weight: 300;
   letter-spacing: -2px;
-  margin-bottom: 40px;
+  margin-bottom: clamp(30px, 5vh, 40px);
   line-height: 1.1;
 }
 
@@ -255,11 +257,11 @@ body {
 
 /* Story and Contact Section */
 .story-contact-section {
-  min-height: 100vh;
+  min-height: clamp(80vh, 100vh, 100vh);
   display: flex;
   flex-wrap: wrap;
   gap: 0;
-  padding: 80px 40px;
+  padding: clamp(40px, 8vh, 80px) clamp(20px, 5vw, 40px);
   background: #fff;
   align-items: stretch;
   justify-content: space-between;
@@ -268,35 +270,35 @@ body {
 }
 
 .story-left {
-  flex: 1 1 60%;
-  max-width: 60%;
-  padding-right: 2rem;
+  flex: 1 1 clamp(50%, 60%, 60%);
+  max-width: clamp(50%, 60%, 60%);
+  padding-right: clamp(1rem, 2vw, 2rem);
   display: flex;
   flex-direction: column;
   justify-content: center;
 }
 
 .contact-right {
-  flex: 1 1 35%;
-  max-width: 35%;
-  padding-left: 2rem;
+  flex: 1 1 clamp(30%, 35%, 35%);
+  max-width: clamp(30%, 35%, 35%);
+  padding-left: clamp(1rem, 2vw, 2rem);
   display: flex;
   flex-direction: column;
   justify-content: center;
-  margin-right: 2vh;
+  margin-right: clamp(1vh, 2vw, 2vh);
 }
 
 .storySection,
 .aboutSection,
 .movementSection {
-  margin-bottom: 2rem;
+  margin-bottom: clamp(1rem, 2vh, 2rem);
 }
 
 .storySection h3,
 .aboutSection h3,
 .movementSection h3 {
-  font-size: 1.1rem;
-  margin-bottom: 0.3rem;
+  font-size: clamp(1rem, 1.5vw, 1.1rem);
+  margin-bottom: clamp(0.2rem, 0.5vh, 0.3rem);
   color: #000;
   letter-spacing: 1px;
   text-transform: uppercase;
@@ -305,7 +307,7 @@ body {
 .storySection p,
 .aboutSection p,
 .movementSection p {
-  font-size: 0.98rem;
+  font-size: clamp(0.9rem, 1.4vw, 0.98rem);
   line-height: 1.6;
   color: #333;
 }
@@ -314,19 +316,19 @@ body {
 .contactForm {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: clamp(0.8rem, 1.5vh, 1rem);
   width: 100%;
 }
 
 .contactForm h3 {
-  font-size: 1.2rem;
+  font-size: clamp(1.1rem, 1.8vw, 1.2rem);
   color: #000;
-  margin-bottom: 1rem;
+  margin-bottom: clamp(0.8rem, 1.5vh, 1rem);
 }
 
 .formRow {
   display: flex;
-  gap: 1rem;
+  gap: clamp(0.8rem, 1.5vw, 1rem);
   width: 100%;
 }
 
@@ -337,8 +339,8 @@ body {
 }
 
 .formGroup label {
-  font-size: 0.9rem;
-  margin-bottom: 0.3rem;
+  font-size: clamp(0.8rem, 1.2vw, 0.9rem);
+  margin-bottom: clamp(0.2rem, 0.5vh, 0.3rem);
   color: #000;
 }
 
@@ -346,14 +348,14 @@ body {
 .formGroup textarea {
   border: 1px solid #ccc;
   border-radius: 6px;
-  padding: 0.7rem;
-  font-size: 0.95rem;
+  padding: clamp(0.6rem, 1.2vh, 0.7rem);
+  font-size: clamp(0.85rem, 1.3vw, 0.95rem);
   font-family: inherit;
   background-color: #eee;
   color: #000;
   resize: none;
   transition: border 0.2s ease;
-  min-height: 2.5rem;
+  min-height: clamp(2rem, 3vh, 2.5rem);
   width: 100%;
   box-sizing: border-box;
 }
@@ -368,8 +370,8 @@ body {
   background-color: #000;
   color: #fff;
   border: none;
-  padding: 0.9rem 1.5rem;
-  font-size: 1rem;
+  padding: clamp(0.8rem, 1.5vh, 0.9rem) clamp(1.2rem, 3vw, 1.5rem);
+  font-size: clamp(0.9rem, 1.4vw, 1rem);
   border-radius: 6px;
   cursor: pointer;
   transition: background 0.3s ease;
@@ -389,10 +391,10 @@ body {
 }
 
 .status-message {
-  margin-top: 1rem;
-  padding: 0.5rem;
+  margin-top: clamp(0.8rem, 1.5vh, 1rem);
+  padding: clamp(0.4rem, 0.8vh, 0.5rem);
   border-radius: 4px;
-  font-size: 0.9rem;
+  font-size: clamp(0.8rem, 1.2vw, 0.9rem);
   text-align: center;
 }
 
@@ -408,16 +410,54 @@ body {
   border: 1px solid rgba(231, 76, 60, 0.3);
 }
 
-/* Responsive Design */
+/* Enhanced Responsive Design with additional breakpoints */
+/* Large desktops */
+@media screen and (min-width: 1400px) {
+  .hero-content {
+    padding: 60px 40px;
+  }
+
+  .product-section {
+    padding: 0 80px;
+  }
+
+  .story-contact-section {
+    padding: 100px 80px;
+  }
+
+  .story-left {
+    padding-right: 4rem;
+  }
+
+  .contact-right {
+    padding-left: 4rem;
+  }
+}
+
+/* Tablets in landscape */
+@media screen and (max-width: 1024px) and (orientation: landscape) {
+  .hero {
+    height: 80vh;
+  }
+
+  .product-section {
+    min-height: 80vh;
+  }
+
+  .story-contact-section {
+    min-height: 80vh;
+  }
+}
+
 @media screen and (max-width: 1024px) {
   .story-contact-section {
-    padding: 60px 20px;
+    padding: clamp(40px, 6vh, 60px) clamp(10px, 3vw, 20px);
   }
 
   .story-left {
     max-width: 100%;
     padding-right: 0;
-    margin-bottom: 2rem;
+    margin-bottom: clamp(1rem, 2vh, 2rem);
   }
 
   .contact-right {
@@ -431,84 +471,180 @@ body {
   }
 }
 
+/* Standard tablets */
 @media screen and (max-width: 768px) {
   .hero-title {
-    font-size: 48px;
+    font-size: clamp(32px, 7vw, 48px);
   }
 
   .hero-subtitle {
-    font-size: 18px;
+    font-size: clamp(14px, 3.5vw, 18px);
   }
 
   .hero-description {
-    font-size: 16px;
+    font-size: clamp(14px, 3vw, 16px);
   }
 
   .product-name {
-    font-size: 42px;
+    font-size: clamp(28px, 7vw, 42px);
   }
 
   .product-section {
-    padding: 0 20px;
-    min-height: 70vh;
+    padding: 0 clamp(10px, 3vw, 20px);
+    min-height: clamp(60vh, 70vh, 80vh);
   }
 
   .shop-btn {
-    padding: 14px 36px;
-    font-size: 13px;
+    padding: clamp(12px, 2.2vh, 14px) clamp(24px, 5vw, 36px);
+    font-size: clamp(11px, 2.2vw, 13px);
   }
 
   .shop-btn-alt {
-    padding: 12px 32px;
-    font-size: 13px;
+    padding: clamp(10px, 2vh, 12px) clamp(20px, 4.5vw, 32px);
+    font-size: clamp(11px, 2.2vw, 13px);
   }
 
   .story-contact-section {
-    padding: 40px 20px;
+    padding: clamp(30px, 5vh, 40px) clamp(10px, 3vw, 20px);
     min-height: auto;
   }
 
   .formRow {
     flex-direction: column;
+    gap: clamp(0.6rem, 1.2vh, 0.8rem);
   }
 
   .product-section .product-content {
-    padding: 0 20px;
-  }
-}
-
-@media screen and (max-width: 480px) {
-  .hero-title {
-    font-size: 36px;
-  }
-
-  .hero-subtitle {
-    font-size: 16px;
-  }
-
-  .hero-content {
-    padding: 20px 10px;
-  }
-
-  .product-name {
-    font-size: 32px;
+    padding: 0 clamp(10px, 3vw, 20px);
   }
 
   .product-tagline {
-    font-size: 14px;
+    letter-spacing: 2px;
+  }
+}
+
+/* Small mobiles */
+@media screen and (max-width: 480px) {
+  .hero-title {
+    font-size: clamp(24px, 8vw, 36px);
+  }
+
+  .hero-subtitle {
+    font-size: clamp(12px, 4vw, 16px);
+  }
+
+  .hero-content {
+    padding: clamp(15px, 4vh, 20px) 10px;
+  }
+
+  .product-name {
+    font-size: clamp(20px, 8vw, 32px);
+  }
+
+  .product-tagline {
+    font-size: clamp(12px, 3vw, 14px);
+    letter-spacing: 1.5px;
   }
 
   .product-section {
-    padding: 0 10px;
+    padding: 0 clamp(5px, 2vw, 10px);
   }
 
   .story-contact-section {
-    padding: 20px 10px;
+    padding: clamp(20px, 4vh, 20px) clamp(5px, 2vw, 10px);
   }
 
   .storySection p,
   .aboutSection p,
   .movementSection p {
-    font-size: 0.9rem;
+    font-size: clamp(0.8rem, 3vw, 0.9rem);
+  }
+
+  .contactForm h3 {
+    font-size: clamp(1rem, 4vw, 1.1rem);
+  }
+
+  .formGroup label {
+    font-size: clamp(0.75rem, 3vw, 0.8rem);
+  }
+
+  .submitButton {
+    padding: clamp(0.7rem, 1.5vh, 0.8rem) clamp(1rem, 4vw, 1.2rem);
+    font-size: clamp(0.8rem, 3vw, 0.9rem);
+  }
+
+  .status-message {
+    font-size: clamp(0.75rem, 3vw, 0.8rem);
+  }
+}
+
+/* Very small screens, e.g., foldables */
+@media screen and (max-width: 320px) {
+  .hero-content {
+    padding: 10px 5px;
+  }
+
+  .hero-description {
+    font-size: 14px;
+  }
+
+  .shop-btn,
+  .shop-btn-alt {
+    padding: 10px 20px;
+    font-size: 11px;
+  }
+
+  .product-section {
+    padding: 0 5px;
+  }
+
+  .story-contact-section {
+    padding: 15px 5px;
+  }
+
+  .story-left,
+  .contact-right {
+    padding: 0;
+  }
+
+  .formGroup input,
+  .formGroup textarea {
+    padding: 0.6rem;
+    font-size: 0.85rem;
+  }
+}
+
+/* Height-based adjustments for shorter viewports */
+@media screen and (max-height: 600px) {
+  .hero {
+    height: 70vh;
+  }
+
+  .product-section {
+    min-height: 60vh;
+    align-items: flex-start;
+    padding-top: 40px;
+  }
+
+  .product-content {
+    margin-top: auto;
+    margin-bottom: auto;
+  }
+
+  .story-contact-section {
+    min-height: 70vh;
+    padding: 40px 20px;
+    flex-direction: column;
+  }
+
+  .story-left,
+  .contact-right {
+    max-width: 100%;
+    padding: 0;
+    margin-bottom: 20px;
+  }
+
+  .formRow {
+    flex-direction: column;
   }
 }
