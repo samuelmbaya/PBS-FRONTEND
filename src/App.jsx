@@ -13,6 +13,8 @@ import Profile from './Pages/Profile';
 import Login from './Pages/Login';
 import Signup from './Pages/Signup';
 import Orders from './Pages/Orders';
+import Dashboard from "./Pages/Dashboard";
+
 
 function App() {
   return (
@@ -47,6 +49,15 @@ function App() {
           element={
             <ProtectedRoute>
               <Payment />
+            </ProtectedRoute>
+          }
+        />
+                {/* Protected Payment Route */}
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <Dashboard />
             </ProtectedRoute>
           }
         />
