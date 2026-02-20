@@ -21,7 +21,7 @@ export default function Dashboard() {
   // Logged in user id from localStorage
   const userId = JSON.parse(localStorage.getItem("user"))?.id;
 
-  const baseUrl = import.meta.env.VITE_API_BASE_URL;
+  const baseUrl = import.meta.env.VITE_API_URL;
 
   async function fetchAnalytics(signal) {
     if (!userId) return;
